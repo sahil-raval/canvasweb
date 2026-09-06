@@ -1,0 +1,6 @@
+{
+  "rewrites": [
+    {"source": "/studio/:path*", "destination": "/studio/index.html"},
+    {"source": "/((?!studio|assets|favicon.svg|robots.txt|sitemap.xml|og-image.svg).*)", "destination": "/index.html"}
+  ]
+}

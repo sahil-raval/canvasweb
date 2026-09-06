@@ -1,0 +1,17 @@
+{
+  "name": "canvas-real-estate-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": ["web", "studio"],
+  "scripts": {
+    "dev": "concurrently -n WEB,STUDIO -c cyan,magenta \"npm run dev -w @canvas/web\" \"npm run dev -w @canvas/studio\"",
+    "dev:web": "npm run dev -w @canvas/web",
+    "dev:studio": "npm run dev -w @canvas/studio",
+    "build": "npm run build -w @canvas/web && npm run build -w @canvas/studio",
+    "typecheck": "npm run typecheck -w @canvas/web",
+    "typegen": "npm run typegen -w @canvas/studio",
+    "seed": "npm run seed -w @canvas/studio",
+    "seed:dry-run": "npm run seed:dry-run -w @canvas/studio"
+  },
+  "devDependencies": {"concurrently": "^9.2.1"}
+}

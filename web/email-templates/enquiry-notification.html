@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>New Enquiry — Canvas Real Estate</title>
+</head>
+<body style="margin:0;padding:0;background-color:#f0ebe8;font-family:Arial,Helvetica,sans-serif;">
+
+  <!-- ── WRAPPER ─────────────────────────────────────────── -->
+  <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color:#f0ebe8;padding:40px 16px;">
+    <tr>
+      <td align="center">
+        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="600" style="max-width:600px;width:100%;">
+
+          <!-- ── HEADER ──────────────────────────────────── -->
+          <tr>
+            <td style="background:linear-gradient(145deg,#371628 0%,#1a0d14 100%);padding:40px 48px 36px;text-align:left;">
+
+              <!-- Logo text (replace src with actual hosted logo URL if available) -->
+              <p style="margin:0 0 28px 0;font-family:Georgia,'Times New Roman',serif;font-size:22px;font-weight:400;color:#FAF8F5;letter-spacing:0.06em;">
+                CANVAS <span style="font-size:11px;letter-spacing:0.22em;vertical-align:middle;opacity:0.6;">REAL ESTATE</span>
+              </p>
+
+              <!-- Tag line -->
+              <p style="margin:0 0 6px 0;font-family:Arial,Helvetica,sans-serif;font-size:9px;font-weight:700;color:rgba(250,248,245,0.4);letter-spacing:0.55em;text-transform:uppercase;">
+                New Enquiry Received
+              </p>
+              <h1 style="margin:0;font-family:Georgia,'Times New Roman',serif;font-size:32px;font-weight:400;color:#FAF8F5;line-height:1.15;letter-spacing:-0.01em;">
+                {{enquiry_type}}
+              </h1>
+
+              <!-- Divider -->
+              <div style="width:40px;height:1px;background:rgba(250,248,245,0.22);margin:20px 0 0;"></div>
+            </td>
+          </tr>
+
+          <!-- ── PROPERTY BANNER (shown only when property is set) ── -->
+          <tr>
+            <td style="background:#2a1f25;padding:14px 48px;">
+              <p style="margin:0;font-family:Arial,Helvetica,sans-serif;font-size:9px;font-weight:700;color:rgba(250,248,245,0.35);letter-spacing:0.5em;text-transform:uppercase;">
+                Property of Interest
+              </p>
+              <p style="margin:4px 0 0;font-family:Georgia,'Times New Roman',serif;font-size:16px;color:rgba(250,248,245,0.85);font-weight:400;">
+                {{property}}
+              </p>
+            </td>
+          </tr>
+
+          <!-- ── BODY ────────────────────────────────────── -->
+          <tr>
+            <td style="background:#ffffff;padding:40px 48px 0;">
+
+              <p style="margin:0 0 24px;font-family:Arial,Helvetica,sans-serif;font-size:9px;font-weight:700;color:rgba(55,22,40,0.4);letter-spacing:0.5em;text-transform:uppercase;">
+                Contact Details
+              </p>
+
+              <!-- Detail table -->
+              <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="border:1px solid #ece8e4;">
+                <tr>
+                  <td style="padding:13px 18px;background:#faf8f5;border-bottom:1px solid #ece8e4;width:28%;">
+                    <p style="margin:0;font-family:Arial,Helvetica,sans-serif;font-size:9px;font-weight:700;color:rgba(55,22,40,0.4);letter-spacing:0.4em;text-transform:uppercase;">Name</p>
+                  </td>
+                  <td style="padding:13px 18px;border-bottom:1px solid #ece8e4;">
+                    <p style="margin:0;font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#2a1f25;font-weight:600;">{{from_name}}</p>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding:13px 18px;background:#faf8f5;border-bottom:1px solid #ece8e4;">
+                    <p style="margin:0;font-family:Arial,Helvetica,sans-serif;font-size:9px;font-weight:700;color:rgba(55,22,40,0.4);letter-spacing:0.4em;text-transform:uppercase;">Email</p>
+                  </td>
+                  <td style="padding:13px 18px;border-bottom:1px solid #ece8e4;">
+                    <a href="mailto:{{from_email}}" style="font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#371628;text-decoration:none;font-weight:400;">{{from_email}}</a>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding:13px 18px;background:#faf8f5;border-bottom:1px solid #ece8e4;">
+                    <p style="margin:0;font-family:Arial,Helvetica,sans-serif;font-size:9px;font-weight:700;color:rgba(55,22,40,0.4);letter-spacing:0.4em;text-transform:uppercase;">Phone</p>
+                  </td>
+                  <td style="padding:13px 18px;border-bottom:1px solid #ece8e4;">
+                    <p style="margin:0;font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#2a1f25;">{{phone}}</p>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding:13px 18px;background:#faf8f5;">
+                    <p style="margin:0;font-family:Arial,Helvetica,sans-serif;font-size:9px;font-weight:700;color:rgba(55,22,40,0.4);letter-spacing:0.4em;text-transform:uppercase;">Type</p>
+                  </td>
+                  <td style="padding:13px 18px;">
+                    <p style="margin:0;font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#2a1f25;">{{enquiry_type}}</p>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- ── MESSAGE ─────────────────────────────────── -->
+          <tr>
+            <td style="background:#ffffff;padding:32px 48px 0;">
+              <p style="margin:0 0 14px;font-family:Arial,Helvetica,sans-serif;font-size:9px;font-weight:700;color:rgba(55,22,40,0.4);letter-spacing:0.5em;text-transform:uppercase;">
+                Message
+              </p>
+              <div style="background:#faf8f5;border-left:3px solid #371628;padding:20px 24px;line-height:1.75;">
+                <p style="margin:0;font-family:Georgia,'Times New Roman',serif;font-size:15px;color:rgba(42,31,37,0.75);white-space:pre-wrap;">{{message}}</p>
+              </div>
+            </td>
+          </tr>
+
+          <!-- ── REPLY CTA ───────────────────────────────── -->
+          <tr>
+            <td style="background:#ffffff;padding:36px 48px 40px;text-align:center;">
+              <a href="mailto:{{from_email}}"
+                style="display:inline-block;background:#371628;color:#ffffff;font-family:Arial,Helvetica,sans-serif;font-size:11px;font-weight:700;letter-spacing:0.35em;text-transform:uppercase;text-decoration:none;padding:16px 40px;">
+                Reply to {{from_name}} →
+              </a>
+              <p style="margin:20px 0 0;font-family:Arial,Helvetica,sans-serif;font-size:11px;color:rgba(55,22,40,0.3);">
+                Or reply directly to this email — it is pre-addressed to the enquirer.
+              </p>
+            </td>
+          </tr>
+
+          <!-- ── DIVIDER ─────────────────────────────────── -->
+          <tr>
+            <td style="background:#ffffff;padding:0 48px;">
+              <div style="height:1px;background:#ece8e4;"></div>
+            </td>
+          </tr>
+
+          <!-- ── QUICK LINKS ─────────────────────────────── -->
+          <tr>
+            <td style="background:#ffffff;padding:28px 48px 40px;">
+              <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                <tr>
+                  <td style="width:50%;vertical-align:top;">
+                    <p style="margin:0 0 8px;font-family:Arial,Helvetica,sans-serif;font-size:9px;font-weight:700;color:rgba(55,22,40,0.35);letter-spacing:0.4em;text-transform:uppercase;">Canvas Real Estate</p>
+                    <p style="margin:0;font-family:Arial,Helvetica,sans-serif;font-size:12px;color:rgba(55,22,40,0.5);line-height:1.7;">
+                      Geelong, Victoria<br />
+                      <a href="tel:0469131347" style="color:#371628;text-decoration:none;">0469 131 347</a><br />
+                      <a href="mailto:enquiry@canvasrealestate.com.au" style="color:#371628;text-decoration:none;">enquiry@canvasrealestate.com.au</a>
+                    </p>
+                  </td>
+                  <td style="width:50%;vertical-align:top;text-align:right;">
+                    <p style="margin:0 0 8px;font-family:Arial,Helvetica,sans-serif;font-size:9px;font-weight:700;color:rgba(55,22,40,0.35);letter-spacing:0.4em;text-transform:uppercase;">This enquiry was submitted</p>
+                    <p style="margin:0;font-family:Arial,Helvetica,sans-serif;font-size:12px;color:rgba(55,22,40,0.45);">{{timestamp}}</p>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- ── FOOTER ──────────────────────────────────── -->
+          <tr>
+            <td style="background:#371628;padding:24px 48px;text-align:center;">
+              <p style="margin:0;font-family:Arial,Helvetica,sans-serif;font-size:9px;color:rgba(250,248,245,0.28);letter-spacing:0.4em;text-transform:uppercase;">
+                Canvas Real Estate · Geelong Victoria · Internal Notification
+              </p>
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+
+</body>
+</html>

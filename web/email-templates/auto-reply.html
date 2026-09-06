@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Thank you — Canvas Real Estate</title>
+</head>
+<body style="margin:0;padding:0;background-color:#f0ebe8;font-family:Arial,Helvetica,sans-serif;">
+
+  <!-- ── WRAPPER ─────────────────────────────────────────── -->
+  <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color:#f0ebe8;padding:40px 16px;">
+    <tr>
+      <td align="center">
+        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="600" style="max-width:600px;width:100%;">
+
+          <!-- ── HEADER ──────────────────────────────────── -->
+          <tr>
+            <td style="background:linear-gradient(145deg,#371628 0%,#1a0d14 100%);padding:44px 48px 40px;text-align:left;">
+              <!-- Logo text -->
+              <p style="margin:0 0 32px 0;font-family:Georgia,'Times New Roman',serif;font-size:22px;font-weight:400;color:#FAF8F5;letter-spacing:0.06em;">
+                CANVAS <span style="font-size:11px;letter-spacing:0.22em;vertical-align:middle;opacity:0.6;">REAL ESTATE</span>
+              </p>
+
+              <p style="margin:0 0 8px 0;font-family:Arial,Helvetica,sans-serif;font-size:9px;font-weight:700;color:rgba(250,248,245,0.38);letter-spacing:0.55em;text-transform:uppercase;">
+                Thank you, {{to_name}}
+              </p>
+              <h1 style="margin:0;font-family:Georgia,'Times New Roman',serif;font-size:34px;font-weight:400;color:#FAF8F5;line-height:1.15;letter-spacing:-0.015em;">
+                We've received<br />your enquiry.
+              </h1>
+
+              <!-- Divider -->
+              <div style="width:40px;height:1px;background:rgba(250,248,245,0.22);margin:22px 0 0;"></div>
+            </td>
+          </tr>
+
+          <!-- ── INTRO ───────────────────────────────────── -->
+          <tr>
+            <td style="background:#ffffff;padding:40px 48px 0;">
+              <p style="margin:0 0 20px;font-family:Georgia,'Times New Roman',serif;font-size:17px;color:#2a1f25;line-height:1.75;font-weight:400;">
+                Dear {{to_name}},
+              </p>
+              <p style="margin:0 0 20px;font-family:Arial,Helvetica,sans-serif;font-size:14px;color:rgba(42,31,37,0.65);line-height:1.85;">
+                Thank you for reaching out to Canvas Real Estate. We've received your enquiry and a member of our team will be in touch with you within <strong style="color:#371628;font-weight:600;">24 hours</strong>.
+              </p>
+              <p style="margin:0;font-family:Arial,Helvetica,sans-serif;font-size:14px;color:rgba(42,31,37,0.65);line-height:1.85;">
+                If your matter is urgent, please don't hesitate to call us directly on <a href="tel:0469131347" style="color:#371628;text-decoration:none;font-weight:600;">0469 131 347</a>.
+              </p>
+            </td>
+          </tr>
+
+          <!-- ── YOUR ENQUIRY SUMMARY ────────────────────── -->
+          <tr>
+            <td style="background:#ffffff;padding:32px 48px 0;">
+              <p style="margin:0 0 14px;font-family:Arial,Helvetica,sans-serif;font-size:9px;font-weight:700;color:rgba(55,22,40,0.38);letter-spacing:0.5em;text-transform:uppercase;">
+                Your Enquiry Summary
+              </p>
+              <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="border:1px solid #ece8e4;">
+                <tr>
+                  <td style="padding:13px 18px;background:#faf8f5;border-bottom:1px solid #ece8e4;width:32%;">
+                    <p style="margin:0;font-family:Arial,Helvetica,sans-serif;font-size:9px;font-weight:700;color:rgba(55,22,40,0.4);letter-spacing:0.4em;text-transform:uppercase;">Type</p>
+                  </td>
+                  <td style="padding:13px 18px;border-bottom:1px solid #ece8e4;">
+                    <p style="margin:0;font-family:Arial,Helvetica,sans-serif;font-size:13px;color:#2a1f25;font-weight:600;">{{enquiry_type}}</p>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding:13px 18px;background:#faf8f5;border-bottom:1px solid #ece8e4;">
+                    <p style="margin:0;font-family:Arial,Helvetica,sans-serif;font-size:9px;font-weight:700;color:rgba(55,22,40,0.4);letter-spacing:0.4em;text-transform:uppercase;">Property</p>
+                  </td>
+                  <td style="padding:13px 18px;border-bottom:1px solid #ece8e4;">
+                    <p style="margin:0;font-family:Arial,Helvetica,sans-serif;font-size:13px;color:#2a1f25;">{{property}}</p>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding:13px 18px;background:#faf8f5;">
+                    <p style="margin:0;font-family:Arial,Helvetica,sans-serif;font-size:9px;font-weight:700;color:rgba(55,22,40,0.4);letter-spacing:0.4em;text-transform:uppercase;">Your Email</p>
+                  </td>
+                  <td style="padding:13px 18px;">
+                    <p style="margin:0;font-family:Arial,Helvetica,sans-serif;font-size:13px;color:#2a1f25;">{{from_email}}</p>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- ── YOUR MESSAGE ────────────────────────────── -->
+          <tr>
+            <td style="background:#ffffff;padding:32px 48px 0;">
+              <p style="margin:0 0 14px;font-family:Arial,Helvetica,sans-serif;font-size:9px;font-weight:700;color:rgba(55,22,40,0.38);letter-spacing:0.5em;text-transform:uppercase;">
+                Your Message
+              </p>
+              <div style="background:#faf8f5;border-left:3px solid #371628;padding:20px 24px;line-height:1.75;">
+                <p style="margin:0;font-family:Georgia,'Times New Roman',serif;font-size:14px;color:rgba(42,31,37,0.65);white-space:pre-wrap;font-style:italic;">{{message}}</p>
+              </div>
+            </td>
+          </tr>
+
+          <!-- ── WHAT HAPPENS NEXT ───────────────────────── -->
+          <tr>
+            <td style="background:#ffffff;padding:36px 48px 0;">
+              <p style="margin:0 0 20px;font-family:Arial,Helvetica,sans-serif;font-size:9px;font-weight:700;color:rgba(55,22,40,0.38);letter-spacing:0.5em;text-transform:uppercase;">
+                What Happens Next
+              </p>
+              <!-- Steps -->
+              <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                <tr>
+                  <td style="padding:0 0 18px;">
+                    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                      <tr>
+                        <td style="width:36px;vertical-align:top;">
+                          <div style="width:28px;height:28px;background:#371628;text-align:center;line-height:28px;">
+                            <span style="font-family:Georgia,'Times New Roman',serif;font-size:12px;color:#FAF8F5;">1</span>
+                          </div>
+                        </td>
+                        <td style="vertical-align:top;padding-left:14px;">
+                          <p style="margin:0 0 3px;font-family:Arial,Helvetica,sans-serif;font-size:13px;font-weight:700;color:#2a1f25;">We review your enquiry</p>
+                          <p style="margin:0;font-family:Arial,Helvetica,sans-serif;font-size:12px;color:rgba(42,31,37,0.5);line-height:1.6;">Your message lands directly with our team — no bots, no delays.</p>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding:0 0 18px;">
+                    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                      <tr>
+                        <td style="width:36px;vertical-align:top;">
+                          <div style="width:28px;height:28px;background:#371628;text-align:center;line-height:28px;">
+                            <span style="font-family:Georgia,'Times New Roman',serif;font-size:12px;color:#FAF8F5;">2</span>
+                          </div>
+                        </td>
+                        <td style="vertical-align:top;padding-left:14px;">
+                          <p style="margin:0 0 3px;font-family:Arial,Helvetica,sans-serif;font-size:13px;font-weight:700;color:#2a1f25;">One of our directors calls you</p>
+                          <p style="margin:0;font-family:Arial,Helvetica,sans-serif;font-size:12px;color:rgba(42,31,37,0.5);line-height:1.6;">Pooja or Chandra will reach out personally within 24 hours.</p>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding:0;">
+                    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                      <tr>
+                        <td style="width:36px;vertical-align:top;">
+                          <div style="width:28px;height:28px;background:#371628;text-align:center;line-height:28px;">
+                            <span style="font-family:Georgia,'Times New Roman',serif;font-size:12px;color:#FAF8F5;">3</span>
+                          </div>
+                        </td>
+                        <td style="vertical-align:top;padding-left:14px;">
+                          <p style="margin:0 0 3px;font-family:Arial,Helvetica,sans-serif;font-size:13px;font-weight:700;color:#2a1f25;">We tailor a plan for you</p>
+                          <p style="margin:0;font-family:Arial,Helvetica,sans-serif;font-size:12px;color:rgba(42,31,37,0.5);line-height:1.6;">Every client is different. Your journey begins with a no-obligation consultation.</p>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- ── AGENT CARDS ─────────────────────────────── -->
+          <tr>
+            <td style="background:#ffffff;padding:36px 48px 0;">
+              <div style="height:1px;background:#ece8e4;margin-bottom:28px;"></div>
+              <p style="margin:0 0 18px;font-family:Arial,Helvetica,sans-serif;font-size:9px;font-weight:700;color:rgba(55,22,40,0.38);letter-spacing:0.5em;text-transform:uppercase;">
+                Your Team at Canvas
+              </p>
+              <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                <tr>
+                  <!-- Pooja -->
+                  <td style="width:50%;vertical-align:top;padding-right:10px;">
+                    <table role="presentation" cellspacing="0" cellpadding="0" border="0" style="border:1px solid #ece8e4;width:100%;">
+                      <tr>
+                        <td style="background:#faf8f5;padding:20px;">
+                          <p style="margin:0 0 2px;font-family:Georgia,'Times New Roman',serif;font-size:15px;color:#2a1f25;font-weight:400;">Pooja Patel</p>
+                          <p style="margin:0 0 12px;font-family:Arial,Helvetica,sans-serif;font-size:10px;color:rgba(55,22,40,0.4);letter-spacing:0.05em;">Director &amp; Founder</p>
+                          <a href="tel:0469131347" style="display:block;font-family:Arial,Helvetica,sans-serif;font-size:12px;color:#371628;text-decoration:none;margin-bottom:4px;">0469 131 347</a>
+                          <a href="mailto:ppatel@canvasrealestate.com.au" style="display:block;font-family:Arial,Helvetica,sans-serif;font-size:11px;color:rgba(55,22,40,0.5);text-decoration:none;word-break:break-all;">ppatel@canvasrealestate.com.au</a>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                  <!-- Chandra -->
+                  <td style="width:50%;vertical-align:top;padding-left:10px;">
+                    <table role="presentation" cellspacing="0" cellpadding="0" border="0" style="border:1px solid #ece8e4;width:100%;">
+                      <tr>
+                        <td style="background:#faf8f5;padding:20px;">
+                          <p style="margin:0 0 2px;font-family:Georgia,'Times New Roman',serif;font-size:15px;color:#2a1f25;font-weight:400;">Chandra Bhatt</p>
+                          <p style="margin:0 0 12px;font-family:Arial,Helvetica,sans-serif;font-size:10px;color:rgba(55,22,40,0.4);letter-spacing:0.05em;">Director &amp; Co-Founder</p>
+                          <a href="tel:0469131347" style="display:block;font-family:Arial,Helvetica,sans-serif;font-size:12px;color:#371628;text-decoration:none;margin-bottom:4px;">0469 131 347</a>
+                          <a href="mailto:cbhatt@canvasrealestate.com.au" style="display:block;font-family:Arial,Helvetica,sans-serif;font-size:11px;color:rgba(55,22,40,0.5);text-decoration:none;word-break:break-all;">cbhatt@canvasrealestate.com.au</a>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- ── CTA ─────────────────────────────────────── -->
+          <tr>
+            <td style="background:#ffffff;padding:36px 48px 40px;text-align:center;">
+              <a href="https://canvasrealestate.com.au/listings"
+                style="display:inline-block;background:#371628;color:#ffffff;font-family:Arial,Helvetica,sans-serif;font-size:11px;font-weight:700;letter-spacing:0.35em;text-transform:uppercase;text-decoration:none;padding:16px 36px;margin-bottom:12px;">
+                Browse Properties →
+              </a>
+              <p style="margin:12px 0 0;font-family:Arial,Helvetica,sans-serif;font-size:11px;color:rgba(55,22,40,0.3);">
+                Explore our latest listings while you wait.
+              </p>
+            </td>
+          </tr>
+
+          <!-- ── FOOTER ──────────────────────────────────── -->
+          <tr>
+            <td style="background:linear-gradient(145deg,#371628 0%,#1a0d14 100%);padding:28px 48px;text-align:center;">
+              <p style="margin:0 0 8px;font-family:Georgia,'Times New Roman',serif;font-size:16px;color:rgba(250,248,245,0.7);font-weight:400;letter-spacing:0.04em;">
+                Canvas Real Estate
+              </p>
+              <p style="margin:0 0 16px;font-family:Arial,Helvetica,sans-serif;font-size:9px;color:rgba(250,248,245,0.28);letter-spacing:0.4em;text-transform:uppercase;">
+                Geelong, Victoria · Independent Agency
+              </p>
+              <table role="presentation" cellspacing="0" cellpadding="0" border="0" align="center">
+                <tr>
+                  <td style="padding:0 12px;">
+                    <a href="tel:0469131347" style="font-family:Arial,Helvetica,sans-serif;font-size:11px;color:rgba(250,248,245,0.45);text-decoration:none;">0469 131 347</a>
+                  </td>
+                  <td style="color:rgba(250,248,245,0.18);font-size:11px;">·</td>
+                  <td style="padding:0 12px;">
+                    <a href="mailto:enquiry@canvasrealestate.com.au" style="font-family:Arial,Helvetica,sans-serif;font-size:11px;color:rgba(250,248,245,0.45);text-decoration:none;">enquiry@canvasrealestate.com.au</a>
+                  </td>
+                </tr>
+              </table>
+              <p style="margin:16px 0 0;font-family:Arial,Helvetica,sans-serif;font-size:9px;color:rgba(250,248,245,0.16);">
+                You are receiving this email because you submitted an enquiry on our website.<br />
+                © Canvas Real Estate Geelong. All rights reserved.
+              </p>
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+
+</body>
+</html>
