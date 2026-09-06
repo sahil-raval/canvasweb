@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "vite build && npm --prefix ../studio install && npm --prefix ../studio run build",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit",
     "generate:sitemap": "node scripts/generate-sitemap.mjs",

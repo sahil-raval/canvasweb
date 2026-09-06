@@ -5,12 +5,12 @@
   "scripts": {
     "dev": "sanity dev --host 0.0.0.0 --port 3333",
     "start": "sanity start --host 0.0.0.0 --port 3333",
-    "build": "sanity build ../web/dist/studio --yes && node scripts/fix-studio-basepath.mjs",
+    "build": "sanity schema extract --force && sanity build ../web/dist/studio --yes && node scripts/fix-studio-basepath.mjs",
     "deploy": "sanity deploy",
     "deploy:schema": "sanity schemas deploy",
     "seed": "sanity exec scripts/seed.mjs --with-user-token",
     "seed:dry-run": "sanity exec scripts/seed.mjs -- --dry-run",
-    "typegen": "sanity schemas extract --force && sanity typegen generate",
+    "typegen": "sanity schema extract --force && sanity typegen generate",
     "cors:web": "sanity cors add http://localhost:5173"
   },
   "dependencies": {
