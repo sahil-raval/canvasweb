@@ -1,7 +1,9 @@
 {
   "outputDirectory": "web/dist",
   "rewrites": [
-    { "source": "/studio/(.*)", "destination": "/studio/$1" },
+    { "source": "/api/(.*)", "destination": "/api/$1" },
+    { "source": "/studio", "destination": "/studio/index.html" },
+    { "source": "/studio/(.*)", "destination": "/studio/index.html" },
     { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
