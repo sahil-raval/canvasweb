@@ -2,32 +2,122 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://canvasrealestate.com.au/</loc>
-    <changefreq>weekly</changefreq>
-    <priority>1.0</priority>
+    <lastmod>2026-09-06T17:30:15Z</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
   </url>
   <url>
     <loc>https://canvasrealestate.com.au/about</loc>
-    <changefreq>monthly</changefreq>
+    <lastmod>2026-09-06T17:20:31Z</lastmod>
+    <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://canvasrealestate.com.au/contact</loc>
-    <changefreq>monthly</changefreq>
+    <lastmod>2026-09-06T17:20:33Z</lastmod>
+    <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://canvasrealestate.com.au/journal</loc>
+    <lastmod>2026-09-06T17:20:28Z</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://canvasrealestate.com.au/journal/armstrong-creek-geelongs-most-exciting-suburb</loc>
+    <lastmod>2026-09-06T17:20:53Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://canvasrealestate.com.au/journal/art-of-the-appraisal-what-your-home-is-truly-worth</loc>
+    <lastmod>2026-09-06T17:20:48Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://canvasrealestate.com.au/journal/from-offer-to-settlement-a-buyers-guide</loc>
+    <lastmod>2026-09-06T17:20:52Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://canvasrealestate.com.au/journal/geelong-effect-why-discerning-buyers-are-arriving</loc>
+    <lastmod>2026-09-06T17:20:47Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://canvasrealestate.com.au/journal/quiet-luxury-design-trend-reshaping-geelong-prestige</loc>
+    <lastmod>2026-09-06T17:20:50Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://canvasrealestate.com.au/journal/waterfront-living-corio-bay-coveted-addresses</loc>
+    <lastmod>2026-09-06T17:20:51Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://canvasrealestate.com.au/listings</loc>
+    <lastmod>2026-09-06T17:20:22Z</lastmod>
     <changefreq>daily</changefreq>
-    <priority>0.9</priority>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://canvasrealestate.com.au/listings/15-generosa-grove-tarneit</loc>
+    <lastmod>2026-09-06T17:20:42Z</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://canvasrealestate.com.au/listings/19-wattlebird-drive-lara</loc>
+    <lastmod>2026-09-06T17:20:38Z</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://canvasrealestate.com.au/listings/25-forbes-street-armstrong-creek</loc>
+    <lastmod>2026-09-06T17:20:39Z</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://canvasrealestate.com.au/listings/30-flagstaff-street-armstrong-creek</loc>
+    <lastmod>2026-09-06T17:20:41Z</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://canvasrealestate.com.au/rent</loc>
+    <lastmod>2026-09-06T17:20:24Z</lastmod>
     <changefreq>daily</changefreq>
-    <priority>0.9</priority>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://canvasrealestate.com.au/rent/14-verdant-circuit-armstrong-creek</loc>
+    <lastmod>2026-09-06T17:20:44Z</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://canvasrealestate.com.au/rent/22-flagstaff-street-armstrong-creek</loc>
+    <lastmod>2026-09-06T17:20:45Z</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://canvasrealestate.com.au/rent/5-sorrento-drive-geelong-west</loc>
+    <lastmod>2026-09-06T17:20:46Z</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://canvasrealestate.com.au/rent/8-lakewood-boulevard-lara</loc>
+    <lastmod>2026-09-06T17:20:43Z</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
   </url>
 </urlset>

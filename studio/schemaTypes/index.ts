@@ -10,6 +10,7 @@ const slugValidation = (rule: any) =>
       ? true
       : 'Use lowercase letters, numbers, and hyphens only',
   )
+  
 
 const seo = defineType({
   name: 'seo', title: 'SEO & Social Sharing', type: 'object',
