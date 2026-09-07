@@ -113,7 +113,6 @@ export function CmsProvider({ children }: { children: ReactNode }) {
     let disposed = false;
     let inFlight = false;
     let initialLoad = true;
-    let usePublicSanity = false;
 
     const refresh = async () => {
       if (disposed || inFlight) return;
@@ -122,31 +121,13 @@ export function CmsProvider({ children }: { children: ReactNode }) {
       controllers.add(controller);
 
       try {
-        let content: CmsPayload | null = null;
-        let apiError = "CMS API is unavailable.";
-
-        if (!usePublicSanity) {
-          const response = await fetch("/api/cms/content", {
-            signal: controller.signal,
-            cache: "no-store",
-            headers: { Accept: "application/json" },
-          });
-          if (response.ok) {
-            content = (await response.json()) as CmsPayload;
-          } else {
-            const body = await response.json().catch(() => null);
-            apiError =
-              body && typeof body.error === "string"
-                ? body.error
-                : `CMS request failed with ${response.status}`;
-            usePublicSanity = true;
-          }
-        }
-
+        const content =
+          (await fetchPublicSanityContent()) as CmsPayload | null;
         if (!content) {
-          content = (await fetchPublicSanityContent()) as CmsPayload | null;
+          throw new Error(
+            "Sanity public configuration is missing. Check the VITE_SANITY_* environment variables.",
+          );
         }
-        if (!content) throw new Error(apiError);
         if (!disposed) setRemote(content);
       } catch (error: unknown) {
         if (error instanceof DOMException && error.name === "AbortError") return;
