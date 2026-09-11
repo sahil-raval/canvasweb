@@ -417,6 +417,88 @@ function StatementOfInformation({ listing }: { listing: Listing }) {
   );
 }
 
+function PropertyDocumentCard({
+  title,
+  eyebrow,
+  url,
+  icon: Icon,
+}: {
+  title: string;
+  eyebrow: string;
+  url: string;
+  icon: typeof FileText;
+}) {
+  return (
+    <FadeUp>
+      <div className="border border-[#371628]/10 p-7 bg-white">
+        <div className="flex items-start gap-4">
+          <div className="w-11 h-11 bg-[#371628]/5 flex items-center justify-center shrink-0">
+            <Icon className="w-5 h-5 text-[#371628]" strokeWidth={1.4} />
+          </div>
+          <div>
+            <Eyebrow>{eyebrow}</Eyebrow>
+            <h3 className="font-serif text-[#2a1f25] text-xl leading-tight mt-2">{title}</h3>
+          </div>
+        </div>
+        <a
+          href={url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mt-6 w-full min-h-11 px-5 inline-flex items-center justify-between gap-4 bg-[#371628] text-white hover:bg-[#2a1f25] transition-colors"
+        >
+          <span className="text-[9px] uppercase tracking-[0.32em] font-semibold font-sans">
+            View PDF
+          </span>
+          <ExternalLink className="w-3.5 h-3.5" strokeWidth={1.6} />
+        </a>
+      </div>
+    </FadeUp>
+  );
+}
+
+function FloorPlanCard({
+  imageUrl,
+  pdfUrl,
+  address,
+}: {
+  imageUrl?: string;
+  pdfUrl?: string;
+  address: string;
+}) {
+  if (!imageUrl && !pdfUrl) return null;
+
+  return (
+    <FadeUp>
+      <div className="border border-[#371628]/10 p-7 bg-white">
+        <Eyebrow>Property Document</Eyebrow>
+        <h3 className="font-serif text-[#2a1f25] text-2xl leading-tight mt-2 mb-5">Floor Plan</h3>
+        {imageUrl && (
+          <a href={imageUrl} target="_blank" rel="noopener noreferrer" className="block bg-[#FAF8F5] border border-[#371628]/8 p-3">
+            <img
+              src={imageUrl}
+              alt={`Floor plan for ${address}`}
+              className="w-full h-auto max-h-[360px] object-contain"
+            />
+          </a>
+        )}
+        {pdfUrl && (
+          <a
+            href={pdfUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={`${imageUrl ? "mt-4" : ""} w-full min-h-11 px-5 inline-flex items-center justify-between gap-4 bg-[#371628] text-white hover:bg-[#2a1f25] transition-colors`}
+          >
+            <span className="text-[9px] uppercase tracking-[0.32em] font-semibold font-sans">
+              View Floor Plan PDF
+            </span>
+            <ExternalLink className="w-3.5 h-3.5" strokeWidth={1.6} />
+          </a>
+        )}
+      </div>
+    </FadeUp>
+  );
+}
+
 /* ─── Lightbox ───────────────────────────────────────────── */
 function Lightbox({ images, current, onClose, onPrev, onNext }: {
   images: string[]; current: number; onClose: () => void; onPrev: () => void; onNext: () => void;
@@ -577,10 +659,20 @@ export default function ListingDetail() {
     );
   }
 
-  const cmsAgent = agents.find((agent) => agent.key === listing.agent);
-  const agentName  = cmsAgent?.name ?? (listing.agent === "pooja" ? "Pooja Patel" : "Chandra Bhatt");
-  const agentImg   = cmsAgent?.photo ?? (listing.agent === "pooja" ? poojaImg : chandraImg);
-  const agentTitle = cmsAgent?.role ?? (listing.agent === "pooja" ? "Director & Founder" : "Director & Co-Founder");
+  const agentKeys = listing.agents?.length ? listing.agents : [listing.agent];
+  const listingAgents = agentKeys.map((key) => {
+    const cmsAgent = agents.find((agent) => agent.key === key);
+    const isPooja = key === "pooja";
+    return {
+      key,
+      name: cmsAgent?.name ?? (isPooja ? "Pooja Patel" : "Chandra Bhatt"),
+      photo: cmsAgent?.photo ?? (isPooja ? poojaImg : chandraImg),
+      role: cmsAgent?.role ?? (isPooja ? "Director & Founder" : "Director & Co-Founder"),
+      phone: cmsAgent?.phone ?? (isPooja ? "0469 131 347" : "0433 907 511"),
+      email: cmsAgent?.email ?? "enquiry@canvasrealestate.com.au",
+    };
+  });
+  const primaryAgent = listingAgents[0];
   const allImages  = [listing.heroImage, ...listing.gallery];
 
   const openLightbox = (idx: number) => { setLightboxIdx(idx); setLightboxOpen(true); };
@@ -706,16 +798,6 @@ export default function ListingDetail() {
 
               <Divider />
 
-              {/* ── FLOOR PLAN ── */}
-              <FloorPlanSection beds={listing.beds} cars={listing.cars} />
-
-              <Divider />
-
-              {/* ── STATEMENT OF INFORMATION ── */}
-              <StatementOfInformation listing={listing} />
-
-              <Divider />
-
               {/* Photo Gallery */}
               <FadeUp>
                 <Eyebrow>Photo Gallery</Eyebrow>
@@ -770,38 +852,59 @@ export default function ListingDetail() {
             <div className="relative">
               <div className="lg:sticky lg:top-28 space-y-5">
 
+                <FloorPlanCard
+                  imageUrl={listing.floorPlanImage}
+                  pdfUrl={listing.floorPlanPdf}
+                  address={`${listing.address}, ${listing.suburb}`}
+                />
+
                 {/* Agent card */}
                 <FadeUp>
                   <div className="border border-[#371628]/10 p-7 bg-white">
-                    <Eyebrow>Your Agent</Eyebrow>
-                    <div className="flex items-center gap-4 mt-5 mb-6">
-                      <div className="w-14 h-14 overflow-hidden shrink-0 border border-[#371628]/10">
-                        <img src={agentImg} alt={agentName} className="w-full h-full object-cover object-top" />
-                      </div>
-                      <div>
-                        <p className="font-serif text-[#2a1f25] text-lg leading-tight">{agentName}</p>
-                        <p className="text-[10px] text-[#371628]/38 tracking-wide font-sans mt-0.5">{agentTitle}</p>
-                        <p className="text-[10px] text-[#371628]/30 font-sans">Canvas Real Estate</p>
-                      </div>
-                    </div>
-                    <div className="space-y-3 border-t border-[#371628]/8 pt-5">
-                      <a href="tel:0469131347"
-                        className="flex items-center gap-3 font-sans text-sm text-[#2a1f25]/65 hover:text-[#371628] transition-colors group">
-                        <div className="w-8 h-8 bg-[#371628]/5 flex items-center justify-center group-hover:bg-[#371628]/10 transition-colors">
-                          <Phone className="w-3.5 h-3.5 text-[#371628]" strokeWidth={1.5} />
+                    <Eyebrow>{listingAgents.length > 1 ? "Your Agents" : "Your Agent"}</Eyebrow>
+                    <div className="mt-5 divide-y divide-[#371628]/8">
+                      {listingAgents.map((agent) => (
+                        <div key={agent.key} className="py-5 first:pt-0 last:pb-0">
+                          <div className="flex items-center gap-4 mb-4">
+                            <div className="w-14 h-14 overflow-hidden shrink-0 border border-[#371628]/10">
+                              <img src={agent.photo} alt={agent.name} className="w-full h-full object-cover object-top" />
+                            </div>
+                            <div>
+                              <p className="font-serif text-[#2a1f25] text-lg leading-tight">{agent.name}</p>
+                              <p className="text-[10px] text-[#371628]/38 tracking-wide font-sans mt-0.5">{agent.role}</p>
+                              <p className="text-[10px] text-[#371628]/30 font-sans">Canvas Real Estate</p>
+                            </div>
+                          </div>
+                          <div className="space-y-2.5">
+                            <a href={`tel:${agent.phone.replace(/\s/g, "")}`}
+                              className="flex items-center gap-3 font-sans text-sm text-[#2a1f25]/65 hover:text-[#371628] transition-colors group">
+                              <div className="w-8 h-8 bg-[#371628]/5 flex items-center justify-center group-hover:bg-[#371628]/10 transition-colors">
+                                <Phone className="w-3.5 h-3.5 text-[#371628]" strokeWidth={1.5} />
+                              </div>
+                              {agent.phone}
+                            </a>
+                            <a href={`mailto:${agent.email}`}
+                              className="flex items-center gap-3 font-sans text-sm text-[#2a1f25]/65 hover:text-[#371628] transition-colors group">
+                              <div className="w-8 h-8 bg-[#371628]/5 flex items-center justify-center group-hover:bg-[#371628]/10 transition-colors">
+                                <Mail className="w-3.5 h-3.5 text-[#371628]" strokeWidth={1.5} />
+                              </div>
+                              {agent.email}
+                            </a>
+                          </div>
                         </div>
-                        0469 131 347
-                      </a>
-                      <a href="mailto:enquiry@canvasrealestate.com.au"
-                        className="flex items-center gap-3 font-sans text-sm text-[#2a1f25]/65 hover:text-[#371628] transition-colors group">
-                        <div className="w-8 h-8 bg-[#371628]/5 flex items-center justify-center group-hover:bg-[#371628]/10 transition-colors">
-                          <Mail className="w-3.5 h-3.5 text-[#371628]" strokeWidth={1.5} />
-                        </div>
-                        enquiry@canvasrealestate.com.au
-                      </a>
+                      ))}
                     </div>
                   </div>
                 </FadeUp>
+
+                {listing.statementOfInformationPdf && (
+                  <PropertyDocumentCard
+                    eyebrow="Legal Document"
+                    title="Statement of Information"
+                    url={listing.statementOfInformationPdf}
+                    icon={FileText}
+                  />
+                )}
 
                 {/* Enquiry form */}
                 <FadeUp delay={0.08}>
@@ -812,7 +915,7 @@ export default function ListingDetail() {
                     </p>
                     <EnquiryForm
                       address={`${listing.address}, ${listing.suburb}`}
-                      agentName={agentName.split(" ")[0]}
+                      agentName={primaryAgent.name.split(" ")[0]}
                     />
                   </div>
                 </FadeUp>

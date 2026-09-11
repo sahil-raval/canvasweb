@@ -36,7 +36,12 @@ const PUBLIC_CONTENT_QUERY = `{
   "listings": *[_type == "listing" && defined(slug.current)] | order(_createdAt desc){
     "slug": slug.current, address, suburb, state, price, beds, baths, cars,
     land, type, status, "heroImage": heroImage.asset->url,
-    "gallery": gallery[].asset->url, description, features, "agent": coalesce(agent->key.current, agent->key),
+    "gallery": gallery[].asset->url, description, features,
+    "agent": coalesce(agent->key.current, agent->key),
+    "agents": agents[]->key.current,
+    "statementOfInformationPdf": statementOfInformationPdf.asset->url,
+    "floorPlanImage": floorPlanImage.asset->url,
+    "floorPlanPdf": floorPlanPdf.asset->url,
     soi{method, indicativeRange, comparableSales[]{address, suburb, saleDate, salePrice, beds, baths, land}},
     "seo": seo{
       title, description, keywords, canonicalUrl, noIndex,

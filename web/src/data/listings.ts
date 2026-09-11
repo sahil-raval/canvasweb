@@ -41,7 +41,11 @@ export interface Listing {
   description: string[];
   features: string[];
   agent: string;
+  agents?: string[];
   soi: StatementOfInformation;
+  statementOfInformationPdf?: string;
+  floorPlanImage?: string;
+  floorPlanPdf?: string;
 }
 
 export const listings: Listing[] = [

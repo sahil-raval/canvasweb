@@ -10,7 +10,6 @@ const slugValidation = (rule: any) =>
       ? true
       : 'Use lowercase letters, numbers, and hyphens only',
   )
-  
 
 const seo = defineType({
   name: 'seo', title: 'SEO & Social Sharing', type: 'object',
@@ -80,7 +79,6 @@ const propertyFields = [
   defineField({name: 'gallery', type: 'array', group: 'media', of: [defineArrayMember({type: 'image', options: {hotspot: true}})], validation: (r) => r.max(30)}),
   defineField({name: 'description', title: 'Description paragraphs', type: 'array', group: 'content', of: [defineArrayMember({type: 'text', rows: 5})], validation: (r) => r.required().min(1)}),
   defineField({name: 'features', type: 'array', group: 'content', of: [defineArrayMember({type: 'string'})], validation: (r) => r.unique()}),
-  defineField({name: 'agent', type: 'reference', group: 'content', to: [{type: 'agent'}], validation: (r) => r.required()}),
   defineField({name: 'seo', type: 'seo', group: 'seo'}),
 ]
 
@@ -91,7 +89,49 @@ const listing = defineType({
     ...propertyFields,
     defineField({name: 'price', title: 'Price display', type: 'string', group: 'sale', validation: (r) => r.required()}),
     defineField({name: 'status', type: 'string', group: 'sale', options: {list: ['For Sale', 'Under Offer', 'Sold'], layout: 'radio'}, initialValue: 'For Sale', validation: (r) => r.required()}),
+    defineField({
+      name: 'agents',
+      title: 'Agents',
+      type: 'array',
+      group: 'content',
+      description: 'Each listing may have more than one agent. Select all assigned agents; their order here controls their order on the website.',
+      of: [defineArrayMember({type: 'reference', to: [{type: 'agent'}]})],
+      validation: (r) => r.unique(),
+    }),
+    defineField({
+      name: 'agent',
+      title: 'Legacy agent',
+      type: 'reference',
+      group: 'content',
+      to: [{type: 'agent'}],
+      hidden: true,
+      readOnly: true,
+    }),
     defineField({name: 'soi', title: 'Statement of Information', type: 'statementOfInformation', group: 'sale'}),
+    defineField({
+      name: 'statementOfInformationPdf',
+      title: 'Statement of Information PDF',
+      type: 'file',
+      group: 'sale',
+      description: 'Upload the published Statement of Information for this property.',
+      options: {accept: 'application/pdf'},
+    }),
+    defineField({
+      name: 'floorPlanImage',
+      title: 'Floor Plan Image',
+      type: 'image',
+      group: 'media',
+      description: 'Upload a JPG or PNG to show the floor plan directly on the listing page.',
+      options: {hotspot: false, accept: 'image/jpeg,image/png'},
+    }),
+    defineField({
+      name: 'floorPlanPdf',
+      title: 'Floor Plan PDF',
+      type: 'file',
+      group: 'media',
+      description: 'Upload a PDF for visitors to open or download. You may provide this with or without a floor plan image.',
+      options: {accept: 'application/pdf'},
+    }),
   ],
   orderings: [{title: 'Newest first', name: 'createdDesc', by: [{field: '_createdAt', direction: 'desc'}]}],
   preview: {select: {title: 'address', subtitle: 'suburb', media: 'heroImage'}, prepare: ({title, subtitle, media}) => ({title: title || 'Untitled listing', subtitle, media})},
@@ -102,6 +142,7 @@ const rental = defineType({
   groups: [{name: 'details', title: 'Property'}, {name: 'media', title: 'Media'}, {name: 'content', title: 'Marketing'}, {name: 'rental', title: 'Rental'}, {name: 'seo', title: 'SEO'}],
   fields: [
     ...propertyFields,
+    defineField({name: 'agent', type: 'reference', group: 'content', to: [{type: 'agent'}], validation: (r) => r.required()}),
     defineField({name: 'rentPw', title: 'Rent per week', type: 'string', group: 'rental', validation: (r) => r.required()}),
     defineField({name: 'bond', type: 'string', group: 'rental'}),
     defineField({name: 'available', title: 'Available date', type: 'date', group: 'rental', validation: (r) => r.required()}),
