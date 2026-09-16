@@ -33,12 +33,24 @@ const PUBLIC_CONTENT_QUERY = `{
       ogTitle, ogDescription, "ogImage": ogImage.asset->url,
       twitterCard, focusKeyword
     },
-    "aboutContent": aboutContent{
-      manifestoEyebrow, manifesto, manifestoCaption, manifestoHint, marqueeItems, valuesEyebrow, valuesHeading,
-      values[]{number, label, title, description, "image": image.asset->url},
-      galleryEyebrow, galleryHeading, galleryIntro, gallery[]{"image": image.asset->url, alt},
-      "cta": cta{eyebrow, heading, body, label, href, perks},
-      agentPanels[]{number, flip, "image": image.asset->url, bio, "agent": agent->{ "key": coalesce(key.current, key), name, role, bio, phone, email, "photo": photo.asset->url }}
+    "aboutContent": {
+      "manifestoEyebrow": aboutContent.manifestoEyebrow,
+      "manifesto": aboutContent.manifesto,
+      "manifestoCaption": aboutContent.manifestoCaption,
+      "manifestoHint": aboutContent.manifestoHint,
+      "marqueeItems": aboutContent.marqueeItems,
+      "valuesEyebrow": coalesce(aboutValuesEyebrow, aboutContent.valuesEyebrow),
+      "valuesHeading": coalesce(aboutValuesHeading, aboutContent.valuesHeading),
+      "values": coalesce(
+        aboutValues[]{number, title, description, "image": image.asset->url},
+        aboutContent.values[]{number, label, title, description, "image": image.asset->url}
+      ),
+      "galleryEyebrow": aboutContent.galleryEyebrow,
+      "galleryHeading": aboutContent.galleryHeading,
+      "galleryIntro": aboutContent.galleryIntro,
+      "gallery": aboutContent.gallery[]{"image": image.asset->url, alt},
+      "cta": aboutContent.cta{eyebrow, heading, body, label, href, perks},
+      "agentPanels": aboutContent.agentPanels[]{number, flip, "image": image.asset->url, bio, "agent": agent->{ "key": coalesce(key.current, key), name, role, bio, phone, email, "photo": photo.asset->url }}
     },
     listingsContent,
     "rentContent": rentContent{processEyebrow, processHeading, processSteps[]{number, label, title, description, href}, availableEyebrow, availableHeading, upcomingEyebrow, upcomingHeading, cardCtaLabel, "cta": cta{eyebrow, heading, body, label, href, perks}},

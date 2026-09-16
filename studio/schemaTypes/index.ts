@@ -3,6 +3,10 @@ import {DocumentIcon} from '@sanity/icons/Document'
 import {DocumentTextIcon} from '@sanity/icons/DocumentText'
 import {UserIcon} from '@sanity/icons/User'
 import {defineArrayMember, defineField, defineType} from 'sanity'
+import type {ConditionalPropertyCallbackContext} from 'sanity'
+
+const pageSlugIs = (slug: string) => ({document}: ConditionalPropertyCallbackContext) =>
+  (document as {slug?: {current?: string}} | undefined)?.slug?.current !== slug
 
 const slugValidation = (rule: any) =>
   rule.required().custom((slug: {current?: string} | undefined) =>
@@ -40,6 +44,9 @@ const comparableSale = defineType({
   ],
   preview: {select: {title: 'address', subtitle: 'salePrice'}},
 })
+
+
+
 
 const statementOfInformation = defineType({
   name: 'statementOfInformation', title: 'Statement of Information', type: 'object',
@@ -184,9 +191,139 @@ const journalArticle = defineType({
   preview: {select: {title: 'title', subtitle: 'category', media: 'image'}},
 })
 
+
+
+const pageTextItem = {
+  type: 'object' as const,
+  fields: [
+    defineField({name: 'label', type: 'string'}),
+    defineField({name: 'title', type: 'string'}),
+    defineField({name: 'description', type: 'text', rows: 4}),
+    defineField({name: 'href', type: 'string'}),
+  ],
+}
+
+const pageCta = {
+  type: 'object' as const,
+  fields: [
+    defineField({name: 'eyebrow', type: 'string'}),
+    defineField({name: 'heading', type: 'string'}),
+    defineField({name: 'body', type: 'text', rows: 5}),
+    defineField({name: 'label', type: 'string'}),
+    defineField({name: 'href', type: 'string'}),
+    defineField({name: 'perks', type: 'array', of: [defineArrayMember({type: 'string'})]}),
+  ],
+}
+
+const aboutContent = defineField({
+  name: 'aboutContent', title: 'About page sections', type: 'object', group: 'about',
+  hidden: pageSlugIs('about'),
+  fields: [
+    defineField({name: 'manifestoEyebrow', title: 'Manifesto eyebrow', type: 'string'}),
+    defineField({name: 'manifesto', title: 'Manifesto statement', type: 'text', rows: 4}),
+    defineField({name: 'manifestoCaption', type: 'string'}),
+    defineField({name: 'manifestoHint', title: 'Manifesto cursor hint', type: 'string'}),
+    defineField({name: 'marqueeItems', title: 'Marquee items', type: 'array', of: [defineArrayMember({type: 'string'})]}),
+    defineField({name: 'galleryEyebrow', title: 'Gallery eyebrow', type: 'string'}),
+    defineField({name: 'galleryHeading', title: 'Gallery heading', type: 'string'}),
+    defineField({name: 'galleryIntro', title: 'Gallery introduction', type: 'text', rows: 3}),
+    defineField({name: 'gallery', title: 'Gallery images', type: 'array', of: [defineArrayMember({type: 'object', fields: [defineField({name: 'image', type: 'image', options: {hotspot: true}, validation: (r) => r.required()}), defineField({name: 'alt', title: 'Accessible alt text', type: 'string', validation: (r) => r.required()})]})], validation: (r) => r.max(4)}),
+    defineField({name: 'cta', title: 'Final CTA', ...pageCta}),
+    defineField({name: 'agentPanels', title: 'Agent panels', type: 'array', of: [defineArrayMember({type: 'object', fields: [
+      defineField({name: 'agent', type: 'reference', to: [{type: 'agent'}]}),
+      defineField({name: 'number', type: 'string'}), defineField({name: 'flip', type: 'boolean'}),
+      defineField({name: 'image', type: 'image', options: {hotspot: true}}),
+      defineField({name: 'bio', type: 'array', of: [defineArrayMember({type: 'text', rows: 4})]}),
+    ]})], validation: (r) => r.max(2)}),
+  ],
+})
+
+const aboutValuesEyebrow = defineField({
+  name: 'aboutValuesEyebrow',
+  title: 'Core values eyebrow',
+  description: 'Small label shown above the Core Values section.',
+  type: 'string',
+  group: 'about',
+  hidden: pageSlugIs('about'),
+})
+
+const aboutValuesHeading = defineField({
+  name: 'aboutValuesHeading',
+  title: 'Core values heading',
+  type: 'string',
+  group: 'about',
+  hidden: pageSlugIs('about'),
+})
+
+const aboutValues = defineField({
+  name: 'aboutValues',
+  title: 'Core values',
+  description: 'The four numbered values shown on the About page. Each can have its own hover image.',
+  type: 'array',
+  group: 'about',
+  hidden: pageSlugIs('about'),
+  validation: (r) => r.max(4),
+  of: [defineArrayMember({
+    type: 'object',
+    fields: [
+      defineField({name: 'number', title: 'Number', type: 'string'}),
+      defineField({name: 'title', title: 'Value title', type: 'string'}),
+      defineField({name: 'description', title: 'Description', type: 'text', rows: 4}),
+      defineField({name: 'image', title: 'Hover image', type: 'image', options: {hotspot: true}}),
+    ],
+    preview: {select: {title: 'title', subtitle: 'number', media: 'image'}},
+  })],
+})
+
+const listingsContent = defineField({
+  name: 'listingsContent', title: 'Listings page sections', type: 'object', group: 'listings',
+  hidden: pageSlugIs('listings'),
+  fields: [
+    defineField({name: 'urgencyText', type: 'string'}),
+    defineField({name: 'emptyTitle', type: 'string'}), defineField({name: 'emptyBody', type: 'text', rows: 3}),
+    defineField({name: 'emptyContactLabel', type: 'string'}), defineField({name: 'emptyContactHref', type: 'string'}),
+    defineField({name: 'offMarketEyebrow', type: 'string'}), defineField({name: 'offMarketHeading', type: 'string'}),
+    defineField({name: 'offMarketBody', type: 'text', rows: 4}), defineField({name: 'offMarketLabel', type: 'string'}), defineField({name: 'offMarketHref', type: 'string'}),
+  ],
+})
+
+const rentContent = defineField({
+  name: 'rentContent', title: 'Rent page sections', type: 'object', group: 'rent',
+  hidden: pageSlugIs('rent'),
+  fields: [
+    defineField({name: 'processEyebrow', title: 'Process eyebrow', type: 'string'}), defineField({name: 'processHeading', title: 'Process heading', type: 'string'}),
+    defineField({name: 'processSteps', title: 'Process steps', type: 'array', of: [defineArrayMember({...pageTextItem, fields: [...pageTextItem.fields, defineField({name: 'number', type: 'string'})]})]}),
+    defineField({name: 'availableEyebrow', type: 'string'}), defineField({name: 'availableHeading', type: 'string'}),
+    defineField({name: 'upcomingEyebrow', type: 'string'}), defineField({name: 'upcomingHeading', type: 'string'}),
+    defineField({name: 'cardCtaLabel', type: 'string'}), defineField({name: 'cta', title: 'Tenancy CTA', ...pageCta}),
+  ],
+})
+
+const contactContent = defineField({
+  name: 'contactContent', title: 'Contact page sections', type: 'object', group: 'contact',
+  hidden: pageSlugIs('contact'),
+  fields: [
+    defineField({name: 'trustPoints', type: 'array', of: [defineArrayMember({type: 'object', fields: [defineField({name: 'icon', type: 'string'}), defineField({name: 'text', type: 'string'})]})]}),
+    defineField({name: 'infoHeading', type: 'string'}), defineField({name: 'formEyebrow', type: 'string'}), defineField({name: 'formHeading', type: 'string'}),
+    defineField({name: 'reachOutEyebrow', type: 'string'}), defineField({name: 'reachOutHeading', title: 'Why reach out heading', type: 'string'}), defineField({name: 'reachOutCards', type: 'array', of: [defineArrayMember(pageTextItem)]}),
+  ],
+})
+
+const journalContent = defineField({
+  name: 'journalContent', title: 'Journal page sections', type: 'object', group: 'journal',
+  hidden: pageSlugIs('journal'),
+  fields: [
+    defineField({name: 'categories', type: 'array', of: [defineArrayMember({type: 'string'})]}),
+    defineField({name: 'tickerItems', type: 'array', of: [defineArrayMember({type: 'string'})]}),
+    defineField({name: 'featuredLabel', type: 'string'}), defineField({name: 'emptyTitle', type: 'string'}), defineField({name: 'emptyBody', type: 'string'}),
+    defineField({name: 'filteredEmptyText', title: 'Filtered empty message', type: 'string'}), defineField({name: 'exploreEyebrow', type: 'string'}), defineField({name: 'exploreHeading', type: 'string'}), defineField({name: 'exploreBody', type: 'text', rows: 3}), defineField({name: 'exploreCtaLabel', type: 'string'}), defineField({name: 'exploreCtaHref', type: 'string'}),
+    defineField({name: 'footerText', type: 'string'}), defineField({name: 'footerCtaLabel', type: 'string'}), defineField({name: 'footerCtaHref', type: 'string'}),
+  ],
+})
+
 const page = defineType({
   name: 'page', title: 'Page', type: 'document', icon: DocumentIcon,
-  groups: [{name: 'content', title: 'Content', default: true}, {name: 'seo', title: 'SEO'}],
+  groups: [{name: 'content', title: 'Content', default: true}, {name: 'about', title: 'About sections'}, {name: 'listings', title: 'Listings sections'}, {name: 'rent', title: 'Rent sections'}, {name: 'contact', title: 'Contact sections'}, {name: 'journal', title: 'Journal sections'}, {name: 'seo', title: 'SEO'}],
   fields: [
     defineField({name: 'title', title: 'Page title', type: 'string', group: 'content', validation: (r) => r.required()}),
     defineField({name: 'slug', title: 'Path', type: 'slug', group: 'content', options: {source: 'title'}, validation: slugValidation}),
@@ -196,6 +333,8 @@ const page = defineType({
     defineField({name: 'heroImage', title: 'Hero image', type: 'image', group: 'content', options: {hotspot: true}}),
     defineField({name: 'ctaLabel', title: 'Primary action label', type: 'string', group: 'content'}),
     defineField({name: 'ctaHref', title: 'Primary action path', type: 'string', group: 'content'}),
+    aboutContent, aboutValuesEyebrow, aboutValuesHeading, aboutValues,
+    listingsContent, rentContent, contactContent, journalContent,
     defineField({name: 'seo', type: 'seo', group: 'seo'}),
   ],
 })
