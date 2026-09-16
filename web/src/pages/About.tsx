@@ -112,7 +112,7 @@ function MagneticBtn({ children, href, className = "" }: {
 
 /** Agent split-panel with mouse parallax on portrait */
 function AgentPanel({
-  img, imgPosition = "object-top", name, role, num, bio, flip,
+  img, imgPosition = "object-top", name, role, num, bio, flip, phone, email,
 }: {
   img: string;
   imgPosition?: string;
@@ -121,6 +121,8 @@ function AgentPanel({
   num: string;
   bio: string[];
   flip?: boolean;
+  phone?: string;
+  email?: string;
 }) {
   const containerRef  = useRef<HTMLDivElement>(null);
   const mx = useMotionValue(0);
@@ -216,12 +218,12 @@ function AgentPanel({
           </div>
 
           <FadeUp delay={0.35} className="flex flex-wrap gap-6 mt-10">
-            <a href="tel:0469131347"
+            <a href={`tel:${(phone || "0469 131 347").replace(/[^\d+]/g, "")}`}
               className={`flex items-center gap-2.5 text-sm font-medium font-sans transition-colors ${linkColor}`}>
               <Phone className="w-4 h-4" strokeWidth={1.5} />
-              0469 131 347
+              {phone || "0469 131 347"}
             </a>
-            <a href={`mailto:${name === "Pooja Patel" ? "ppatel" : "cbhatt"}@canvasrealestate.com.au`}
+            <a href={`mailto:${email || (name === "Pooja Patel" ? "ppatel" : "cbhatt") + "@canvasrealestate.com.au"}`}
               className={`flex items-center gap-2.5 text-sm font-medium font-sans transition-colors ${linkColor}`}>
               <Mail className="w-4 h-4" strokeWidth={1.5} />
               {`Email ${name.split(" ")[0]}`}
@@ -237,7 +239,17 @@ function AgentPanel({
    MANIFESTO — cursor-spotlight dark chamber
    Move cursor across the screen to illuminate the belief.
 ───────────────────────────────────────────────────────────── */
-function ManifestoSection({ words }: { words: string[] }) {
+function ManifestoSection({
+  words,
+  eyebrow = "Our Belief",
+  caption = "canvas real estate · geelong · independent since 2015",
+  hint = "Move your cursor to illuminate",
+}: {
+  words: string[];
+  eyebrow?: string;
+  caption?: string;
+  hint?: string;
+}) {
   const sectionRef = useRef<HTMLElement>(null);
   const cursorX = useMotionValue(-800);
   const cursorY = useMotionValue(-800);
@@ -341,7 +353,7 @@ function ManifestoSection({ words }: { words: string[] }) {
           viewport={{ once: true, margin: "-60px" }}
           transition={{ duration: 0.9 }}
         >
-          Our Belief
+          {eyebrow}
         </motion.p>
 
         {/* Quote — dim base always visible (cream at low opacity on wine) */}
@@ -392,7 +404,7 @@ function ManifestoSection({ words }: { words: string[] }) {
             className="text-[9px] uppercase tracking-[0.45em] font-sans"
             style={{ color: "rgba(250,248,245,0.28)" }}
           >
-            canvas real estate · geelong · independent since 2015
+            {caption}
           </p>
         </motion.div>
 
@@ -405,7 +417,7 @@ function ManifestoSection({ words }: { words: string[] }) {
           viewport={{ once: true }}
           transition={{ duration: 1, delay: 1.2 }}
         >
-          Move your cursor to illuminate
+          {hint}
         </motion.p>
       </div>
 
@@ -440,10 +452,14 @@ function ManifestoSection({ words }: { words: string[] }) {
 export default function About() {
   const { pages, agents } = useCms();
   const page = pages.find((item) => item.slug === "about");
+  const content = page?.aboutContent;
+  const galleryImages = content?.gallery?.length ? content.gallery : [office1, office2, office3, office4].map((image, i) => ({image, alt: ["Canvas office", "Canvas team", "Canvas workspace", "Canvas detail"][i]}));
   /* Values hover state */
   const [hoveredValue, setHoveredValue] = useState<number | null>(null);
 
-  const values = [
+  const values = content?.values?.length ? content.values.map((value, i) => ({
+    num: value.number || String(i + 1).padStart(2, "0"), title: value.title || value.label || "", desc: value.description || "", img: value.image || [office1, office2, office3, office4][i % 4],
+  })) : [
     { num: "01", title: "Transparency",    desc: "No hidden agendas, no ambiguity. You'll always know exactly where you stand, from first meeting to final settlement.", img: office1 },
     { num: "02", title: "Integrity",        desc: "We act in your best interest, always. Our advice is grounded in honesty, even when it is not what you want to hear.",  img: office2 },
     { num: "03", title: "Local Expertise",  desc: "We know Geelong's suburbs, schools, streets and market dynamics with a depth that only comes from truly living here.",  img: office3 },
@@ -451,8 +467,14 @@ export default function About() {
   ];
 
   /* Manifesto words */
-  const manifesto = "We believe real estate is not simply about property. It is about the lives, the memories, and the futures taking shape within those walls.";
+  const manifesto = content?.manifesto || "We believe real estate is not simply about property. It is about the lives, the memories, and the futures taking shape within those walls.";
   const words = manifesto.split(" ");
+  const configuredPanels = content?.agentPanels?.flatMap((panel) => panel.agent ? [{
+    img: panel.image || panel.agent.photo || (panel.agent.key === "pooja" ? poojaImg : chandraImg),
+    name: panel.agent.name, role: panel.agent.role || "Agent",
+    num: panel.number || "01", flip: panel.flip, bio: panel.bio?.length ? panel.bio : panel.agent.bio ? [panel.agent.bio] : [],
+    phone: panel.agent.phone, email: panel.agent.email,
+  }] : []) || [];
 
   return (
     <div className="min-h-screen bg-white overflow-x-hidden">
@@ -515,40 +537,31 @@ export default function About() {
         </div>
       </section>
 
+      <ManifestoSection
+        words={words}
+        eyebrow={content?.manifestoEyebrow}
+        caption={content?.manifestoCaption}
+        hint={content?.manifestoHint}
+      />
+
 
       {/* ══════════════════════════════════════════
           04 · POOJA — photo left, wine right
       ══════════════════════════════════════════ */}
-      <AgentPanel
-        img={poojaImg}
-        imgPosition="object-top"
-        name="Pooja Patel"
-        role="Director & Founder"
-        num="01"
-        flip={false}
-        bio={[
-          "Pooja Patel is part of a new wave of real estate professionals: dynamic, community-minded, and deeply invested in the region she serves. As Director of Canvas Real Estate, Pooja brings a fresh, client-focused approach to the Geelong property market.",
-          "Her business is proudly local and independent, built on strong relationships, clear communication, and tailored marketing strategies. With a background spanning IT and real estate, Pooja blends modern technology with genuine industry insight to deliver standout results.",
-          "Having moved to Australia as a teenager and grown up in Geelong, Pooja has a deep, personal connection to the community she serves every day. That connection shows in every result she achieves.",
-        ]}
-      />
+      {(configuredPanels.length ? configuredPanels : [{
+        img: poojaImg, name: "Pooja Patel", role: "Director & Founder", num: "01", flip: false,
+        bio: ["Pooja Patel is part of a new wave of real estate professionals: dynamic, community-minded, and deeply invested in the region she serves. As Director of Canvas Real Estate, Pooja brings a fresh, client-focused approach to the Geelong property market.", "Her business is proudly local and independent, built on strong relationships, clear communication, and tailored marketing strategies. With a background spanning IT and real estate, Pooja blends modern technology with genuine industry insight to deliver standout results.", "Having moved to Australia as a teenager and grown up in Geelong, Pooja has a deep, personal connection to the community she serves every day. That connection shows in every result she achieves."],
+      }, {
+        img: chandraImg, name: "Chandra Bhatt", role: "Director & Co-Founder", num: "02", flip: true,
+        bio: ["Chandrakant (Chandra) Bhatt blends over a decade of industry experience with deep practical knowledge of home building and design, offering clients clear, grounded advice at every stage of their property journey.", "As Director of Canvas Real Estate, Chandra brings a background in residential construction, design functionality, and client service, giving him a unique edge in guiding buyers and sellers with confidence, care, and exceptional insight.", "With a strong history as a Senior New Home Sales Consultant, Chandra has guided hundreds of clients through complex decisions. That expertise gives every Canvas client an unparalleled advantage in Geelong's market."],
+      }]).map((panel) => <AgentPanel
+        key={panel.num + panel.name}
+        {...panel}
+      />)}
 
       {/* ══════════════════════════════════════════
           05 · CHANDRA — cream left, photo right
       ══════════════════════════════════════════ */}
-      <AgentPanel
-        img={chandraImg}
-        imgPosition="object-top"
-        name="Chandra Bhatt"
-        role="Director & Co-Founder"
-        num="02"
-        flip={true}
-        bio={[
-          "Chandrakant (Chandra) Bhatt blends over a decade of industry experience with deep practical knowledge of home building and design, offering clients clear, grounded advice at every stage of their property journey.",
-          "As Director of Canvas Real Estate, Chandra brings a background in residential construction, design functionality, and client service, giving him a unique edge in guiding buyers and sellers with confidence, care, and exceptional insight.",
-          "With a strong history as a Senior New Home Sales Consultant, Chandra has guided hundreds of clients through complex decisions. That expertise gives every Canvas client an unparalleled advantage in Geelong's market.",
-        ]}
-      />
 
       {/* ══════════════════════════════════════════
           06 · MARQUEE — continuous wine ticker
@@ -562,7 +575,7 @@ export default function About() {
         >
           {[0, 1].map(k => (
             <div key={k} className="flex items-center shrink-0">
-              {["CANVAS REAL ESTATE", "GEELONG VICTORIA", "INDEPENDENT AGENCY", "5.0 GOOGLE RATING", "LOCALLY TRUSTED", "BOUTIQUE SERVICE", "HONEST ADVICE", "GENUINE CARE"].map((item, i) => (
+              {(content?.marqueeItems?.length ? content.marqueeItems : ["CANVAS REAL ESTATE", "GEELONG VICTORIA", "INDEPENDENT AGENCY", "5.0 GOOGLE RATING", "LOCALLY TRUSTED", "BOUTIQUE SERVICE", "HONEST ADVICE", "GENUINE CARE"]).map((item, i) => (
                 <span key={i} className="flex items-center shrink-0">
                   <span className="text-white/55 text-[10px] font-semibold tracking-[0.4em] uppercase font-sans px-8 whitespace-nowrap">
                     {item}
@@ -586,7 +599,7 @@ export default function About() {
             <div className="lg:col-span-4 lg:sticky lg:top-36">
               <FadeUp>
                 <p className="text-[10px] uppercase tracking-[0.3em] text-[#371628]/40 font-semibold font-sans mb-6">
-                  What We Stand For
+                  {content?.valuesEyebrow || "What We Stand For"}
                 </p>
               </FadeUp>
 
@@ -595,7 +608,7 @@ export default function About() {
                 <HeadingReveal>
                   <h2 className="font-serif font-normal text-gray-900 leading-[1.0]"
                     style={{ fontSize: "clamp(2rem, 8vw, 3.2rem)" }}>
-                    OUR CORE<br />VALUES
+                    {(content?.valuesHeading || "OUR CORE VALUES").split(" ").map((word, i) => <span key={i}>{word}{i === 0 ? <br /> : " "}</span>)}
                   </h2>
                 </HeadingReveal>
                 <HR className="mt-6 w-14" />
@@ -612,7 +625,7 @@ export default function About() {
                   <HeadingReveal>
                     <h2 className="font-serif font-normal text-gray-900 leading-[1.0]"
                       style={{ fontSize: "clamp(2rem, 4vw, 3.2rem)" }}>
-                      OUR CORE<br />VALUES
+                      {(content?.valuesHeading || "OUR CORE VALUES").split(" ").map((word, i) => <span key={i}>{word}{i === 0 ? <br /> : " "}</span>)}
                     </h2>
                   </HeadingReveal>
                   <HR className="mt-8 w-14" />
@@ -700,19 +713,19 @@ export default function About() {
             <div>
               <FadeUp>
                 <p className="text-[10px] uppercase tracking-[0.3em] text-[#371628]/40 font-semibold font-sans mb-5">
-                  Our Space
+                  {content?.galleryEyebrow || "Our Space"}
                 </p>
               </FadeUp>
               <HeadingReveal>
                 <h2 className="font-serif font-normal text-gray-900"
                   style={{ fontSize: "clamp(2rem, 4vw, 3rem)" }}>
-                  WHERE WE WORK
+                  {content?.galleryHeading || "WHERE WE WORK"}
                 </h2>
               </HeadingReveal>
             </div>
             <FadeUp delay={0.1}>
               <p className="text-gray-400 font-sans text-sm max-w-sm leading-relaxed text-right">
-                Our Geelong studio is where strategy meets creativity, a space built for the focused work of helping people achieve extraordinary outcomes.
+                {content?.galleryIntro || "Our Geelong studio is where strategy meets creativity, a space built for the focused work of helping people achieve extraordinary outcomes."}
               </p>
             </FadeUp>
           </div>
@@ -720,17 +733,17 @@ export default function About() {
           {/* Asymmetric grid — stacked on mobile, editorial on md+ */}
           <div className="flex flex-col gap-3 md:grid md:grid-cols-12 md:grid-rows-[320px_320px]">
             <FadeUp className="w-full h-[260px] md:h-auto md:col-span-7 md:row-span-2 overflow-hidden rounded-sm group" delay={0}>
-              <img src={office1} alt="Canvas office" className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-700" />
+              <img src={galleryImages[0]?.image} alt={galleryImages[0]?.alt || "Canvas office"} className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-700" />
             </FadeUp>
             <FadeUp className="w-full h-[220px] md:h-auto md:col-span-5 md:row-span-1 overflow-hidden rounded-sm group" delay={0.08}>
-              <img src={office2} alt="Canvas team" className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-700" />
+              <img src={galleryImages[1]?.image || galleryImages[0]?.image} alt={galleryImages[1]?.alt || "Canvas team"} className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-700" />
             </FadeUp>
             <div className="col-span-12 md:col-span-5 md:row-span-1 grid grid-cols-2 gap-3 h-[220px] md:h-auto">
               <FadeUp className="col-span-1 overflow-hidden rounded-sm group h-full" delay={0.14}>
-                <img src={office3} alt="Canvas workspace" className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-700" />
+                <img src={galleryImages[2]?.image || galleryImages[0]?.image} alt={galleryImages[2]?.alt || "Canvas workspace"} className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-700" />
               </FadeUp>
               <FadeUp className="col-span-1 overflow-hidden rounded-sm group h-full" delay={0.2}>
-                <img src={office4} alt="Canvas detail" className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-700" />
+                <img src={galleryImages[3]?.image || galleryImages[0]?.image} alt={galleryImages[3]?.alt || "Canvas detail"} className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-700" />
               </FadeUp>
             </div>
           </div>
@@ -760,20 +773,20 @@ export default function About() {
         <div className="relative z-10 max-w-3xl mx-auto px-8 md:px-14 text-center">
           <FadeUp>
             <p className="text-[10px] uppercase tracking-[0.3em] text-white/35 font-semibold font-sans mb-8">
-              Begin Your Journey
+              {content?.cta?.eyebrow || "Begin Your Journey"}
             </p>
           </FadeUp>
 
           <HeadingReveal>
             <h2 className="font-serif font-normal text-white leading-[1.05] mb-8"
               style={{ fontSize: "clamp(2.5rem, 7vw, 5.5rem)" }}>
-              Let's write your<br />Geelong story.
+              {(content?.cta?.heading || "Let's write your Geelong story.").split(" ").slice(0, -2).join(" ")}<br />{(content?.cta?.heading || "Let's write your Geelong story.").split(" ").slice(-2).join(" ")}
             </h2>
           </HeadingReveal>
 
           <FadeUp delay={0.15}>
             <p className="text-white/50 font-sans text-base leading-relaxed mb-14 max-w-xl mx-auto">
-              Book a free, no-obligation consultation and discover how Canvas Real Estate can deliver exceptional results for your property journey.
+              {content?.cta?.body || "Book a free, no-obligation consultation and discover how Canvas Real Estate can deliver exceptional results for your property journey."}
             </p>
           </FadeUp>
 
@@ -781,10 +794,10 @@ export default function About() {
           <FadeUp delay={0.25}>
             <div className="flex justify-center mb-20">
               <MagneticBtn
-                href="/contact"
+                href={content?.cta?.href || "/contact"}
                 className="group relative inline-flex items-center gap-3 bg-white text-[#371628] font-bold font-sans text-sm uppercase tracking-[0.22em] px-12 py-5 rounded-full hover:bg-[#FAF8F5] active:scale-[0.97] transition-colors duration-300 shadow-2xl shadow-black/30"
               >
-                Book Free Consultation
+                {content?.cta?.label || "Book Free Consultation"}
                 <motion.span
                   className="inline-block"
                   animate={{ x: [0, 4, 0] }}

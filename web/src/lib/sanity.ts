@@ -19,6 +19,7 @@ const PUBLIC_CONTENT_QUERY = `{
     }
   },
   "pages": *[_type == "page" && defined(slug.current)]{
+    title,
     "slug": slug.current,
     eyebrow,
     heading,
@@ -31,7 +32,18 @@ const PUBLIC_CONTENT_QUERY = `{
       title, description, keywords, canonicalUrl, noIndex,
       ogTitle, ogDescription, "ogImage": ogImage.asset->url,
       twitterCard, focusKeyword
-    }
+    },
+    "aboutContent": aboutContent{
+      manifestoEyebrow, manifesto, manifestoCaption, manifestoHint, marqueeItems, valuesEyebrow, valuesHeading,
+      values[]{number, label, title, description, "image": image.asset->url},
+      galleryEyebrow, galleryHeading, galleryIntro, gallery[]{"image": image.asset->url, alt},
+      "cta": cta{eyebrow, heading, body, label, href, perks},
+      agentPanels[]{number, flip, "image": image.asset->url, bio, "agent": agent->{ "key": coalesce(key.current, key), name, role, bio, phone, email, "photo": photo.asset->url }}
+    },
+    listingsContent,
+    "rentContent": rentContent{processEyebrow, processHeading, processSteps[]{number, label, title, description, href}, availableEyebrow, availableHeading, upcomingEyebrow, upcomingHeading, cardCtaLabel, "cta": cta{eyebrow, heading, body, label, href, perks}},
+    "contactContent": contactContent{trustPoints[]{icon, text}, infoHeading, formEyebrow, formHeading, reachOutEyebrow, reachOutHeading, reachOutCards[]{label, title, description, href}},
+    "journalContent": journalContent{categories, tickerItems, featuredLabel, emptyTitle, emptyBody, filteredEmptyText, exploreEyebrow, exploreHeading, exploreBody, exploreCtaLabel, exploreCtaHref, footerText, footerCtaLabel, footerCtaHref}
   },
   "listings": *[_type == "listing" && defined(slug.current)] | order(_createdAt desc){
     "slug": slug.current, address, suburb, state, price, beds, baths, cars,

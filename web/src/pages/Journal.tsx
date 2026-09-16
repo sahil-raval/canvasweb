@@ -39,8 +39,8 @@ function FadeUp({ children, delay = 0, className = "" }: {
 }
 
 /* ─── Marquee tape ──────────────────────────────────────── */
-function MarqueeTape() {
-  const repeated = [...TICKER_ITEMS, ...TICKER_ITEMS, ...TICKER_ITEMS, ...TICKER_ITEMS];
+function MarqueeTape({items = TICKER_ITEMS}: {items?: string[]}) {
+  const repeated = [...items, ...items, ...items, ...items];
   return (
     <div className="overflow-hidden py-5 border-y border-[#371628]/8 my-24 select-none">
       <motion.div
@@ -64,10 +64,10 @@ function MarqueeTape() {
 }
 
 /* ─── Category filter — editorial underline style ───────── */
-function CategoryFilter({ active, onChange }: { active: string; onChange: (c: string) => void }) {
+function CategoryFilter({ active, onChange, categories = CATEGORIES }: { active: string; onChange: (c: string) => void; categories?: string[] }) {
   return (
     <div className="flex items-center gap-0 border-b border-[#371628]/10 pb-0">
-      {CATEGORIES.map(cat => (
+      {categories.map(cat => (
         <button
           key={cat}
           onClick={() => onChange(cat)}
@@ -457,13 +457,15 @@ function Hero({
 export default function Journal() {
   const { articles, pages } = useCms();
   const page = pages.find((item) => item.slug === "journal");
+  const content = page?.journalContent;
+  const categories = content?.categories?.length ? ["All", ...content.categories.filter((category) => category !== "All")] : CATEGORIES;
   const [activeCategory, setActiveCategory] = useState("All");
 
   const featured = articles.find(a => a.featured) ?? articles[0];
   const secondary = articles.filter(a => a !== featured);
   const filtered  = activeCategory === "All"
     ? secondary
-    : secondary.filter(a => a.category === activeCategory);
+     : secondary.filter(a => a.category === activeCategory);
 
   const isAll     = activeCategory === "All";
   const [a0, a1, a2, a3, a4] = filtered;
@@ -471,10 +473,10 @@ export default function Journal() {
   if (!featured) {
     return (
       <div className="bg-[#FAF8F5] min-h-screen">
-        <Hero eyebrow={page?.eyebrow} heading={page?.heading} intro={page?.intro} />
+         <Hero eyebrow={page?.eyebrow} heading={page?.heading} intro={page?.intro} heroImage={page?.heroImage} />
         <div className="max-w-7xl mx-auto px-6 md:px-12 lg:px-16 py-24 text-center">
-          <h2 className="font-serif text-3xl text-[#371628]">No journal articles published yet</h2>
-          <p className="mt-4 text-[#371628]/55">Published stories from Sanity will appear here.</p>
+          <h2 className="font-serif text-3xl text-[#371628]">{content?.emptyTitle || "No journal articles published yet"}</h2>
+          <p className="mt-4 text-[#371628]/55">{content?.emptyBody || "Published stories from Sanity will appear here."}</p>
         </div>
       </div>
     );
@@ -482,24 +484,24 @@ export default function Journal() {
 
   return (
     <div className="bg-[#FAF8F5] min-h-screen">
-      <Hero eyebrow={page?.eyebrow} heading={page?.heading} intro={page?.intro} />
+      <Hero eyebrow={page?.eyebrow} heading={page?.heading} intro={page?.intro} heroImage={page?.heroImage} />
 
       <div className="max-w-7xl mx-auto px-6 md:px-12 lg:px-16 pt-24 pb-36">
 
         {/* ── Featured ── */}
         <FadeUp className="mb-5">
-          <Eyebrow>Featured Story</Eyebrow>
+           <Eyebrow>{content?.featuredLabel || "Featured Story"}</Eyebrow>
         </FadeUp>
         <FadeUp>
           <FeaturedCard article={featured} />
         </FadeUp>
 
         {/* ── Marquee ── */}
-        <MarqueeTape />
+         <MarqueeTape items={content?.tickerItems?.length ? content.tickerItems : undefined} />
 
         {/* ── Category filter ── */}
         <FadeUp className="mb-16">
-          <CategoryFilter active={activeCategory} onChange={setActiveCategory} />
+           <CategoryFilter active={activeCategory} onChange={setActiveCategory} categories={categories} />
         </FadeUp>
 
         {/* ── Editorial layout when "All" is selected and we have 5 articles ── */}
@@ -536,20 +538,20 @@ export default function Journal() {
                 </FadeUp>
                 <FadeUp delay={0.07}>
                   <div className="flex flex-col justify-center px-10 py-12 h-full">
-                    <Eyebrow>Explore further</Eyebrow>
+                     <Eyebrow>{content?.exploreEyebrow || "Explore further"}</Eyebrow>
                     <p
                       className="font-serif font-normal text-[#371628] leading-[1.22] mt-5 mb-5"
                       style={{ fontSize: "clamp(1.15rem, 1.9vw, 1.5rem)" }}
                     >
-                      Ready to start your Geelong property journey?
+                       {content?.exploreHeading || "Ready to start your Geelong property journey?"}
                     </p>
                     <div className="w-8 h-px bg-[#371628]/20 mb-5" />
                     <p className="text-[#371628]/45 font-sans leading-[1.78] mb-9" style={{ fontSize: "0.875rem" }}>
-                      Our team is on the ground, everyday, watching the market move. Let us guide you.
+                       {content?.exploreBody || "Our team is on the ground, everyday, watching the market move. Let us guide you."}
                     </p>
-                    <Link href="/contact">
+                    <Link href={page?.ctaHref || content?.exploreCtaHref || "/contact"}>
                       <button className="inline-flex items-center gap-3 bg-[#371628] text-white font-sans font-semibold text-[13px] px-8 py-3.5 hover:bg-[#2d1020] transition-colors w-fit tracking-wide">
-                        Get in touch <ArrowRight className="w-3.5 h-3.5" />
+                         {page?.ctaLabel || content?.exploreCtaLabel || "Get in touch"} <ArrowRight className="w-3.5 h-3.5" />
                       </button>
                     </Link>
                   </div>
@@ -561,7 +563,7 @@ export default function Journal() {
           /* ── Filtered / fallback: standard 3-col grid ── */
           filtered.length === 0 ? (
             <div className="text-center py-32">
-              <p className="font-serif text-2xl text-[#371628]/25">No articles in this category yet.</p>
+              <p className="font-serif text-2xl text-[#371628]/25">{content?.filteredEmptyText || "No articles in this category yet."}</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-10 gap-y-16">
@@ -577,11 +579,11 @@ export default function Journal() {
         {/* ── Footer rule ── */}
         <div className="mt-32 pt-10 border-t border-[#371628]/8 flex flex-col md:flex-row items-center justify-between gap-5">
           <p className="font-sans text-[8.5px] text-[#371628]/22 tracking-[0.4em] uppercase">
-            Canvas Real Estate · Geelong · Est. 2015
+             {content?.footerText || "Canvas Real Estate · Geelong · Est. 2015"}
           </p>
-          <Link href="/contact">
+          <Link href={page?.ctaHref || content?.footerCtaHref || "/contact"}>
             <button className="text-[8.5px] uppercase tracking-[0.45em] font-semibold font-sans text-[#371628]/35 hover:text-[#371628] transition-colors duration-300 border-b border-[#371628]/15 hover:border-[#371628]/45 pb-0.5">
-              Speak with our team
+               {page?.ctaLabel || content?.footerCtaLabel || "Speak with our team"}
             </button>
           </Link>
         </div>

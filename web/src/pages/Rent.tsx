@@ -22,7 +22,7 @@ function FadeUp({ children, delay = 0, className = "" }: {
 }
 
 /* ─── Rental card ────────────────────────────────────────── */
-function RentalCard({ rental, index }: { rental: Rental; index: number }) {
+function RentalCard({ rental, index, ctaLabel = "View Property" }: { rental: Rental; index: number; ctaLabel?: string }) {
   const availableNow = rental.available.toLowerCase() === "now";
 
   return (
@@ -118,7 +118,7 @@ function RentalCard({ rental, index }: { rental: Rental; index: number }) {
         <div className="mt-auto">
           <Link href={`/rent/${rental.slug}`}>
             <button className="w-full h-11 flex items-center justify-center gap-2.5 bg-[#371628] text-white font-sans font-semibold text-[13px] tracking-wide hover:bg-[#2d1020] transition-colors duration-300 group/btn">
-              View Property
+               {ctaLabel}
               <ArrowRight className="w-3.5 h-3.5 group-hover/btn:translate-x-0.5 transition-transform duration-200" />
             </button>
           </Link>
@@ -132,6 +132,7 @@ function RentalCard({ rental, index }: { rental: Rental; index: number }) {
 export default function Rent() {
   const { rentals, pages } = useCms();
   const page = pages.find((item) => item.slug === "rent");
+  const content = page?.rentContent;
   const available = rentals.filter(r => r.available.toLowerCase() === "now");
   const upcoming  = rentals.filter(r => r.available.toLowerCase() !== "now");
 
@@ -196,15 +197,23 @@ export default function Rent() {
       </section>
 
       {/* ── PROCESS STRIP ── */}
+      <div className="max-w-7xl mx-auto px-6 md:px-12 lg:px-16 pt-10 pb-2">
+        <p className="text-[9px] uppercase tracking-[0.5em] text-[#371628]/35 font-semibold">{content?.processEyebrow || "How It Works"}</p>
+        <h2 className="font-serif text-2xl text-[#2a1f25] mt-2">{content?.processHeading || "Your next home, made simple"}</h2>
+      </div>
       <div className="bg-white border-b border-[#371628]/8">
         <div className="max-w-7xl mx-auto px-6 md:px-12 lg:px-16">
           <div className="flex flex-wrap divide-x divide-[#371628]/8">
-            {[
-              { num: "01", label: "Inspect", desc: "Book an inspection online or by phone" },
-              { num: "02", label: "Apply",   desc: "Submit your application via 2Apply" },
-              { num: "03", label: "Approve", desc: "Receive approval within 48 hours" },
-              { num: "04", label: "Move In", desc: "Collect keys and settle in" },
-            ].map(({ num, label, desc }) => (
+            {(content?.processSteps?.length ? content.processSteps : [
+              { number: "01", label: "Inspect", description: "Book an inspection online or by phone" },
+              { number: "02", label: "Apply",   description: "Submit your application via 2Apply" },
+              { number: "03", label: "Approve", description: "Receive approval within 48 hours" },
+              { number: "04", label: "Move In", description: "Collect keys and settle in" },
+            ]).map((step, i) => {
+              const num = step.number || String(i + 1).padStart(2, "0");
+              const label = step.label || step.title || "";
+              const desc = step.description || "";
+              return (
               <div key={num} className="flex-1 min-w-[180px] px-8 py-7 flex items-start gap-4">
                 <span className="font-serif text-[#371628]/15 text-xl shrink-0 mt-0.5" style={{ fontVariantNumeric: "tabular-nums" }}>{num}</span>
                 <div>
@@ -212,7 +221,8 @@ export default function Rent() {
                   <p className="font-sans text-[#2a1f25]/60 leading-snug" style={{ fontSize: "0.82rem" }}>{desc}</p>
                 </div>
               </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </div>
@@ -223,10 +233,10 @@ export default function Rent() {
           <FadeUp className="flex items-center gap-5 mb-12">
             <div>
               <p className="text-[9px] uppercase tracking-[0.55em] text-[#371628]/35 font-semibold font-sans mb-2">
-                Immediate Availability
+                 {content?.availableEyebrow || "Immediate Availability"}
               </p>
               <h2 className="font-serif font-normal text-[#2a1f25]" style={{ fontSize: "clamp(1.6rem, 3vw, 2.4rem)" }}>
-                Available Now
+                 {content?.availableHeading || "Available Now"}
               </h2>
             </div>
             <div className="flex-1 h-px bg-[#371628]/8 hidden md:block" />
@@ -240,7 +250,7 @@ export default function Rent() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
             {available.map((rental, i) => (
-              <RentalCard key={rental.slug} rental={rental} index={i} />
+              <RentalCard key={rental.slug} rental={rental} index={i} ctaLabel={content?.cardCtaLabel} />
             ))}
           </div>
         </div>
@@ -252,10 +262,10 @@ export default function Rent() {
           <FadeUp className="flex items-center gap-5 mb-12">
             <div>
               <p className="text-[9px] uppercase tracking-[0.55em] text-[#371628]/35 font-semibold font-sans mb-2">
-                Coming Soon
+                 {content?.upcomingEyebrow || "Coming Soon"}
               </p>
               <h2 className="font-serif font-normal text-[#2a1f25]" style={{ fontSize: "clamp(1.6rem, 3vw, 2.4rem)" }}>
-                Upcoming Rentals
+                 {content?.upcomingHeading || "Upcoming Rentals"}
               </h2>
             </div>
             <div className="flex-1 h-px bg-[#371628]/8 hidden md:block" />
@@ -263,7 +273,7 @@ export default function Rent() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
             {upcoming.map((rental, i) => (
-              <RentalCard key={rental.slug} rental={rental} index={i} />
+              <RentalCard key={rental.slug} rental={rental} index={i} ctaLabel={content?.cardCtaLabel} />
             ))}
           </div>
         </div>
@@ -286,27 +296,27 @@ export default function Rent() {
 
             <div className="relative max-w-2xl">
               <p className="text-[9px] uppercase tracking-[0.65em] text-white/30 font-semibold font-sans mb-5">
-                Property Management
+                {content?.cta?.eyebrow || "Property Management"}
               </p>
               <h2
                 className="font-serif font-normal text-[#FAF8F5] leading-[1.08] mb-6"
                 style={{ fontSize: "clamp(1.8rem, 3.5vw, 3rem)" }}
               >
-                Can't Find the Right Home?
+                {content?.cta?.heading || "Can't Find the Right Home?"}
               </h2>
               <div className="w-8 h-px bg-white/20 mb-7" />
               <p className="text-white/40 font-sans leading-[1.8] mb-10 max-w-lg" style={{ fontSize: "0.95rem" }}>
-                Register your requirements with our property management team and we'll notify you the moment a suitable home becomes available — including off-market opportunities.
+                 {content?.cta?.body || "Register your requirements with our property management team and we'll notify you the moment a suitable home becomes available — including off-market opportunities."}
               </p>
 
               {/* Perks */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-10">
-                {[
+                {(content?.cta?.perks?.length ? content.cta.perks : [
                   "Priority notification on new listings",
                   "Access to off-market properties",
                   "Dedicated property manager",
                   "Online maintenance requests",
-                ].map(perk => (
+                ]).map(perk => (
                   <div key={perk} className="flex items-center gap-3">
                     <CheckCircle2 className="w-3.5 h-3.5 text-white/30 shrink-0" strokeWidth={1.5} />
                     <span className="text-white/45 font-sans" style={{ fontSize: "0.875rem" }}>{perk}</span>
@@ -314,9 +324,9 @@ export default function Rent() {
                 ))}
               </div>
 
-              <Link href="/contact">
+              <Link href={page?.ctaHref || content?.cta?.href || "/contact"}>
                 <button className="inline-flex items-center gap-3 bg-white text-[#371628] font-sans font-semibold text-[13px] tracking-wide px-9 py-3.5 hover:bg-[#FAF8F5] transition-colors duration-300">
-                  Register Your Interest
+                   {page?.ctaLabel || content?.cta?.label || "Register Your Interest"}
                   <ArrowRight className="w-3.5 h-3.5" />
                 </button>
               </Link>
