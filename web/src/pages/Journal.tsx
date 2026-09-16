@@ -382,15 +382,23 @@ function Hero({
   eyebrow,
   heading,
   intro,
+  heroImage,
 }: {
   eyebrow?: string;
   heading?: string;
   intro?: string;
+  heroImage?: string;
 }) {
   return (
     <section
       className="relative pt-36 pb-20 overflow-hidden"
-      style={{ background: "linear-gradient(145deg, #371628 0%, #1a0d14 100%)" }}
+      style={{
+        backgroundImage: heroImage
+          ? `linear-gradient(145deg, rgba(55,22,40,0.88) 0%, rgba(26,13,20,0.82) 100%), url("${heroImage}")`
+          : "linear-gradient(145deg, #371628 0%, #1a0d14 100%)",
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+      }}
     >
       {/* Subtle grain */}
       <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{

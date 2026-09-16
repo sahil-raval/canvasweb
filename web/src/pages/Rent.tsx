@@ -141,7 +141,13 @@ export default function Rent() {
       {/* ── HERO ── */}
       <section
         className="relative pt-36 pb-20 overflow-hidden"
-        style={{ background: "linear-gradient(145deg, #371628 0%, #1a0d14 100%)" }}
+        style={{
+          backgroundImage: page?.heroImage
+            ? `linear-gradient(145deg, rgba(55,22,40,0.88) 0%, rgba(26,13,20,0.82) 100%), url("${page.heroImage}")`
+            : "linear-gradient(145deg, #371628 0%, #1a0d14 100%)",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
       >
         {/* Grain */}
         <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{

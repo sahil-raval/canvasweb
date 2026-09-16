@@ -38,7 +38,16 @@ export default function Listings() {
     <div className="min-h-screen bg-[#FAF8F5] overflow-x-hidden">
 
       {/* ── HERO ─────────────────────────────────────────────────── */}
-      <section className="relative pt-36 pb-20 overflow-hidden" style={{ background: "linear-gradient(145deg, #371628 0%, #1a0d14 100%)" }}>
+      <section
+        className="relative pt-36 pb-20 overflow-hidden"
+        style={{
+          backgroundImage: page?.heroImage
+            ? `linear-gradient(145deg, rgba(55,22,40,0.88) 0%, rgba(26,13,20,0.82) 100%), url("${page.heroImage}")`
+            : "linear-gradient(145deg, #371628 0%, #1a0d14 100%)",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
+      >
         <div className="absolute inset-0 opacity-8 pointer-events-none">
           <div className="absolute top-0 right-0 w-[500px] h-[500px] rounded-full bg-white translate-x-1/3 -translate-y-1/3" />
         </div>
