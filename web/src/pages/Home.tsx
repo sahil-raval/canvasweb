@@ -313,62 +313,65 @@ export default function Home() {
       </section>
 
       {/* ── MEET THE TEAM ──────────────────────────────────────────── */}
-      <section className="py-28 bg-[#371628] text-white relative overflow-hidden">
-        <div className="absolute inset-0 opacity-5 pointer-events-none">
-          <div className="absolute top-0 right-0 w-[600px] h-[600px] rounded-full bg-white translate-x-1/2 -translate-y-1/2" />
-          <div className="absolute bottom-0 left-0 w-[400px] h-[400px] rounded-full bg-white -translate-x-1/2 translate-y-1/2" />
+      <section className="py-16 md:py-24 lg:py-28 bg-[#371628] text-white relative overflow-hidden">
+  <div className="absolute inset-0 opacity-5 pointer-events-none">
+    <div className="absolute top-0 right-0 w-[600px] h-[600px] rounded-full bg-white translate-x-1/2 -translate-y-1/2" />
+    <div className="absolute bottom-0 left-0 w-[400px] h-[400px] rounded-full bg-white -translate-x-1/2 translate-y-1/2" />
+  </div>
+  <div className="container mx-auto px-6 md:px-12 relative z-10">
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+      <motion.div initial={{ opacity: 0, x: -30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}>
+        <p className="text-xs uppercase tracking-[0.3em] text-white/50 font-semibold font-sans mb-4">Meet the Team</p>
+        <h2 className="text-3xl sm:text-4xl md:text-5xl font-serif font-normal leading-tight mb-6">
+          Real People.<br />Real Results.
+        </h2>
+        <p className="text-white/70 text-base md:text-lg font-sans font-light leading-relaxed mb-8 max-w-lg">
+          Pooja Patel and Chandra Bhatt founded Canvas Real Estate on a simple belief: that every client deserves honest advice, genuine care, and a result they're proud of.
+        </p>
+        <div className="space-y-3 mb-10">
+          {["Independent & locally owned", "Combined 15+ years of industry expertise", "Deeply embedded in the Geelong community", "Available when you need us, not just 9 to 5"].map((point, i) => (
+            <div key={i} className="flex items-center gap-3">
+              <CheckCircle2 className="w-5 h-5 text-white/60 shrink-0" />
+              <span className="text-white/80 font-sans text-sm">{point}</span>
+            </div>
+          ))}
         </div>
-        <div className="container mx-auto px-6 md:px-12 relative z-10">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-            <motion.div initial={{ opacity: 0, x: -30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}>
-              <p className="text-xs uppercase tracking-[0.3em] text-white/50 font-semibold font-sans mb-4">Meet the Team</p>
-              <h2 className="text-4xl md:text-5xl font-serif font-normal leading-tight mb-6">
-                Real People.<br />Real Results.
-              </h2>
-              <p className="text-white/70 text-lg font-sans font-light leading-relaxed mb-8 max-w-lg">
-                Pooja Patel and Chandra Bhatt founded Canvas Real Estate on a simple belief: that every client deserves honest advice, genuine care, and a result they're proud of.
-              </p>
-              <div className="space-y-3 mb-10">
-                {["Independent & locally owned", "Combined 15+ years of industry expertise", "Deeply embedded in the Geelong community", "Available when you need us, not just 9 to 5"].map((point, i) => (
-                  <div key={i} className="flex items-center gap-3">
-                    <CheckCircle2 className="w-5 h-5 text-white/60 shrink-0" />
-                    <span className="text-white/80 font-sans text-sm">{point}</span>
-                  </div>
-                ))}
-              </div>
-              <Link href="/about">
-                <button className="h-12 px-8 text-sm font-bold font-sans bg-white text-[#371628] rounded-xl hover:bg-white/90 active:scale-95 transition-all duration-200 shadow-lg">
-                  Our Full Story →
-                </button>
-              </Link>
-            </motion.div>
+        <Link href="/about">
+          <button className="h-12 px-8 text-sm font-bold font-sans bg-white text-[#371628] rounded-xl hover:bg-white/90 active:scale-95 transition-all duration-200 shadow-lg">
+            Our Full Story →
+          </button>
+        </Link>
+      </motion.div>
 
-            <motion.div
-              initial={{ opacity: 0, x: 30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}
-              className="flex gap-4"
-            >
-              <div className="flex-1 rounded-3xl overflow-hidden h-[420px] mt-8">
-                <img src={poojaImg} alt="Pooja Patel" className="w-full h-full object-cover object-center" />
-                <div className="relative -mt-16 mx-4">
-                  <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl px-4 py-3">
-                    <p className="text-white font-serif font-normal text-base">Pooja Patel</p>
-                    <p className="text-white/60 font-sans text-xs">Director / Licensed Estate Agent</p>
-                  </div>
-                </div>
+      <motion.div
+        initial={{ opacity: 0, x: 30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}
+        className="flex flex-row gap-3 sm:gap-4"
+      >
+        {[
+          { img: poojaImg, name: "Pooja Patel", role: "Director / Licensed Estate Agent" },
+          { img: chandraImg, name: "Chandra Bhatt", role: "Director" },
+        ].map((person) => (
+          <div
+            key={person.name}
+            className="flex-1 rounded-2xl sm:rounded-3xl overflow-hidden relative h-[280px] sm:h-[360px] lg:h-[420px]"
+          >
+            <img
+              src={person.img}
+              alt={person.name}
+              className="absolute inset-0 w-full h-full object-cover object-center"
+            />
+            <div className="absolute bottom-3 left-3 right-3 sm:bottom-4 sm:left-4 sm:right-4">
+              <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-xl sm:rounded-2xl px-3 py-2.5 sm:px-4 sm:py-3">
+                <p className="text-white font-serif font-normal text-sm sm:text-base leading-tight">{person.name}</p>
+                <p className="text-white/60 font-sans text-[10px] sm:text-xs">{person.role}</p>
               </div>
-              <div className="flex-1 rounded-3xl overflow-hidden h-[420px] mb-8">
-                <img src={chandraImg} alt="Chandra Bhatt" className="w-full h-full object-cover object-center" />
-                <div className="relative -mt-16 mx-4">
-                  <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl px-4 py-3">
-                    <p className="text-white font-serif font-normal text-base">Chandra Bhatt</p>
-                    <p className="text-white/60 font-sans text-xs">Director</p>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
+            </div>
           </div>
-        </div>
-      </section>
+        ))}
+      </motion.div>
+    </div>
+  </div>
+</section>
 
       {/* ── TESTIMONIALS (auto-slider) ──────────────────────────────── */}
       <section className="py-28 bg-white">
