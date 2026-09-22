@@ -21,14 +21,14 @@ const pillars = [
 ];
 
 const testimonials = [
-  { name: "Sarah M.",  suburb: "Armstrong Creek", rating: 5, text: "Pooja made the entire process seamless. She understood exactly what we needed and delivered beyond our expectations. Truly exceptional service from start to finish." },
-  { name: "David K.",  suburb: "Lara",            rating: 5, text: "Chandra's knowledge of the local market is unmatched. He guided us through every decision with confidence and care. We couldn't recommend Canvas more highly." },
-  { name: "Priya R.",  suburb: "Geelong",         rating: 5, text: "From our first meeting to settlement, Canvas Real Estate was professional, responsive, and genuinely invested in our success. An absolute pleasure to work with." },
-  { name: "Michael T.", suburb: "Tarneit",        rating: 5, text: "We achieved $45,000 above our reserve price. The marketing strategy was immaculate and the communication was outstanding throughout the entire campaign." },
+  { name: "Sarah M.",  suburb: "Charlemont", rating: 5, text: "We really appreciate all the support and help from Pooja and the team at Canvas Real Estate throughout our rental process. The communication was always friendly, professional, and very quick, which made everything smooth and stress-free for our family. Pooja was very helpful, approachable, and supportive at every step, and the whole process was handled efficiently and fast. Thank you again for making our move much easier" },
+  { name: "David K.",  suburb: "Leopold",            rating: 5, text: "Pooja was amazing to deal with whilst selling our home. Communication was fantastic and we were kept up to date every step of the way. Very flexible with her time and always willing to help however she could." },
+  { name: "Priya R.",  suburb: "Leopold",         rating: 5, text: "Easy and Stress free, Pooja was easy to work with and patient. She made everything easy and seamless. Really enjoyed working with her." },
+  { name: "Shishtika K.", suburb: "Lara",        rating: 5, text: "i had the privilege to work with canvas reality. they had put up my rental property up very quickly in Geelong. Pooja was a very great help." },
 ];
 
 const processSteps = [
-  { num: "01", title: "Free Consultation",  desc: "We meet, listen, and understand your goals. No pressure, no obligation. Just honest conversation." },
+  { num: "01", title: "Consultation",  desc: "We meet, listen, and understand your goals. No pressure, no obligation. Just honest conversation." },
   { num: "02", title: "Market Appraisal",   desc: "Receive a data-driven valuation based on current Geelong market conditions and comparable sales." },
   { num: "03", title: "Tailored Strategy",  desc: "We craft a personalised marketing plan designed to attract the right buyers and achieve premium results." },
   { num: "04", title: "Exceptional Outcome",desc: "Watch as your property is expertly positioned, negotiated, and sold for the best possible price." },
@@ -209,7 +209,7 @@ export default function Home() {
             </Link>
             <Link href="/contact">
               <button className="h-14 px-10 text-sm font-semibold font-sans bg-white/10 text-white border border-white/30 rounded-2xl hover:bg-white/20 backdrop-blur-sm active:scale-95 transition-all duration-200">
-                Free Property Appraisal →
+                Property Appraisal →
               </button>
             </Link>
           </motion.div>
@@ -321,7 +321,7 @@ export default function Home() {
         <div className="container mx-auto px-6 md:px-12 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <motion.div initial={{ opacity: 0, x: -30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}>
-              <p className="text-xs uppercase tracking-[0.3em] text-white/50 font-semibold font-sans mb-4">Meet the Directors</p>
+              <p className="text-xs uppercase tracking-[0.3em] text-white/50 font-semibold font-sans mb-4">Meet the Team</p>
               <h2 className="text-4xl md:text-5xl font-serif font-normal leading-tight mb-6">
                 Real People.<br />Real Results.
               </h2>
@@ -352,7 +352,7 @@ export default function Home() {
                 <div className="relative -mt-16 mx-4">
                   <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl px-4 py-3">
                     <p className="text-white font-serif font-normal text-base">Pooja Patel</p>
-                    <p className="text-white/60 font-sans text-xs">Director</p>
+                    <p className="text-white/60 font-sans text-xs">Director / Licensed Estate Agent</p>
                   </div>
                 </div>
               </div>

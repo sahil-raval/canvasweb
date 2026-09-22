@@ -15,7 +15,7 @@ const formSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
   phone: z.string().min(8, "Please enter your phone number"),
   enquiryType: z.string().min(1, "Please select an enquiry type"),
-  message: z.string().min(10, "Please tell us a little more (min 10 characters)"),
+  message: z.string().optional(),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -23,7 +23,7 @@ type FormValues = z.infer<typeof formSchema>;
 const enquiryTypes = [
   "Sell My Property",
   "Buy a Property",
-  "Free Market Appraisal",
+  "Market Appraisal",
   "Property Management",
   "General Enquiry",
 ];
@@ -170,10 +170,7 @@ export function ContactForm({ dark = false }: { dark?: boolean }) {
           </FormItem>
         )} />
 
-        {/* Trust line */}
-        <p className={`text-xs ${dark ? "text-white/40" : "text-gray-400"}`}>
-          🔒 Your details are confidential. We typically respond within 24 hours.
-        </p>
+       
 
         {/* Submit */}
         <button

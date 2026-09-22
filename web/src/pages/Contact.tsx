@@ -1,12 +1,12 @@
 import { motion } from "framer-motion";
-import { MapPin, Phone, Mail, Facebook, Instagram, Linkedin, Youtube, Clock, Shield, Star } from "lucide-react";
+import { MapPin, Phone, Mail, Facebook, Instagram, Linkedin, Youtube, Clock, Shield, Star, Link } from "lucide-react";
 import { ContactForm } from "@/components/ContactForm";
 import poojaImg from "@/assets/canvas/agent-pooja-new.jpg";
 import chandraImg from "@/assets/canvas/agent-chandra-new.jpg";
 import { useCms } from "@/lib/cms";
 
 const trustPoints = [
-  { icon: Clock, text: "Response within 24 hours" },
+  
   { icon: Shield, text: "100% confidential & obligation-free" },
   { icon: Star, text: "5.0 Google Rating" },
 ];
@@ -96,7 +96,7 @@ export default function Contact() {
                     </div>
                     <div>
                       <p className="text-[10px] uppercase tracking-[0.3em] font-sans text-white/40 mb-1">Location</p>
-                      <p className="text-white font-semibold">{siteSettings.location || "Geelong, Victoria"}</p>
+                      <p className="text-white font-semibold">{siteSettings.location || "East Geelong, Victoria"}</p>
                       <p className="text-white/60 text-sm">{siteSettings.serviceArea || "Serving all Geelong suburbs"}</p>
                     </div>
                   </div>
@@ -162,24 +162,30 @@ export default function Contact() {
         <div className="container mx-auto px-6 md:px-12">
           <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6">
             {[
-              { title: "Sell For More", desc: "Our strategic marketing and negotiation expertise consistently achieves prices above comparable sales. Start with a free appraisal.", cta: "Get Appraisal" },
-              { title: "Find Your Home", desc: "Tell us exactly what you're looking for and we'll proactively source properties, including off-market opportunities.", cta: "Start Search" },
-              { title: "Know Your Value", desc: "Receive a comprehensive, data-backed market appraisal for your property with absolutely no obligation to sell.", cta: "Free Valuation" },
-            ].map((card, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }} transition={{ delay: i * 0.1 }}
-                className="bg-white rounded-3xl p-8 border border-gray-100 shadow-sm hover:shadow-xl hover:shadow-[#371628]/8 hover:-translate-y-1 transition-all duration-300"
-              >
-                <div className="w-10 h-1 bg-[#371628] rounded-full mb-6" />
-                <h3 className="text-xl font-serif text-gray-900 mb-3">{card.title}</h3>
-                <p className="text-gray-500 text-sm leading-relaxed mb-6">{card.desc}</p>
-                <a href="#" className="text-[#371628] text-sm font-bold hover:opacity-70 transition-opacity flex items-center gap-2">
-                  {card.cta} →
-                </a>
-              </motion.div>
-            ))}
+  { title: "Sell For More", desc: "Our strategic marketing and negotiation expertise consistently achieves prices above comparable sales. Start with appraisal.", cta: "Get Appraisal", href: "#enquiry-form" },
+  { title: "Find Your Home", desc: "Tell us exactly what you're looking for and we'll proactively source properties, including off-market opportunities.", cta: "Start Search", href: "/listings" },
+  { title: "Know Your Value", desc: "Receive a comprehensive, data-backed market appraisal for your property with absolutely no obligation to sell.", cta: "Valuation", href: "#enquiry-form" },
+].map((card, i) => (
+  <motion.div
+    key={i}
+    initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }}
+    viewport={{ once: true }} transition={{ delay: i * 0.1 }}
+    className="bg-white rounded-3xl p-8 border border-gray-100 shadow-sm hover:shadow-xl hover:shadow-[#371628]/8 hover:-translate-y-1 transition-all duration-300"
+  >
+    <div className="w-10 h-1 bg-[#371628] rounded-full mb-6" />
+    <h3 className="text-xl font-serif text-gray-900 mb-3">{card.title}</h3>
+    <p className="text-gray-500 text-sm leading-relaxed mb-6">{card.desc}</p>
+    {card.href.startsWith("/") ? (
+      <Link href={card.href} className="text-[#371628] text-sm font-bold hover:opacity-70 transition-opacity flex items-center gap-2">
+        {card.cta} →
+      </Link>
+    ) : (
+      <a href={card.href} className="text-[#371628] text-sm font-bold hover:opacity-70 transition-opacity flex items-center gap-2">
+        {card.cta} →
+      </a>
+    )}
+  </motion.div>
+))}
           </div>
         </div>
       </section>

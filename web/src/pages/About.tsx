@@ -786,7 +786,7 @@ export default function About() {
 
           <FadeUp delay={0.15}>
             <p className="text-white/50 font-sans text-base leading-relaxed mb-14 max-w-xl mx-auto">
-              {content?.cta?.body || "Book a free, no-obligation consultation and discover how Canvas Real Estate can deliver exceptional results for your property journey."}
+              {content?.cta?.body || "Book a no-obligation consultation and discover how Canvas Real Estate can deliver exceptional results for your property journey."}
             </p>
           </FadeUp>
 
@@ -797,7 +797,7 @@ export default function About() {
                 href={content?.cta?.href || "/contact"}
                 className="group relative inline-flex items-center gap-3 bg-white text-[#371628] font-bold font-sans text-sm uppercase tracking-[0.22em] px-12 py-5 rounded-full hover:bg-[#FAF8F5] active:scale-[0.97] transition-colors duration-300 shadow-2xl shadow-black/30"
               >
-                {content?.cta?.label || "Book Free Consultation"}
+                {content?.cta?.label || "Book Consultation"}
                 <motion.span
                   className="inline-block"
                   animate={{ x: [0, 4, 0] }}

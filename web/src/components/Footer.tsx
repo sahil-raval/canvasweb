@@ -51,7 +51,7 @@ export function Footer() {
                   { label: "Current Listings", href: "/listings" },
                   { label: "About Us", href: "/about" },
                   { label: "Contact Us", href: "/contact" },
-                  { label: "Free Appraisal", href: "/contact" },
+                  { label: "Appraisal", href: "/contact" },
                 ].map((link) => (
                   <li key={link.href + link.label}>
                     <Link
@@ -108,11 +108,11 @@ export function Footer() {
             <div>
               <h4 className="text-[10px] font-semibold font-sans uppercase tracking-[0.3em] text-white/40 mb-6">Ready to Move?</h4>
               <p className="text-white/60 text-sm leading-relaxed mb-6">
-                Book a free, no-obligation property appraisal with Geelong's most trusted independent agency.
+                Book a no-obligation property appraisal with Geelong's most trusted independent agency.
               </p>
               <Link href="/contact">
                 <button className="w-full bg-white text-[#371628] text-sm font-bold py-3.5 rounded-2xl hover:bg-white/90 active:scale-95 transition-all duration-200 shadow-lg shadow-black/20">
-                  Book Free Appraisal
+                  Book Appraisal
                 </button>
               </Link>
               <div className="mt-5 flex items-center gap-2">
