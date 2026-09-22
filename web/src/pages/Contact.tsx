@@ -1,9 +1,11 @@
-import { motion } from "framer-motion";
-import { MapPin, Phone, Mail, Facebook, Instagram, Linkedin, Youtube, Clock, Shield, Star, Link } from "lucide-react";
-import { ContactForm } from "@/components/ContactForm";
+
 import poojaImg from "@/assets/canvas/agent-pooja-new.jpg";
 import chandraImg from "@/assets/canvas/agent-chandra-new.jpg";
 import { useCms } from "@/lib/cms";
+import { motion } from "framer-motion";
+import { Link as RouterLink } from "wouter";
+import { MapPin, Phone, Mail, Facebook, Instagram, Linkedin, Youtube, Clock, Shield, Star } from "lucide-react";
+import { ContactForm } from "@/components/ContactForm";
 
 const trustPoints = [
   
@@ -176,9 +178,9 @@ export default function Contact() {
     <h3 className="text-xl font-serif text-gray-900 mb-3">{card.title}</h3>
     <p className="text-gray-500 text-sm leading-relaxed mb-6">{card.desc}</p>
     {card.href.startsWith("/") ? (
-      <Link href={card.href} className="text-[#371628] text-sm font-bold hover:opacity-70 transition-opacity flex items-center gap-2">
+      <RouterLink href={card.href} className="text-[#371628] text-sm font-bold hover:opacity-70 transition-opacity flex items-center gap-2">
         {card.cta} →
-      </Link>
+      </RouterLink>
     ) : (
       <a href={card.href} className="text-[#371628] text-sm font-bold hover:opacity-70 transition-opacity flex items-center gap-2">
         {card.cta} →
