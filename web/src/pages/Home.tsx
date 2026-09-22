@@ -22,8 +22,8 @@ const pillars = [
 
 const testimonials = [
   { name: "Monson C.",  suburb: "Charlemont", rating: 5, text: "We really appreciate all the support and help from Pooja and the team at Canvas Real Estate throughout our rental process. The communication was always friendly, professional, and very quick, which made everything smooth and stress-free for our family. Pooja was very helpful, approachable, and supportive at every step, and the whole process was handled efficiently and fast. Thank you again for making our move much easier" },
-  { name: "David K.",  suburb: "Leopold",            rating: 5, text: "Pooja was amazing to deal with whilst selling our home. Communication was fantastic and we were kept up to date every step of the way. Very flexible with her time and always willing to help however she could." },
-  { name: "Priya R.",  suburb: "Leopold",         rating: 5, text: "Easy and Stress free, Pooja was easy to work with and patient. She made everything easy and seamless. Really enjoyed working with her." },
+  { name: "Verified Seller",  suburb: "Leopold",            rating: 5, text: "Pooja was amazing to deal with whilst selling our home. Communication was fantastic and we were kept up to date every step of the way. Very flexible with her time and always willing to help however she could." },
+  { name: "Verified Buyer",  suburb: "Leopold",         rating: 5, text: "Easy and Stress free, Pooja was easy to work with and patient. She made everything easy and seamless. Really enjoyed working with her." },
   { name: "Shishtika K.", suburb: "Lara",        rating: 5, text: "i had the privilege to work with canvas reality. they had put up my rental property up very quickly in Geelong. Pooja was a very great help." },
 ];
 
