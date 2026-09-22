@@ -175,7 +175,7 @@ const siteSettingsSeed = {
   tagline: 'Your story starts here in Geelong.',
   phone: '0469 131 347',
   email: 'enquiry@canvasrealestate.com.au',
-  location: 'Geelong, Victoria',
+  location: 'East Geelong, Victoria',
   serviceArea: 'Serving Greater Geelong and surrounding suburbs',
   weekdayHours: 'Mon–Fri: 9am – 6pm',
   weekendHours: 'Sat: 10am – 3pm · Sun: By appointment',

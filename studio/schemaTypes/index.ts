@@ -348,7 +348,7 @@ const siteSettings = defineType({
     defineField({name: 'tagline', type: 'text', rows: 3, group: 'business'}),
     defineField({name: 'phone', title: 'Main phone', type: 'string', group: 'business'}),
     defineField({name: 'email', title: 'Main email', type: 'string', group: 'business', validation: (r) => r.email()}),
-    defineField({name: 'location', type: 'string', group: 'business', initialValue: 'Geelong, Victoria'}),
+    defineField({name: 'location', type: 'string', group: 'business', initialValue: 'East Geelong, Victoria'}),
     defineField({name: 'serviceArea', title: 'Service area', type: 'string', group: 'business', initialValue: 'Serving all Geelong suburbs'}),
     defineField({name: 'weekdayHours', title: 'Weekday hours', type: 'string', group: 'business', initialValue: 'Mon–Fri: 9am – 6pm'}),
     defineField({name: 'weekendHours', title: 'Weekend hours', type: 'string', group: 'business', initialValue: 'Sat: 10am – 3pm · Sun: By appt.'}),
