@@ -38,7 +38,8 @@ Useful extras:
 |---|---|
 | current | Shown. Status "For Sale", or "Under Offer" if under offer is set |
 | sold | Shown as "Sold" (with the sold price if it is set to display) |
-| withdrawn, off market, leased, or hidden | Removed from the website |
+| withdrawn, leased, or "hidden" in Agentbox | Removed from the website |
+| off market | Still shown (same as the current WordPress site) |
 
 - Listings are matched by their Agentbox unique ID (for example `1P0012`).
 - **First run:** if a hand-made listing in Sanity has the same address (URL slug), the

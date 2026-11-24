@@ -39,7 +39,7 @@ Second paragraph here.</description>
     <media><attachment usage="statementOfInformation" contentType="application/pdf" id="abc" url="https://cdn.example/soi.pdf"/></media>
     <extraFields name="streetAddress" value="30 Flagstaff Street"/>
     <extraFields name="hiddenListing" value="0"/>
-    <extraFields name="OffMarketListing" value="0"/>
+    <extraFields name="OffMarketListing" value="1"/>
   </residential>
   <residential modTime="2026-06-10 12:41:21" status="sold">
     <uniqueID>1P0002</uniqueID>
@@ -86,6 +86,7 @@ assert.equal(house.floorPlan?.url, 'https://cdn.example/1P0012/fp.jpg')
 assert.equal(house.soiPdf?.url, 'https://cdn.example/soi.pdf')
 assert.deepEqual(house.agents, [{name: 'Pooja Patel', email: 'ppatel@canvasrealestate.com.au'}])
 
+assert.equal(isPublishable(house), true) // off market is still shown
 assert.equal(sold.status, 'Sold')
 assert.equal(sold.price, 'Sold $1,260,000')
 assert.equal(isPublishable(sold), true)

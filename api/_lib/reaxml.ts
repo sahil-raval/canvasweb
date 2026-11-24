@@ -223,7 +223,8 @@ const mapProperty = (feedType: string, p: Record<string, any>): FeedProperty | n
     uniqueId,
     modTime: attr(p, 'modTime'),
     feedStatus,
-    hidden: extraField(p, 'hiddenListing') === '1' || extraField(p, 'OffMarketListing') === '1',
+    // Off-market listings are still shown, the same as the current WordPress site.
+    hidden: extraField(p, 'hiddenListing') === '1',
     address,
     suburb,
     state,
