@@ -13,5 +13,10 @@
       "source": "/((?!api|studio|assets|favicon.svg|robots.txt|sitemap.xml|og-image.svg).*)",
       "destination": "/index.html"
     }
-  ]
+  ],
+  "functions": {
+    "api/feedsync-sync.ts": {
+      "maxDuration": 300
+    }
+  }
 }

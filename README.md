@@ -97,6 +97,10 @@ The Studio includes curated navigation, grouped forms, validation, document prev
 
 No Sanity API token is included. Project ID and dataset are public configuration. Never add a token to `VITE_*` or `SANITY_STUDIO_*` variables. Private-dataset reads require a server-only API route and an unprefixed secret.
 
+## Agentbox listings (FeedSync sync)
+
+Listings from Agentbox are copied into Sanity by `/api/feedsync-sync`. See [FEEDSYNC_SYNC.md](FEEDSYNC_SYNC.md) for setup and the 3-step update process.
+
 ## Commands
 
 ```bash
@@ -106,4 +110,6 @@ npm run dev:studio   # Studio only
 npm run build        # build website, then mount Studio at /studio
 npm run typecheck    # website TypeScript
 npm run typegen      # generate Sanity types for the website
+npm run test:feed    # test the FeedSync REAXML parser
+npm run typecheck:api # type-check the /api functions
 ```

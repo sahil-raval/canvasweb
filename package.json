@@ -2,7 +2,10 @@
   "name": "canvas-real-estate-monorepo",
   "version": "1.0.0",
   "private": true,
-  "workspaces": ["web", "studio"],
+  "workspaces": [
+    "web",
+    "studio"
+  ],
   "scripts": {
     "dev": "concurrently -n WEB,STUDIO -c cyan,magenta \"npm run dev -w @canvas/web\" \"npm run dev -w @canvas/studio\"",
     "dev:web": "npm run dev -w @canvas/web",
@@ -11,7 +14,16 @@
     "typecheck": "npm run typecheck -w @canvas/web",
     "typegen": "npm run typegen -w @canvas/studio",
     "seed": "npm run seed -w @canvas/studio",
-    "seed:dry-run": "npm run seed:dry-run -w @canvas/studio"
+    "seed:dry-run": "npm run seed:dry-run -w @canvas/studio",
+    "typecheck:api": "tsc -p api/tsconfig.json",
+    "test:feed": "node --experimental-strip-types api/_lib/reaxml.test.ts"
   },
-  "devDependencies": {"concurrently": "^9.2.1"}
+  "devDependencies": {
+    "concurrently": "^9.2.1",
+    "@types/node": "^25.3.3",
+    "typescript": "^5.7.0"
+  },
+  "dependencies": {
+    "fast-xml-parser": "^5.12.1"
+  }
 }

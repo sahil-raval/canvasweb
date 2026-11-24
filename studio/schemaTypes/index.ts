@@ -89,9 +89,23 @@ const propertyFields = [
   defineField({name: 'seo', type: 'seo', group: 'seo'}),
 ]
 
+
+/** Filled in by /api/feedsync-sync. Edit the listing in Agentbox, not here. */
+const feedFields = [
+  defineField({name: 'feedUniqueId', title: 'Agentbox ID', type: 'string', group: 'feed', readOnly: true, description: 'Set by the Agentbox / FeedSync sync. Changes to synced fields should be made in Agentbox, or the next sync will overwrite them.'}),
+  defineField({name: 'feedType', title: 'Feed type', type: 'string', group: 'feed', readOnly: true}),
+  defineField({name: 'feedStatus', title: 'Agentbox status', type: 'string', group: 'feed', readOnly: true}),
+  defineField({name: 'feedModTime', title: 'Agentbox last modified', type: 'string', group: 'feed', readOnly: true}),
+  defineField({name: 'feedSyncedAt', title: 'Last synced', type: 'datetime', group: 'feed', readOnly: true}),
+  defineField({name: 'feedAssets', title: 'Synced files', type: 'array', group: 'feed', readOnly: true, hidden: true, of: [defineArrayMember({type: 'object', fields: [
+    defineField({name: 'role', type: 'string'}), defineField({name: 'url', type: 'url'}),
+    defineField({name: 'modTime', type: 'string'}), defineField({name: 'assetId', type: 'string'}),
+  ]})]}),
+]
+
 const listing = defineType({
   name: 'listing', title: 'Sale listing', type: 'document', icon: DocumentIcon,
-  groups: [{name: 'details', title: 'Property'}, {name: 'media', title: 'Media'}, {name: 'content', title: 'Marketing'}, {name: 'sale', title: 'Sale'}, {name: 'seo', title: 'SEO'}],
+  groups: [{name: 'details', title: 'Property'}, {name: 'media', title: 'Media'}, {name: 'content', title: 'Marketing'}, {name: 'sale', title: 'Sale'}, {name: 'seo', title: 'SEO'}, {name: 'feed', title: 'Agentbox'}],
   fields: [
     ...propertyFields,
     defineField({name: 'price', title: 'Price display', type: 'string', group: 'sale', validation: (r) => r.required()}),
@@ -139,6 +153,7 @@ const listing = defineType({
       description: 'Upload a PDF for visitors to open or download. You may provide this with or without a floor plan image.',
       options: {accept: 'application/pdf'},
     }),
+    ...feedFields,
   ],
   orderings: [{title: 'Newest first', name: 'createdDesc', by: [{field: '_createdAt', direction: 'desc'}]}],
   preview: {select: {title: 'address', subtitle: 'suburb', media: 'heroImage'}, prepare: ({title, subtitle, media}) => ({title: title || 'Untitled listing', subtitle, media})},
@@ -146,7 +161,7 @@ const listing = defineType({
 
 const rental = defineType({
   name: 'rental', title: 'Rental', type: 'document', icon: DocumentIcon,
-  groups: [{name: 'details', title: 'Property'}, {name: 'media', title: 'Media'}, {name: 'content', title: 'Marketing'}, {name: 'rental', title: 'Rental'}, {name: 'seo', title: 'SEO'}],
+  groups: [{name: 'details', title: 'Property'}, {name: 'media', title: 'Media'}, {name: 'content', title: 'Marketing'}, {name: 'rental', title: 'Rental'}, {name: 'seo', title: 'SEO'}, {name: 'feed', title: 'Agentbox'}],
   fields: [
     ...propertyFields,
     defineField({name: 'agent', type: 'reference', group: 'content', to: [{type: 'agent'}], validation: (r) => r.required()}),
@@ -156,6 +171,7 @@ const rental = defineType({
     defineField({name: 'leaseLength', title: 'Lease length', type: 'string', group: 'rental'}),
     defineField({name: 'furnished', type: 'boolean', group: 'rental', initialValue: false}),
     defineField({name: 'petsConsidered', title: 'Pets considered', type: 'boolean', group: 'rental', initialValue: false}),
+    ...feedFields,
   ],
   preview: {select: {title: 'address', subtitle: 'suburb', media: 'heroImage'}},
 })
