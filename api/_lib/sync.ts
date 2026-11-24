@@ -19,6 +19,8 @@ interface ExistingDoc {
   _id: string
   _type: 'listing' | 'rental'
   slug?: string
+  address?: string
+  suburb?: string
   feedUniqueId?: string
   feedModTime?: string
   feedAssets?: FeedAsset[]
@@ -111,7 +113,7 @@ export async function runSync(opts: SyncOptions = {}): Promise<SyncReport> {
   const [existing, agents] = await Promise.all([
     query<ExistingDoc[]>(
       c,
-      `*[_type in ["listing","rental"] && !(_id in path("drafts.**"))]{_id,_type,"slug":slug.current,feedUniqueId,feedModTime,feedAssets}`,
+      `*[_type in ["listing","rental"] && !(_id in path("drafts.**"))]{_id,_type,"slug":slug.current,address,suburb,feedUniqueId,feedModTime,feedAssets}`,
     ),
     query<AgentDoc[]>(c, `*[_type == "agent" && !(_id in path("drafts.**"))]{_id,name,email}`),
   ])
@@ -130,14 +132,26 @@ export async function runSync(opts: SyncOptions = {}): Promise<SyncReport> {
   }
 
   const liveIds = new Set<string>()
+  const claimed = new Set<string>()
+  const norm = (s?: string) => (s || '').toLowerCase().replace(/[^a-z0-9]/g, '')
 
   // 3. Create or update each live property.
   for (const p of live) {
     const label = `${p.address}, ${p.suburb}`
     const current =
       existing.find((d) => d._type === p.kind && d.feedUniqueId === p.uniqueId) ||
-      // Adopt a hand-made document for the same address so we don't create a duplicate.
-      existing.find((d) => d._type === p.kind && !d.feedUniqueId && d.slug === p.slug)
+      // Adopt a hand-made document for the same property so we don't create a duplicate:
+      // same URL slug, or same street address (and suburb, if the document has one).
+      existing.find((d) => d._type === p.kind && !d.feedUniqueId && !claimed.has(d._id) && d.slug === p.slug) ||
+      existing.find(
+        (d) =>
+          d._type === p.kind &&
+          !d.feedUniqueId &&
+          !claimed.has(d._id) &&
+          norm(d.address) === norm(p.address) &&
+          (!d.suburb || norm(d.suburb) === norm(p.suburb)),
+      )
+    if (current) claimed.add(current._id)
     const id = current?._id ?? docId(p)
     liveIds.add(id)
 
