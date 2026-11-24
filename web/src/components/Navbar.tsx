@@ -20,6 +20,7 @@ export function Navbar() {
   const navLinks = [
     { label: "Home", href: "/" },
     { label: "Buy", href: "/listings" },
+    { label: "Sold", href: "/sold" },
     { label: "Rent", href: "/rent" },
     { label: "Journal", href: "/journal" },
     { label: "About Us", href: "/about" },

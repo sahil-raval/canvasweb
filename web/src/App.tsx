@@ -23,7 +23,7 @@ import { CmsProvider } from '@/lib/cms';
 
 // Pages
 import Home from '@/pages/Home';
-import Listings from '@/pages/Listings';
+import Listings, { SoldListings } from '@/pages/Listings';
 import ListingDetail from '@/pages/ListingDetail';
 import About from '@/pages/About';
 import Contact from '@/pages/Contact';
@@ -44,6 +44,7 @@ function Router({ ready }: { ready: boolean }) {
         <Switch>
           <Route path="/" component={Home} />
           <Route path="/listings" component={Listings} />
+          <Route path="/sold" component={SoldListings} />
           <Route path="/listings/:slug" component={ListingDetail} />
           <Route path="/about" component={About} />
           <Route path="/contact" component={Contact} />

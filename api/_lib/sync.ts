@@ -164,24 +164,30 @@ export async function runSync(opts: SyncOptions = {}): Promise<SyncReport> {
       ...(p.floorPlan ? [{role: 'floorPlan' as const, ...p.floorPlan}] : []),
       ...(p.soiPdf ? [{role: 'soi' as const, ...p.soiPdf}] : []),
     ]
-    for (const w of want) {
-      const hit = known.find((k) => k.role === w.role && k.url === w.url && k.modTime === w.modTime)
-      if (hit) {
-        assets.push(hit)
-        continue
-      }
-      if (outOfTime()) {
-        finished = false
-        break
-      }
-      try {
-        const assetId = await uploadFromUrl(c, w.url, w.role === 'soi' ? 'files' : 'images')
-        report.uploads++
-        assets.push({_key: key(`${w.role}${assets.length}${assetId}`), ...w, assetId})
-      } catch (e) {
-        report.warnings.push(`${label}: ${(e as Error).message}`)
+    // Copy new or changed files, 4 at a time, keeping the Agentbox photo order.
+    const slots: Array<FeedAsset | null> = want.map(
+      (w) => known.find((k) => k.role === w.role && k.url === w.url && k.modTime === w.modTime) ?? null,
+    )
+    const todo = want.map((w, i) => ({w, i})).filter(({i}) => !slots[i])
+    let next = 0
+    const worker = async () => {
+      while (next < todo.length) {
+        if (outOfTime()) {
+          finished = false
+          return
+        }
+        const {w, i} = todo[next++]
+        try {
+          const assetId = await uploadFromUrl(c, w.url, w.role === 'soi' ? 'files' : 'images')
+          report.uploads++
+          slots[i] = {_key: key(`${w.role}${i}${assetId}`), ...w, assetId}
+        } catch (e) {
+          report.warnings.push(`${label}: ${(e as Error).message}`)
+        }
       }
     }
+    await Promise.all(Array.from({length: Math.min(4, todo.length)}, worker))
+    assets.push(...(slots.filter(Boolean) as FeedAsset[]))
     const photos = assets.filter((a) => a.role === 'image')
     if (!photos.length) {
       report.warnings.push(`${label}: photos could not be copied yet, will retry next run`)
@@ -231,9 +237,15 @@ export async function runSync(opts: SyncOptions = {}): Promise<SyncReport> {
       if (agentIds[0]) fields.agent = {_type: 'reference', _ref: agentIds[0]}
     }
 
+    // Agentbox is the source of truth: if it no longer has a floor plan or SOI, remove it here too.
+    const unset: string[] = []
+    if (p.kind === 'listing' && finished) {
+      if (!p.floorPlan) unset.push('floorPlanImage')
+      if (!p.soiPdf) unset.push('statementOfInformationPdf')
+    }
     await mutate(c, [
       {createIfNotExists: {_id: id, _type: p.kind}},
-      {patch: {id, set: fields}},
+      {patch: {id, set: fields, ...(unset.length ? {unset} : {})}},
     ])
     if (!finished) report.complete = false
     ;(current ? report.updated : report.created).push(

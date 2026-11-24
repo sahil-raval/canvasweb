@@ -49,6 +49,7 @@ export function Footer() {
                 {[
                   { label: "Home", href: "/" },
                   { label: "Current Listings", href: "/listings" },
+                  { label: "Sold Properties", href: "/sold" },
                   { label: "About Us", href: "/about" },
                   { label: "Contact Us", href: "/contact" },
                   { label: "Appraisal", href: "/contact" },

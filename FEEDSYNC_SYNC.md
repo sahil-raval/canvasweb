@@ -36,12 +36,18 @@ Useful extras:
 
 | Agentbox / FeedSync status | Website |
 |---|---|
-| current | Shown. Status "For Sale", or "Under Offer" if under offer is set |
-| sold | Shown as "Sold" (with the sold price if it is set to display) |
+| current | Shown on **Buy** (`/listings`) as "For Sale", or "Under Offer" if under offer is set |
+| sold | Moves to the **Sold** page (`/sold`), shown as "Sold" (with the sold price if it is set to display) |
 | withdrawn, leased, or "hidden" in Agentbox | Removed from the website |
 | off market | Still shown (same as the current WordPress site) |
 
 - Listings are matched by their Agentbox unique ID (for example `1P0012`).
+- Every time Agentbox changes a listing, all of these fields are refreshed: address,
+  price, status, bedrooms, bathrooms, car spaces (garages + carports + open spaces, the
+  same as WordPress), land size, photos (in Agentbox order), description, features,
+  agents, floor plan image and Statement of Information PDF. If Agentbox removes the
+  floor plan or SOI, it is removed from the website too.
+- The website re-reads Sanity every 15 seconds, so changes appear without a rebuild.
 - **First run:** if a hand-made listing in Sanity has the same address (URL slug), the
   sync takes it over instead of making a duplicate. From then on, Agentbox controls the
   address, details, price, status, photos, description, features and agents.
@@ -69,16 +75,20 @@ Add these **Environment Variables** in the Vercel project (Production). Never gi
 
 Then redeploy. Test with `&dry=1` first.
 
-### Optional: run step 3 automatically
+### Run step 3 automatically (recommended)
 
-To run the sync on a timer, add `CRON_SECRET` to the environment variables and this
-to `vercel.json`:
+`.github/workflows/feedsync-sync.yml` opens the sync link every 15 minutes, using
+GitHub Actions (free). It does nothing until you add the secret:
 
-```json
-"crons": [{ "path": "/api/feedsync-sync", "schedule": "*/30 * * * *" }]
-```
+GitHub → repo → **Settings → Secrets and variables → Actions → New repository secret**
 
-(Vercel Hobby plans only allow one cron run per day.)
+- Name: `FEEDSYNC_SYNC_URL`
+- Value: `https://<website-domain>/api/feedsync-sync?key=<SYNC_SECRET>`
+
+Then the only manual steps are 1 and 2 (duplicate-xml and FeedSync Process Feed).
+Listings reach the website within 15 minutes. You can also run it straight away from
+GitHub → **Actions → Sync Agentbox listings → Run workflow**. Unchanged runs take about
+2 seconds and copy nothing.
 
 ## Domain move
 

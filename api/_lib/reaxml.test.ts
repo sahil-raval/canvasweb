@@ -22,7 +22,7 @@ const xml = `<?xml version="1.0" encoding="UTF-8" standalone="no"?>
     <category name="House"/>
     <features>
       <openSpaces>2</openSpaces><bedrooms>4</bedrooms><bathrooms>2</bathrooms><garages>0</garages>
-      <carports>0</carports><toilets>2</toilets><airConditioning>1</airConditioning><balcony>0</balcony>
+      <carports>0</carports><toilets>2</toilets><ensuite>1</ensuite><airConditioning>1</airConditioning><balcony>0</balcony>
       <otherFeatures>Walk-in pantry, Alfresco</otherFeatures>
     </features>
     <headline>Premium Family Home Offer</headline>
@@ -80,7 +80,7 @@ assert.equal(house.land, '400 m²')
 assert.equal(house.price, '$779,000 - $829,000')
 assert.equal(house.status, 'For Sale')
 assert.deepEqual(house.description, ['Premium Family Home Offer', 'Designed with families in mind.', 'Second paragraph here.'])
-assert.deepEqual(house.features, ['Air Conditioning', 'Walk-in pantry', 'Alfresco'])
+assert.deepEqual(house.features, ['Ensuite', 'Air Conditioning', 'Walk-in pantry', 'Alfresco'])
 assert.deepEqual(house.images.map((i) => i.url.split('/').pop()), ['m.jpg', 'a.jpg'])
 assert.equal(house.floorPlan?.url, 'https://cdn.example/1P0012/fp.jpg')
 assert.equal(house.soiPdf?.url, 'https://cdn.example/soi.pdf')

@@ -1,0 +1,37 @@
+# Runs Step 3 (copy listings from FeedSync to the website) every 15 minutes,
+# so new or changed Agentbox listings appear without anyone opening the sync link.
+#
+# Setup: GitHub repo -> Settings -> Secrets and variables -> Actions -> New repository secret
+#   Name:  FEEDSYNC_SYNC_URL
+#   Value: https://<website-domain>/api/feedsync-sync?key=<SYNC_SECRET>
+name: Sync Agentbox listings
+
+on:
+  schedule:
+    - cron: "*/15 * * * *"
+  workflow_dispatch: {}
+
+concurrency:
+  group: feedsync-sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Run sync
+        env:
+          SYNC_URL: ${{ secrets.FEEDSYNC_SYNC_URL }}
+        run: |
+          if [ -z "$SYNC_URL" ]; then
+            echo "FEEDSYNC_SYNC_URL secret is not set - skipping."
+            exit 0
+          fi
+          # Run up to 3 times so a big first photo copy can finish.
+          for attempt in 1 2 3; do
+            body=$(curl -sS --fail-with-body --max-time 320 -H "Accept: application/json" "$SYNC_URL") || { echo "$body"; exit 1; }
+            echo "$body" | python3 -c 'import json,sys; r=json.load(sys.stdin); print({k: r[k] for k in ("complete","created","updated","removed","warnings","uploads")})'
+            complete=$(echo "$body" | python3 -c 'import json,sys; print(json.load(sys.stdin).get("complete"))')
+            [ "$complete" = "True" ] && exit 0
+          done

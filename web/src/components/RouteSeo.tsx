@@ -30,6 +30,16 @@ const staticMeta: Record<
       "Armstrong Creek real estate",
     ],
   },
+  "/sold": {
+    title: "Sold Properties Geelong | Canvas Real Estate",
+    description:
+      "Recent property sales by Canvas Real Estate across Geelong, Lara, Armstrong Creek, Tarneit and surrounding suburbs.",
+    keywords: [
+      "sold properties Geelong",
+      "recent sales Geelong",
+      "Geelong real estate results",
+    ],
+  },
   "/rent": {
     title: "Rental Properties Geelong | Canvas Real Estate",
     description:

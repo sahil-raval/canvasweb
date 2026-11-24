@@ -141,7 +141,9 @@ function TestimonialSlider() {
    PAGE
 ═══════════════════════════════════════════════════════ */
 export default function Home() {
-  const { listings, pages, siteSettings } = useCms();
+  const { listings: allListings, pages, siteSettings } = useCms();
+  // Only current (not sold) listings are featured and counted.
+  const listings = allListings.filter((l) => (l.status || "").toLowerCase() !== "sold");
   const featuredListings = listings.slice(0, 3);
   const page = pages.find((item) => item.slug === "home");
   const phone = siteSettings.phone || "0469 131 347";

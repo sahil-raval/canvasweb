@@ -29,6 +29,7 @@ const query = `*[
 const staticRoutes = [
   { path: "/", priority: "1.0", changefreq: "weekly" },
   { path: "/listings", priority: "0.9", changefreq: "daily" },
+  { path: "/sold", priority: "0.7", changefreq: "weekly" },
   { path: "/rent", priority: "0.9", changefreq: "daily" },
   { path: "/journal", priority: "0.8", changefreq: "weekly" },
   { path: "/about", priority: "0.7", changefreq: "monthly" },

@@ -122,7 +122,7 @@ const mapType = (feedType: string, category: string) => {
 /** Count-style feature tags that are already shown as beds / baths / cars. */
 const COUNT_FEATURES = new Set([
   'bedrooms', 'bathrooms', 'garages', 'carports', 'openSpaces', 'toilets',
-  'livingAreas', 'ensuite', 'remoteGarage', 'secureParking', 'study',
+  'livingAreas', 'remoteGarage', 'secureParking', 'study',
 ])
 
 const label = (key: string) =>

@@ -690,7 +690,7 @@ export default function ListingDetail() {
         </motion.div>
 
         <div className="absolute top-0 left-0 right-0 z-20 pt-6 px-6 md:px-10 mt-16">
-          <Link href="/listings">
+          <Link href={listing.status === "Sold" ? "/sold" : "/listings"}>
             <span className="inline-flex items-center gap-2.5 text-white/55 text-[9px] font-semibold font-sans uppercase tracking-[0.45em] hover:text-white transition-colors cursor-pointer">
               <ArrowLeft className="w-3.5 h-3.5" />
               {listing.address} · {listing.suburb}
@@ -948,13 +948,13 @@ export default function ListingDetail() {
                 More Properties
               </h2>
             </div>
-            <Link href="/listings">
+            <Link href={listing.status === "Sold" ? "/sold" : "/listings"}>
               <button className="hidden md:flex items-center gap-2 text-[9px] font-semibold uppercase tracking-[0.35em] font-sans text-[#371628]/38 hover:text-[#371628] transition-colors">
                 All Listings <ArrowRight className="w-3.5 h-3.5" />
               </button>
             </Link>
           </FadeUp>
-          <Link href="/listings">
+          <Link href={listing.status === "Sold" ? "/sold" : "/listings"}>
             <button className="flex items-center gap-2 text-[9px] font-bold uppercase tracking-[0.3em] font-sans text-[#371628] hover:opacity-60 transition-opacity md:hidden mb-8">
               View All Listings <ArrowRight className="w-3.5 h-3.5" />
             </button>

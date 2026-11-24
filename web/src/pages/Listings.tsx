@@ -13,9 +13,22 @@ const bedOptions = [
   { value: "5",   label: "5+ Beds" },
 ];
 
+export const isSold = (status?: string) => (status || "").toLowerCase() === "sold";
+
 export default function Listings() {
-  const { listings, pages } = useCms();
-  const page = pages.find((item) => item.slug === "listings");
+  return <ListingsView mode="current" />;
+}
+
+export function SoldListings() {
+  return <ListingsView mode="sold" />;
+}
+
+function ListingsView({ mode }: { mode: "current" | "sold" }) {
+  const sold = mode === "sold";
+  const { listings: allListings, pages } = useCms();
+  // "Buy" shows For Sale / Under Offer. Sold listings move to the Sold page.
+  const listings = allListings.filter((l) => isSold(l.status) === sold);
+  const page = pages.find((item) => item.slug === (sold ? "sold" : "listings"));
   const [searchTerm,   setSearchTerm]   = useState("");
   const [bedFilter,    setBedFilter]    = useState("any");
   const [suburbFilter, setSuburbFilter] = useState("All Suburbs");
@@ -53,10 +66,12 @@ export default function Listings() {
         </div>
         <div className="container mx-auto px-6 md:px-12 relative z-10">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-            <p className="text-[10px] uppercase tracking-[0.3em] text-white/50 font-semibold font-sans mb-4">{page?.eyebrow || "Geelong Properties"}</p>
-            <h1 className="text-5xl md:text-6xl font-serif font-normal text-white mb-4">{page?.heading || "Current Listings"}</h1>
+            <p className="text-[10px] uppercase tracking-[0.3em] text-white/50 font-semibold font-sans mb-4">{page?.eyebrow || (sold ? "Recent Results" : "Geelong Properties")}</p>
+            <h1 className="text-5xl md:text-6xl font-serif font-normal text-white mb-4">{page?.heading || (sold ? "Sold Properties" : "Current Listings")}</h1>
             <p className="text-white/65 text-lg font-sans max-w-xl mb-10">
-              {page?.intro || "Expertly curated properties across Geelong and surrounds. Each one hand-selected and professionally presented."}
+              {page?.intro || (sold
+                ? "A selection of homes and land recently sold by Canvas Real Estate across Geelong and surrounds."
+                : "Expertly curated properties across Geelong and surrounds. Each one hand-selected and professionally presented.")}
             </p>
 
             {/* Search bar */}
@@ -84,12 +99,14 @@ export default function Listings() {
       {/* ── LISTINGS GRID ────────────────────────────────────────── */}
       <div className="container mx-auto px-6 md:px-12 py-16">
         {/* Urgency nudge */}
+        {!sold && (
         <div className="flex items-center gap-3 mb-8 bg-white border border-[#371628]/10 rounded-2xl px-5 py-3 w-fit shadow-sm">
           <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
           <p className="text-xs text-[#371628]/70 font-semibold">
             Properties at this level are actively receiving enquiries. Act early to avoid missing out
           </p>
         </div>
+        )}
 
         {filtered.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
@@ -104,7 +121,9 @@ export default function Listings() {
             </div>
             <h3 className="text-2xl font-serif text-gray-900 mb-3">No Properties Found</h3>
             <p className="text-gray-500 max-w-sm mx-auto mb-8 text-sm leading-relaxed">
-              No properties match your current search. Try adjusting your filters, or get in touch and we'll find your perfect match, including off-market listings.
+              {sold && listings.length === 0
+                ? "Our recent sales will appear here. Get in touch for a free appraisal of your property."
+                : "No properties match your current search. Try adjusting your filters, or get in touch and we'll find your perfect match, including off-market listings."}
             </p>
             <div className="flex gap-3 justify-center">
               <button
