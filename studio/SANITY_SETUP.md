@@ -11,7 +11,7 @@
 
 1. Sign in from `studio/` with `npx sanity login`.
 2. Deploy the schema with `npm run deploy:schema`.
-3. Add `http://localhost:5173` and `https://canvasrealestate.com.au` in Sanity Manage → API → CORS origins.
+3. Add `http://localhost:3000` and `https://canvasrealestate.com.au` in Sanity Manage → API → CORS origins.
 4. Do not enable credentials for public published-content reads. Enable them only for authenticated preview/draft flows.
 5. Publish Site Settings, Agents, page documents (`home`, `listings`, `rent`, `journal`, `about`, `contact`), listings, rentals, and journal articles.
 6. Add a Sanity webhook that calls your hosting provider's private build hook when published route content changes. This regenerates `sitemap.xml` from Sanity.

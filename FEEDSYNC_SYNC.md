@@ -10,8 +10,7 @@ Agentbox (CRM)  ->  XML files  ->  FeedSync  ->  /api/feedsync-sync  ->  Sanity 
   WordPress import does today.
 - `/api/feedsync-sync` reads every FeedSync output type (residential, land, rural,
   commercial, rental, ...), and creates or updates the matching **Sale listing** or
-  **Rental** in Sanity. The website already reads listings from Sanity, so they show
-  up within about 15 seconds.
+  **Rental** in Sanity. The website is refreshed as soon as the sync finishes.
 - Photos, the floor plan and the Statement of Information PDF are copied from the
   Agentbox CDN into Sanity, so the website does not depend on Agentbox image links.
 
@@ -47,7 +46,7 @@ Useful extras:
   same as WordPress), land size, photos (in Agentbox order), description, features,
   agents, floor plan image and Statement of Information PDF. If Agentbox removes the
   floor plan or SOI, it is removed from the website too.
-- The website re-reads Sanity every 15 seconds, so changes appear without a rebuild.
+- The website shows the change as soon as the sync finishes (the page cache is refreshed).
 - **First run:** if a hand-made listing in Sanity has the same address (URL slug), the
   sync takes it over instead of making a duplicate. From then on, Agentbox controls the
   address, details, price, status, photos, description, features and agents.
@@ -105,8 +104,10 @@ Before the switch:
 
 ## Developer notes
 
-- Code: `api/feedsync-sync.ts` (route), `api/_lib/reaxml.ts` (REAXML parser),
-  `api/_lib/sync.ts` (sync rules), `api/_lib/sanity.ts` (Sanity HTTP client).
-- Checks: `npm run test:feed` (parser test) and `npm run typecheck:api`.
-- The function may run for up to 300 seconds (`vercel.json` → `functions`). It stops
-  starting new photo uploads after 240 seconds and reports *Partly done*.
+- Code: `src/app/api/feedsync-sync/route.ts` (route), `src/lib/agentbox/reaxml.ts` (REAXML
+  parser), `src/lib/agentbox/sync.ts` (sync rules), `src/lib/agentbox/sanity-write.ts`
+  (Sanity HTTP client).
+- After a sync changes anything, the website cache is refreshed straight away.
+- Checks: `npm test` (parser test) and `npm run typecheck`.
+- The route may run for up to 300 seconds. It stops starting new photo uploads after
+  240 seconds and reports *Partly done*.

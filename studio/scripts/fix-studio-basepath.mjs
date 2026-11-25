@@ -1,6 +1,6 @@
 import {readFile, writeFile} from 'node:fs/promises'
 
-const indexUrl = new URL('../../web/dist/studio/index.html', import.meta.url)
+const indexUrl = new URL('../../public/studio/index.html', import.meta.url)
 const html = await readFile(indexUrl, 'utf8')
 const normalized = html.replaceAll('href="/static/', 'href="/studio/static/')
 

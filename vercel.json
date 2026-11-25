@@ -1,22 +1,6 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "framework": null,
+  "framework": "nextjs",
   "installCommand": "npm install",
-  "buildCommand": "npm run build",
-  "outputDirectory": "web/dist",
-  "rewrites": [
-    {
-      "source": "/studio/:path*",
-      "destination": "/studio/index.html"
-    },
-    {
-      "source": "/((?!api|studio|assets|favicon.svg|robots.txt|sitemap.xml|og-image.svg).*)",
-      "destination": "/index.html"
-    }
-  ],
-  "functions": {
-    "api/feedsync-sync.ts": {
-      "maxDuration": 300
-    }
-  }
+  "buildCommand": "npm run build"
 }

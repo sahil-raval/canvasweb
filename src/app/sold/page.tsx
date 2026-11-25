@@ -1,0 +1,20 @@
+import {SoldListings} from '@/views/Listings'
+import {isSold} from '@/lib/cms/listing'
+import {JsonLd} from '@/components/JsonLd'
+import {getContent} from '@/lib/cms/fetch'
+import {breadcrumbSchema, itemListSchema, staticPageMetadata} from '@/lib/seo'
+
+export async function generateMetadata() {
+  return staticPageMetadata(await getContent(), '/sold')
+}
+
+export default async function Page() {
+  const content = await getContent()
+  const sold = content.listings.filter((l) => isSold(l.status))
+  return (
+    <>
+      <SoldListings />
+      <JsonLd data={[breadcrumbSchema(content, [['Sold', '/sold']]), itemListSchema(content, 'Properties sold by Canvas Real Estate', sold)]} />
+    </>
+  )
+}
