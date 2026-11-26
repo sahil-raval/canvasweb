@@ -24,7 +24,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         url: `${base}${path === '/' ? '' : path}`,
         lastModified: pageSeo(path === '/' ? 'home' : path.slice(1))?._updatedAt,
         changeFrequency,
-        priority,
+        priority: pageSeo(path === '/' ? 'home' : path.slice(1))?.seo?.sitemapPriority ?? priority,
       })),
     ...c.listings
       .filter((l) => !l.seo?.noIndex)
@@ -32,15 +32,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         url: `${base}/listings/${l.slug}`,
         lastModified: l._updatedAt,
         changeFrequency: 'daily' as const,
-        priority: l.status === 'Sold' ? 0.5 : 0.9,
+        priority: l.seo?.sitemapPriority ?? (l.status === 'Sold' ? 0.5 : 0.9),
         images: [l.heroImage].filter(Boolean),
       })),
+    ...c.landingPages
+      .filter((p) => !RESERVED_PAGE_SLUGS.has(p.slug) && !p.seo?.noIndex)
+      .map((p) => ({url: `${base}/${p.slug}`, lastModified: p._updatedAt, changeFrequency: 'weekly' as const, priority: p.seo?.sitemapPriority ?? 0.8})),
     ...c.pages
       .filter((p) => !RESERVED_PAGE_SLUGS.has(p.slug) && !p.seo?.noIndex)
       .map((p) => ({url: `${base}/${p.slug}`, lastModified: p._updatedAt, changeFrequency: 'yearly' as const, priority: 0.3})),
     ...c.suburbs
       .filter((s) => !s.seo?.noIndex)
-      .map((s) => ({url: `${base}/suburbs/${s.slug}`, lastModified: s._updatedAt, changeFrequency: 'weekly' as const, priority: 0.8})),
+      .map((s) => ({url: `${base}/suburbs/${s.slug}`, lastModified: s._updatedAt, changeFrequency: 'weekly' as const, priority: s.seo?.sitemapPriority ?? 0.8})),
     ...c.rentals
       .filter((r) => !r.seo?.noIndex)
       .map((r) => ({url: `${base}/rent/${r.slug}`, lastModified: r._updatedAt, changeFrequency: 'daily' as const, priority: 0.8})),

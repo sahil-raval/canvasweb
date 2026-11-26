@@ -31,6 +31,11 @@ export async function GET() {
     '',
     `${s.businessName} is an independent real estate agency based in ${s.location || 'Geelong, Victoria'}. ${s.serviceArea || ''}`.trim(),
     '',
+    ...(() => {
+      const answers = c.pages.filter((p) => p.seo?.answerSummary && !p.seo?.excludeFromLlms && !p.seo?.noIndex)
+      if (!answers.length) return []
+      return ['## Key facts', ...answers.map((p) => `- ${p.title}: ${p.seo!.answerSummary}${p.seo?.keyTakeaways?.length ? ` (${p.seo.keyTakeaways.join('; ')})` : ''}`), '']
+    })(),
     '## Contact',
     s.phone ? `- Phone: ${s.phone}` : '',
     s.email ? `- Email: ${s.email}` : '',
@@ -65,7 +70,12 @@ export async function GET() {
     `- [Contact and appraisals](${base}/contact)`,
     `- [Journal: Geelong property insights](${base}/journal)`,
     ...(c.suburbs.length ? [`- [Suburb guides](${base}/suburbs)`] : []),
-    ...c.suburbs.map((x) => `  - [${x.name}](${base}/suburbs/${x.slug})${x.intro ? `: ${x.intro}` : ''}`),
+    ...c.landingPages
+      .filter((p) => !p.seo?.noIndex && !p.seo?.excludeFromLlms)
+      .map((p) => `- [${p.sections.find((x) => x._type === 'lpHero')?.heading || p.title}](${base}/${p.slug})${p.seo?.answerSummary ? `: ${p.seo.answerSummary}` : ''}`),
+    ...c.suburbs
+      .filter((x) => !x.seo?.excludeFromLlms)
+      .map((x) => `  - [${x.name}](${base}/suburbs/${x.slug})${x.seo?.answerSummary || x.intro ? `: ${x.seo?.answerSummary || x.intro}` : ''}`),
     ...c.articles.slice(0, 20).map((a) => `  - [${a.title}](${base}/journal/${a.slug}): ${a.excerpt}`),
     '',
   ]

@@ -19,7 +19,7 @@ export default async function Page() {
       <CmsProvider content={scope(content, {articles: content.articles.map((a) => ({...a, body: []})), pages: pagesFor(content, 'journal')})}>
         <Journal />
       </CmsProvider>
-      <PageFaqs content={content} path="/journal" />
+      <PageFaqs content={content} path="/journal" type="CollectionPage" />
       <JsonLd data={breadcrumbSchema(content, [[name, '/journal']])} />
     </>
   )

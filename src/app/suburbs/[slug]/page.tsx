@@ -2,7 +2,7 @@ import {notFound} from 'next/navigation'
 import SuburbView, {listingsIn} from '@/views/SuburbView'
 import {JsonLd} from '@/components/JsonLd'
 import {getContent} from '@/lib/cms/fetch'
-import {breadcrumbSchema, faqSchema, itemListSchema, suburbMetadata, suburbSchema} from '@/lib/seo'
+import {breadcrumbSchema, faqSchema, itemListSchema, suburbMetadata, suburbSchema, webPageSchema} from '@/lib/seo'
 
 type Props = {params: Promise<{slug: string}>}
 
@@ -27,6 +27,7 @@ export default async function Page({params}: Props) {
     breadcrumbSchema(content, [['Suburbs', '/suburbs'], [suburb.name, `/suburbs/${suburb.slug}`]]),
     itemListSchema(content, `Property in ${suburb.name}`, listingsIn(suburb, content.listings)),
     faqSchema(suburb.faqs),
+    webPageSchema(content, {path: `/suburbs/${suburb.slug}`, name: suburb.heading || suburb.name, description: suburb.intro, seo: suburb.seo, image: suburb.heroImage, dateModified: suburb._updatedAt}),
   ].filter((x): x is Record<string, unknown> => !!x)
   return (
     <>

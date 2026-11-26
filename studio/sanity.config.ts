@@ -13,7 +13,7 @@ export default defineConfig({
   title: 'Canvas Real Estate CMS',
   projectId,
   dataset,
-  basePath: '/studio',
+  // The /studio base path is set once, in sanity.cli.ts (setting it here too doubles it).
   plugins: [structureTool({structure}), visionTool({defaultApiVersion: '2026-01-01'})],
   schema: {
     types: schemaTypes,

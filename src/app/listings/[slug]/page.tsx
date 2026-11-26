@@ -1,11 +1,12 @@
 import {notFound} from 'next/navigation'
 import ListingDetail from '@/views/ListingDetail'
+import {AnswerBox} from '@/components/AnswerBox'
 import {JsonLd} from '@/components/JsonLd'
 import {getContent} from '@/lib/cms/fetch'
 import {CmsProvider} from '@/lib/cms/context'
 import {pagesFor, scope} from '@/lib/cms/scope'
 
-import {breadcrumbSchema, listingMetadata, listingSchema} from '@/lib/seo'
+import {breadcrumbSchema, listingMetadata, listingSchema, webPageSchema} from '@/lib/seo'
 
 type Props = {params: Promise<{slug: string}>}
 
@@ -31,14 +32,16 @@ export default async function Page({params}: Props) {
       <CmsProvider content={scope(content, {listings: [listing], agents: content.agents})}>
         <ListingDetail />
       </CmsProvider>
+      <AnswerBox seo={listing.seo} />
       <JsonLd
         data={[
+          webPageSchema(content, {path: `/listings/${listing.slug}`, name: `${listing.address}, ${listing.suburb}`, seo: listing.seo}),
           listingSchema(content, listing),
           breadcrumbSchema(content, [
             sold ? ['Sold', '/sold'] : ['Property for sale', '/listings'],
             [`${listing.address}, ${listing.suburb}`, `/listings/${listing.slug}`],
           ]),
-        ]}
+        ].filter((x): x is Record<string, unknown> => !!x)}
       />
     </>
   )

@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import {ListingCard} from '@/components/ListingCard'
+import {AnswerBox} from '@/components/AnswerBox'
 import {FaqSection} from '@/components/FaqSection'
 import {RichSections} from '@/components/RichSections'
 import {isSold} from '@/lib/cms/listing'
@@ -39,6 +40,8 @@ export default function SuburbView({suburb, listings}: {suburb: CmsSuburb; listi
           {suburb.intro && <p className="max-w-2xl font-sans text-lg text-white/70">{suburb.intro}</p>}
         </div>
       </section>
+
+      <AnswerBox seo={suburb.seo} />
 
       {!!suburb.body?.length && (
         <section className="container mx-auto max-w-3xl px-6 py-16 md:px-12">

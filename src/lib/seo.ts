@@ -1,6 +1,6 @@
 import type {Metadata} from 'next'
 import {SITE_URL} from '@/lib/cms/config'
-import type {CmsArticle, CmsContent, CmsListing, CmsRental, CmsSuburb, Faq, SeoFields} from '@/lib/cms/types'
+import type {CmsArticle, CmsContent, CmsLandingPage, CmsListing, CmsRental, CmsSuburb, Faq, LpSection, SeoFields} from '@/lib/cms/types'
 
 /** Default SEO per route. Any of these can be overridden in Sanity (Page → SEO, or Site settings → Default SEO). */
 export const STATIC_SEO: Record<string, {title: string; description: string; keywords: string[]}> = {
@@ -110,6 +110,7 @@ export function buildMetadata(c: CmsContent, m: MetaInput): Metadata {
   const canonical = s.canonicalUrl || `${base}${m.path === '/' ? '' : m.path}`
   const image = abs(base, s.ogImage || m.image || '/og-image.svg')
   const noIndex = s.noIndex ?? m.noIndex ?? false
+  const noFollow = s.noFollow ?? false
   const socialTitle = s.ogTitle || title
   const socialDescription = s.ogDescription || description
   return {
@@ -118,8 +119,8 @@ export function buildMetadata(c: CmsContent, m: MetaInput): Metadata {
     keywords: s.keywords?.length ? s.keywords : m.keywords,
     alternates: {canonical},
     robots: noIndex
-      ? {index: false, follow: false}
-      : {index: true, follow: true, googleBot: {'max-image-preview': 'large', 'max-snippet': -1, 'max-video-preview': -1}},
+      ? {index: false, follow: !noFollow}
+      : {index: true, follow: !noFollow, googleBot: {'max-image-preview': 'large', 'max-snippet': -1, 'max-video-preview': -1}},
     openGraph: {
       type: m.type ?? 'website',
       locale: 'en_AU',
@@ -127,7 +128,7 @@ export function buildMetadata(c: CmsContent, m: MetaInput): Metadata {
       url: canonical,
       title: socialTitle,
       description: socialDescription,
-      images: [{url: image, alt: socialTitle}],
+      images: [{url: image, alt: s.ogImageAlt || socialTitle}],
       ...(m.publishedTime ? {publishedTime: m.publishedTime} : {}),
       ...(m.modifiedTime ? {modifiedTime: m.modifiedTime} : {}),
     },
@@ -392,3 +393,100 @@ export function suburbSchema(c: CmsContent, sub: CmsSuburb): Json {
 /** Find the Sanity page document for a fixed route ("/" is the "home" page). */
 export const pageFor = (c: CmsContent, path: string) =>
   c.pages.find((p) => p.slug === (path === '/' ? 'home' : path.slice(1)) || (path === '/' && p.slug === '/'))
+
+/* ── Page-level data for answer engines and AI search ──────────────── */
+
+const SCHEMA_TYPES = new Set(['WebPage', 'AboutPage', 'ContactPage', 'CollectionPage', 'FAQPage'])
+
+/**
+ * WebPage data built from the SEO, AEO and GEO fields: the short answer (marked as
+ * speakable for voice assistants), topics, sources, reviewer and review date.
+ * Returns null when none of those fields are filled, so nothing empty is published.
+ */
+export function webPageSchema(
+  c: CmsContent,
+  p: {path: string; name: string; description?: string; seo?: SeoFields; image?: string; dateModified?: string; defaultType?: string},
+): Json | null {
+  const s = p.seo ?? {}
+  const hasExtras = s.answerSummary || s.keyTakeaways?.length || s.aboutEntities?.length || s.sources?.length || s.reviewedBy || s.schemaType
+  if (!hasExtras) return null
+  const base = siteUrlOf(c)
+  const url = `${base}${p.path === '/' ? '' : p.path}`
+  const type = s.schemaType && SCHEMA_TYPES.has(s.schemaType) ? s.schemaType : p.defaultType || 'WebPage'
+  // A service is not a kind of page: describe it as the main thing on a normal web page.
+  const service =
+    s.schemaType === 'Service'
+      ? {
+          mainEntity: {
+            '@type': 'Service',
+            name: s.title || p.name,
+            description: s.answerSummary || s.description || p.description,
+            serviceType: s.focusKeyword || p.name,
+            provider: {'@id': `${base}/#business`},
+            areaServed: {'@type': 'Place', name: 'Greater Geelong'},
+          },
+        }
+      : {}
+  return {
+    '@context': 'https://schema.org',
+    '@type': type,
+    '@id': `${url}#webpage`,
+    url,
+    name: s.title || p.name,
+    description: s.answerSummary || s.description || p.description,
+    inLanguage: 'en-AU',
+    isPartOf: {'@id': `${base}/#website`},
+    publisher: {'@id': `${base}/#business`},
+    ...(p.image ? {primaryImageOfPage: p.image} : {}),
+    ...(p.dateModified ? {dateModified: p.dateModified} : {}),
+    ...(s.lastReviewed ? {lastReviewed: s.lastReviewed} : {}),
+    ...(s.reviewedBy ? {reviewedBy: {'@type': 'Person', name: s.reviewedBy.name, jobTitle: s.reviewedBy.role, worksFor: {'@id': `${base}/#business`}}} : {}),
+    ...(s.keyTakeaways?.length ? {abstract: s.keyTakeaways.join(' ')} : {}),
+    ...(s.keywords?.length || s.focusKeyword ? {keywords: [s.focusKeyword, ...(s.keywords ?? [])].filter(Boolean).join(', ')} : {}),
+    ...(s.aboutEntities?.length
+      ? {about: s.aboutEntities.map((e) => ({'@type': 'Thing', name: e.name, ...(e.url ? {sameAs: e.url} : {})}))}
+      : {}),
+    ...(s.sources?.length ? {citation: s.sources.map((x) => ({'@type': 'CreativeWork', name: x.title, url: x.url}))} : {}),
+    ...(s.answerSummary && s.speakable !== false
+      ? {speakable: {'@type': 'SpeakableSpecification', cssSelector: ['.answer-summary']}}
+      : {}),
+    ...service,
+  }
+}
+
+/** HowTo data for a "Steps" section that is marked as a how-to guide. */
+export function howToSchema(name: string, steps: LpSection): Json | null {
+  const items = (steps.items ?? []).filter((x) => x.title)
+  if (!steps.markAsHowTo || items.length < 2) return null
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'HowTo',
+    name: steps.heading || name,
+    step: items.map((x, i) => ({'@type': 'HowToStep', position: i + 1, name: x.title, text: x.description || x.title})),
+  }
+}
+
+export function landingMetadata(c: CmsContent, lp: CmsLandingPage): Metadata {
+  const hero = lp.sections.find((x) => x._type === 'lpHero')
+  return buildMetadata(c, {
+    path: `/${lp.slug}`,
+    title: `${hero?.heading || lp.title} | ${c.siteSettings.businessName}`,
+    description: lp.seo?.answerSummary || hero?.subheading || `${lp.title} - ${c.siteSettings.businessName}, Geelong.`,
+    image: hero?.image,
+    modifiedTime: lp._updatedAt,
+    seo: lp.seo,
+  })
+}
+
+/** All structured data for a landing page: WebPage extras, breadcrumbs, FAQs and how-to steps. */
+export function landingSchemas(c: CmsContent, lp: CmsLandingPage): Json[] {
+  const hero = lp.sections.find((x) => x._type === 'lpHero')
+  const name = hero?.heading || lp.title
+  const faqs = lp.sections.filter((x) => x._type === 'lpFaq').flatMap((x) => (x.items ?? []).map((i) => ({question: i.question || '', answer: i.answer || ''})))
+  return [
+    webPageSchema(c, {path: `/${lp.slug}`, name, description: hero?.subheading, seo: lp.seo, image: hero?.image, dateModified: lp._updatedAt}),
+    breadcrumbSchema(c, [[name, `/${lp.slug}`]]),
+    faqSchema(faqs),
+    ...lp.sections.filter((x) => x._type === 'lpSteps').map((x) => howToSchema(name, x)),
+  ].filter((x): x is Json => !!x)
+}

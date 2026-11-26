@@ -1,25 +1,33 @@
 import {notFound} from 'next/navigation'
+import {AnswerBox} from '@/components/AnswerBox'
+import LandingPageView from '@/views/LandingPageView'
 import {FaqSection} from '@/components/FaqSection'
 import {JsonLd} from '@/components/JsonLd'
 import {RichSections} from '@/components/RichSections'
 import {getContent} from '@/lib/cms/fetch'
 import {RESERVED_PAGE_SLUGS} from '@/lib/cms/routes'
 import type {CmsContent} from '@/lib/cms/types'
-import {breadcrumbSchema, buildMetadata, faqSchema} from '@/lib/seo'
+import {breadcrumbSchema, buildMetadata, faqSchema, landingMetadata, landingSchemas, webPageSchema} from '@/lib/seo'
 
-/** General pages created in Sanity (e.g. Privacy Policy). */
+/** Landing pages (built from sections) and general pages (e.g. Privacy Policy) created in Sanity. */
 type Props = {params: Promise<{slug: string}>}
 
 const findPage = (c: CmsContent, slug: string) =>
   RESERVED_PAGE_SLUGS.has(slug) ? undefined : c.pages.find((p) => p.slug === slug)
+const findLanding = (c: CmsContent, slug: string) =>
+  RESERVED_PAGE_SLUGS.has(slug) ? undefined : c.landingPages.find((p) => p.slug === slug)
 
 export async function generateStaticParams() {
-  return (await getContent()).pages.filter((p) => !RESERVED_PAGE_SLUGS.has(p.slug)).map((p) => ({slug: p.slug}))
+  const c = await getContent()
+  const slugs = new Set([...c.landingPages.map((p) => p.slug), ...c.pages.map((p) => p.slug)])
+  return [...slugs].filter((slug) => !RESERVED_PAGE_SLUGS.has(slug)).map((slug) => ({slug}))
 }
 
 export async function generateMetadata({params}: Props) {
   const {slug} = await params
   const c = await getContent()
+  const landing = findLanding(c, slug)
+  if (landing) return landingMetadata(c, landing)
   const page = findPage(c, slug)
   if (!page) return {}
   return buildMetadata(c, {
@@ -35,9 +43,19 @@ export async function generateMetadata({params}: Props) {
 export default async function Page({params}: Props) {
   const {slug} = await params
   const c = await getContent()
+  const landing = findLanding(c, slug)
+  if (landing) {
+    return (
+      <>
+        <LandingPageView page={landing} content={c} />
+        <JsonLd data={landingSchemas(c, landing)} />
+      </>
+    )
+  }
   const page = findPage(c, slug)
   if (!page) notFound()
   const faq = faqSchema(page.faqs)
+  const webPage = webPageSchema(c, {path: `/${slug}`, name: page.title || slug, description: page.intro, seo: page.seo, dateModified: page._updatedAt})
   return (
     <div className="min-h-screen bg-[#FAF8F5]">
       <section className="pb-16 pt-36" style={{background: 'linear-gradient(145deg, #371628 0%, #1a0d14 100%)'}}>
@@ -47,6 +65,7 @@ export default async function Page({params}: Props) {
           {page.intro && <p className="max-w-2xl font-sans text-lg text-white/65">{page.intro}</p>}
         </div>
       </section>
+      <AnswerBox seo={page.seo} />
       <article className="container mx-auto max-w-3xl px-6 py-16 md:px-12">
         <RichSections sections={page.body} />
         {page._updatedAt && (
@@ -56,7 +75,7 @@ export default async function Page({params}: Props) {
         )}
       </article>
       <FaqSection faqs={page.faqs} />
-      <JsonLd data={[breadcrumbSchema(c, [[page.title || slug, `/${slug}`]]), ...(faq ? [faq] : [])]} />
+      <JsonLd data={[breadcrumbSchema(c, [[page.title || slug, `/${slug}`]]), ...(faq ? [faq] : []), ...(webPage ? [webPage] : [])]} />
     </div>
   )
 }

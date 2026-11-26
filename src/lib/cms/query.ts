@@ -1,3 +1,21 @@
+/** Every SEO / AEO / GEO field, projected the same way for all document types. */
+const SEO = `{
+  title, description, focusKeyword, keywords, schemaType,
+  answerSummary, keyTakeaways, speakable,
+  aboutEntities[]{name, url}, sources[]{title, url},
+  "reviewedBy": reviewedBy->{name, role, "key": coalesce(key.current, key)}, lastReviewed, excludeFromLlms,
+  ogTitle, ogDescription, "ogImage": ogImage.asset->url, ogImageAlt, twitterCard,
+  noIndex, noFollow, canonicalUrl, sitemapPriority
+}`
+
+const SECTIONS = `sections[]{
+  _key, _type, eyebrow, heading, subheading, intro, show, suburbs, limit, markAsHowTo,
+  "body": select(_type == "lpText" => body[]{_key, type, text}, body),
+  "image": image.asset->url, imageAlt, imageOnRight,
+  primaryCta, secondaryCta, cta,
+  "items": items[]{title, description, href, value, label, source, question, answer}
+}`
+
 /** One query for all public website content (published documents only). */
 export const CONTENT_QUERY = `{
   "siteSettings": *[_type == "siteSettings"][0]{
@@ -19,11 +37,7 @@ export const CONTENT_QUERY = `{
     licenceNumber,
     abn,
     socialLinks[]{platform, url},
-    "defaultSeo": defaultSeo{
-      title, description, keywords, canonicalUrl, noIndex,
-      ogTitle, ogDescription, "ogImage": ogImage.asset->url,
-      twitterCard, focusKeyword
-    }
+    "defaultSeo": defaultSeo${SEO}
   },
   "pages": *[_type == "page" && defined(slug.current)]{
     title,
@@ -37,11 +51,7 @@ export const CONTENT_QUERY = `{
     _updatedAt,
     "faqs": faqs[]{question, answer},
     body[]{_key, type, text},
-    "seo": seo{
-      title, description, keywords, canonicalUrl, noIndex,
-      ogTitle, ogDescription, "ogImage": ogImage.asset->url,
-      twitterCard, focusKeyword
-    },
+    "seo": seo${SEO},
     "aboutContent": {
       "manifestoEyebrow": aboutContent.manifestoEyebrow,
       "manifesto": aboutContent.manifesto,
@@ -77,41 +87,25 @@ export const CONTENT_QUERY = `{
     "floorPlanImage": floorPlanImage.asset->url,
     "floorPlanPdf": floorPlanPdf.asset->url,
     soi{method, indicativeRange, comparableSales[]{address, suburb, saleDate, salePrice, beds, baths, land}},
-    "seo": seo{
-      title, description, keywords, canonicalUrl, noIndex,
-      ogTitle, ogDescription, "ogImage": ogImage.asset->url,
-      twitterCard, focusKeyword
-    }
+    "seo": seo${SEO}
   },
   "rentals": *[_type == "rental" && defined(slug.current)] | order(_createdAt desc){
     "slug": slug.current, _updatedAt, address, suburb, state, rentPw, bond, available,
     leaseLength, beds, baths, cars, land, type, furnished, petsConsidered,
     "heroImage": heroImage.asset->url, "gallery": gallery[].asset->url,
     description, features, "agent": coalesce(agent->key.current, agent->key),
-    "seo": seo{
-      title, description, keywords, canonicalUrl, noIndex,
-      ogTitle, ogDescription, "ogImage": ogImage.asset->url,
-      twitterCard, focusKeyword
-    }
+    "seo": seo${SEO}
   },
   "articles": *[_type == "journalArticle" && defined(slug.current)] | order(publishedAt desc){
     "slug": slug.current, _updatedAt, category, categoryColor, title, subtitle, excerpt,
     body[]{_key, type, text}, "author": coalesce(author->key.current, author->key), "date": coalesce(displayDate, publishedAt),
     readTime, "image": image.asset->url, featured,
-    "seo": seo{
-      title, description, keywords, canonicalUrl, noIndex,
-      ogTitle, ogDescription, "ogImage": ogImage.asset->url,
-      twitterCard, focusKeyword
-    }
+    "seo": seo${SEO}
   },
   "agents": *[_type == "agent"] | order(name asc){
     "key": coalesce(key.current, key), name, role, bio, phone, email,
     "photo": photo.asset->url,
-    "seo": seo{
-      title, description, keywords, canonicalUrl, noIndex,
-      ogTitle, ogDescription, "ogImage": ogImage.asset->url,
-      twitterCard, focusKeyword
-    }
+    "seo": seo${SEO}
   },
   "reviews": *[_type == "review" && !(_id in path("drafts.**"))] | order(coalesce(date, _createdAt) desc)[0...40]{
     _id, authorName, rating, text, suburb, service, source, link, date, featured,
@@ -122,10 +116,11 @@ export const CONTENT_QUERY = `{
     "heroImage": heroImage.asset->url,
     body[]{_key, type, text},
     "faqs": faqs[]{question, answer},
-    "seo": seo{
-      title, description, keywords, canonicalUrl, noIndex,
-      ogTitle, ogDescription, "ogImage": ogImage.asset->url,
-      twitterCard, focusKeyword
-    }
+    "seo": seo${SEO}
+  },
+  "landingPages": *[_type == "landingPage" && defined(slug.current) && !(_id in path("drafts.**"))]{
+    title, "slug": slug.current, _updatedAt, showInFooter,
+    ${SECTIONS},
+    "seo": seo${SEO}
   }
 }`;

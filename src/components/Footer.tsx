@@ -12,7 +12,7 @@ const SOCIAL_ICONS = { facebook: Facebook, instagram: Instagram, linkedin: Linke
 const telHref = (phone: string) => `tel:${phone.replace(/[^\d+]/g, "")}`;
 
 export function Footer() {
-  const { siteSettings: s, suburbs, pages } = useCms();
+  const { siteSettings: s, suburbs, pages, landingPages } = useCms();
   const rating = googleRating(s);
   const legal = LEGAL_PAGES.filter((l) => pages.some((p) => p.slug === l.slug));
   const phone = s.phone || "0469 131 347";
@@ -67,6 +67,7 @@ export function Footer() {
                   { label: "Current Listings", href: "/listings" },
                   { label: "Sold Properties", href: "/sold" },
                   ...(suburbs.length ? [{ label: "Suburb Guides", href: "/suburbs" }] : []),
+                  ...landingPages.filter((l) => l.showInFooter).map((l) => ({ label: l.title, href: `/${l.slug}` })),
                   { label: "About Us", href: "/about" },
                   { label: "Contact Us", href: "/contact" },
                   { label: "Appraisal", href: "/contact" },

@@ -19,7 +19,7 @@ export default async function Page() {
       <CmsProvider content={scope(content, {pages: pagesFor(content, 'about'), agents: content.agents})}>
         <About />
       </CmsProvider>
-      <PageFaqs content={content} path="/about" />
+      <PageFaqs content={content} path="/about" type="AboutPage" />
       <JsonLd data={breadcrumbSchema(content, [[name, '/about']])} />
     </>
   )

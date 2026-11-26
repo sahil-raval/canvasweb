@@ -89,16 +89,33 @@ export interface Article {
 }
 
 export interface SeoFields {
+  // Google search
   title?: string;
   description?: string;
+  focusKeyword?: string;
   keywords?: string[];
-  canonicalUrl?: string;
-  noIndex?: boolean;
+  schemaType?: string;
+  // Answer engines
+  answerSummary?: string;
+  keyTakeaways?: string[];
+  speakable?: boolean;
+  // AI search
+  aboutEntities?: Array<{ name: string; url?: string }>;
+  sources?: Array<{ title: string; url: string }>;
+  reviewedBy?: { name: string; role?: string; key?: string } | null;
+  lastReviewed?: string;
+  excludeFromLlms?: boolean;
+  // Social
   ogTitle?: string;
   ogDescription?: string;
   ogImage?: string;
+  ogImageAlt?: string;
   twitterCard?: "summary" | "summary_large_image";
-  focusKeyword?: string;
+  // Indexing
+  noIndex?: boolean;
+  noFollow?: boolean;
+  canonicalUrl?: string;
+  sitemapPriority?: number;
 }
 
 export interface BusinessAddress {
@@ -217,6 +234,38 @@ export interface CmsReview {
   agent?: string;
 }
 
+export interface LpCta { label?: string; href?: string }
+export interface LpItem { title?: string; description?: string; href?: string; value?: string; label?: string; source?: string; question?: string; answer?: string }
+export interface LpSection {
+  _key: string;
+  _type: "lpHero" | "lpText" | "lpImageText" | "lpCards" | "lpSteps" | "lpStats" | "lpListings" | "lpReviews" | "lpFaq" | "lpCta" | "lpForm";
+  eyebrow?: string;
+  heading?: string;
+  subheading?: string;
+  intro?: string;
+  /** Rich sections for "Text", plain text for the other section types. */
+  body?: string | Array<{ _key?: string; type: "paragraph" | "heading" | "pullquote" | "divider"; text?: string }> | null;
+  image?: string;
+  imageAlt?: string;
+  imageOnRight?: boolean;
+  primaryCta?: LpCta | null;
+  secondaryCta?: LpCta | null;
+  cta?: LpCta | null;
+  items?: LpItem[] | null;
+  show?: "current" | "sold" | "all";
+  suburbs?: string[] | null;
+  limit?: number;
+  markAsHowTo?: boolean;
+}
+export interface CmsLandingPage {
+  title: string;
+  slug: string;
+  _updatedAt?: string;
+  showInFooter?: boolean;
+  sections: LpSection[];
+  seo?: SeoFields;
+}
+
 export interface CmsContent {
   siteSettings: SiteSettings;
   listings: CmsListing[];
@@ -226,4 +275,5 @@ export interface CmsContent {
   agents: CmsAgent[];
   suburbs: CmsSuburb[];
   reviews: CmsReview[];
+  landingPages: CmsLandingPage[];
 }

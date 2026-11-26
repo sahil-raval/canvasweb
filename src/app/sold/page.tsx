@@ -20,7 +20,7 @@ export default async function Page() {
       <CmsProvider content={scope(content, {listings: sold, pages: pagesFor(content, 'sold', 'listings')})}>
         <SoldListings />
       </CmsProvider>
-      <PageFaqs content={content} path="/sold" />
+      <PageFaqs content={content} path="/sold" type="CollectionPage" />
       <JsonLd data={[breadcrumbSchema(content, [['Sold', '/sold']]), itemListSchema(content, 'Properties sold by Canvas Real Estate', sold)]} />
     </>
   )

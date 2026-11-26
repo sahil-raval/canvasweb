@@ -51,12 +51,23 @@ public/images/          static images
 | "Thinking of buying or selling?" box on articles | Pages → journal → Journal sections | Every article |
 | Any other page (e.g. `privacy-policy`, `terms`, `disclaimer`) | Pages → new page with that slug | `/<slug>`; legal pages are linked in the footer automatically |
 | Suburb guides | Suburb pages | `/suburbs/<slug>`, with that suburb's Agentbox listings added automatically |
+| New landing pages (campaigns, services, "sell my house Geelong" …) | Landing pages → + | `/<web address>`. Built from sections: Hero, Text, Image + text, Cards, Steps, Numbers, Listings, Reviews, FAQs, Call to action, Enquiry form. Tick "Link in footer" to add it to the footer |
 | Journal articles, agents | Journal, Agents | `/journal`, agent cards, home team section |
 
 Buttons and form labels ("View PDF", "Back to Listings", field names) stay in code on purpose: they are interface text, not content.
 | Client reviews | Reviews (one per review, copied exactly) | Home page review slider, `llms.txt` |
 | Google rating, review count, "read" and "leave a review" links | Site settings → Reviews | Rating badges (hidden until filled in), review buttons |
 | Listing details | Agentbox (not Sanity) | Listing pages. Only the SEO tab of a listing is edited in Sanity |
+
+**SEO, AEO & GEO tab (every page type):**
+
+- *Google search*: SEO title, meta description, focus keyword, related keywords, page type.
+- *Answer engines (AEO)*: **Short answer** (40–60 words, shown on the page as "In short" and marked
+  for voice assistants) and **Key points**. Fill these on every important page.
+- *AI search (GEO)*: topics with Wikipedia/official links, sources for facts, the agent who checked
+  the page and the date. These build trust with ChatGPT, Perplexity and Google AI Overviews.
+- *Social sharing*: title, description, image and image description.
+- *Indexing*: hide from search, no-follow, canonical URL, sitemap priority, leave out of llms.txt.
 
 **Reviews:** the site shows only the Google rating you type in Site settings, so it never shows an
 unchecked number. Update it when it changes. What actually helps local ranking is the number and

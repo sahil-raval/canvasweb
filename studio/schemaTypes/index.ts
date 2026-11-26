@@ -15,19 +15,61 @@ const slugValidation = (rule: any) =>
       : 'Use lowercase letters, numbers, and hyphens only',
   )
 
+/**
+ * SEO, AEO (answer engines) and GEO (AI search) settings shared by every page type.
+ * Everything is optional: empty fields fall back to sensible defaults built from the page content.
+ */
 const seo = defineType({
-  name: 'seo', title: 'SEO & Social Sharing', type: 'object',
+  name: 'seo', title: 'SEO, AEO & GEO', type: 'object',
+  fieldsets: [
+    {name: 'search', title: 'Google search', options: {collapsible: true, collapsed: false}},
+    {name: 'answers', title: 'Answer engines (AEO): featured snippets, voice, AI overviews', options: {collapsible: true, collapsed: false}},
+    {name: 'ai', title: 'AI search (GEO): ChatGPT, Perplexity, Gemini, Claude', options: {collapsible: true, collapsed: true}},
+    {name: 'social', title: 'Social sharing', options: {collapsible: true, collapsed: true}},
+    {name: 'indexing', title: 'Indexing & crawling', options: {collapsible: true, collapsed: true}},
+  ],
   fields: [
-    defineField({name: 'title', title: 'SEO title', type: 'string', description: 'Optional override. Aim for 50–60 characters.', validation: (r) => r.max(60).warning()}),
-    defineField({name: 'description', title: 'Meta description', type: 'text', rows: 3, description: 'Optional override. Aim for 150–160 characters.', validation: (r) => r.max(160).warning()}),
-    defineField({name: 'focusKeyword', title: 'Focus keyword', type: 'string'}),
-    defineField({name: 'keywords', title: 'Related keywords', type: 'array', of: [defineArrayMember({type: 'string'})], options: {layout: 'tags'}, validation: (r) => r.unique().max(12)}),
-    defineField({name: 'canonicalUrl', title: 'Canonical URL override', type: 'url', validation: (r) => r.uri({scheme: ['http', 'https']})}),
-    defineField({name: 'noIndex', title: 'Hide from search engines', type: 'boolean', initialValue: false}),
-    defineField({name: 'ogTitle', title: 'Social title override', type: 'string', validation: (r) => r.max(70).warning()}),
-    defineField({name: 'ogDescription', title: 'Social description override', type: 'text', rows: 3, validation: (r) => r.max(200).warning()}),
-    defineField({name: 'ogImage', title: 'Social image', type: 'image', description: 'Recommended: 1200 × 630px.', options: {hotspot: true}}),
-    defineField({name: 'twitterCard', title: 'X / Twitter card', type: 'string', options: {list: [{title: 'Large image', value: 'summary_large_image'}, {title: 'Summary', value: 'summary'}], layout: 'radio'}, initialValue: 'summary_large_image'}),
+    // Google search
+    defineField({name: 'title', title: 'SEO title', type: 'string', fieldset: 'search', description: 'Shown as the blue link in Google. Put the main keyword first and the brand last. 50–60 characters.', validation: (r) => r.max(60).warning('Over 60 characters may be cut off in Google.')}),
+    defineField({name: 'description', title: 'Meta description', type: 'text', rows: 3, fieldset: 'search', description: 'The grey text under the link in Google. Say what the page offers and include a reason to click. 140–160 characters.', validation: (r) => r.max(160).warning('Over 160 characters may be cut off.')}),
+    defineField({name: 'focusKeyword', title: 'Focus keyword', type: 'string', fieldset: 'search', description: 'The one search phrase this page should rank for, e.g. "real estate agents Armstrong Creek". Use it in the SEO title, the main heading and the first paragraph.'}),
+    defineField({name: 'keywords', title: 'Related keywords', type: 'array', fieldset: 'search', of: [defineArrayMember({type: 'string'})], options: {layout: 'tags'}, description: 'Other phrases people search for. Use them naturally in the text.', validation: (r) => r.unique().max(12)}),
+    defineField({name: 'schemaType', title: 'Page type for search engines', type: 'string', fieldset: 'search', description: 'Helps Google understand the page. Leave empty for automatic.', options: {list: [
+      {title: 'Automatic', value: ''}, {title: 'Web page', value: 'WebPage'}, {title: 'About page', value: 'AboutPage'},
+      {title: 'Contact page', value: 'ContactPage'}, {title: 'Collection / listings page', value: 'CollectionPage'},
+      {title: 'FAQ page', value: 'FAQPage'}, {title: 'Service page', value: 'Service'},
+    ]}}),
+
+    // AEO
+    defineField({name: 'answerSummary', title: 'Short answer', type: 'text', rows: 3, fieldset: 'answers', description: 'A direct 40–60 word answer to the main question this page answers. Start with the answer itself. Shown on the page as "In short" and used by Google, voice assistants and AI tools.', validation: (r) => r.max(400).warning('Keep it short: 40–60 words works best.')}),
+    defineField({name: 'keyTakeaways', title: 'Key points', type: 'array', fieldset: 'answers', of: [defineArrayMember({type: 'string'})], description: '3–5 one-line facts or takeaways. Shown on the page as a bullet list.', validation: (r) => r.max(6)}),
+    defineField({name: 'speakable', title: 'Mark the short answer for voice assistants', type: 'boolean', fieldset: 'answers', initialValue: true, description: 'Tells Google Assistant which text to read aloud.'}),
+
+    // GEO
+    defineField({name: 'aboutEntities', title: 'Topics this page is about', type: 'array', fieldset: 'ai', description: 'Places, organisations or concepts the page covers, each with a link to its Wikipedia or official page, e.g. "Armstrong Creek, Victoria" → Wikipedia. Helps AI tools connect your page to the right topic.', of: [defineArrayMember({type: 'object', fields: [
+      defineField({name: 'name', type: 'string', validation: (r) => r.required()}),
+      defineField({name: 'url', title: 'Reference link (Wikipedia, Wikidata or official site)', type: 'url'}),
+    ], preview: {select: {title: 'name', subtitle: 'url'}}})], validation: (r) => r.max(8)}),
+    defineField({name: 'sources', title: 'Sources and references', type: 'array', fieldset: 'ai', description: 'Where the facts on this page come from (council, ABS census, REIV, CoreLogic …). AI tools trust and cite pages with clear sources.', of: [defineArrayMember({type: 'object', fields: [
+      defineField({name: 'title', type: 'string', validation: (r) => r.required()}),
+      defineField({name: 'url', type: 'url', validation: (r) => r.required()}),
+    ], preview: {select: {title: 'title', subtitle: 'url'}}})], validation: (r) => r.max(10)}),
+    defineField({name: 'reviewedBy', title: 'Written or checked by', type: 'reference', to: [{type: 'agent'}], fieldset: 'ai', description: 'The agent who stands behind the content. Shows real expertise (E-E-A-T).'}),
+    defineField({name: 'lastReviewed', title: 'Last checked on', type: 'date', fieldset: 'ai', description: 'Update when you re-check the facts. Fresh, dated content is preferred by AI search.'}),
+    defineField({name: 'excludeFromLlms', title: 'Leave out of llms.txt (AI summary file)', type: 'boolean', fieldset: 'ai', initialValue: false}),
+
+    // Social
+    defineField({name: 'ogTitle', title: 'Social title', type: 'string', fieldset: 'social', description: 'Title when shared on Facebook, LinkedIn, WhatsApp. Defaults to the SEO title.', validation: (r) => r.max(70).warning()}),
+    defineField({name: 'ogDescription', title: 'Social description', type: 'text', rows: 3, fieldset: 'social', validation: (r) => r.max(200).warning()}),
+    defineField({name: 'ogImage', title: 'Social image', type: 'image', fieldset: 'social', description: '1200 × 630px. Defaults to the page image.', options: {hotspot: true}}),
+    defineField({name: 'ogImageAlt', title: 'Social image description', type: 'string', fieldset: 'social', description: 'Describe the image for screen readers and platforms.'}),
+    defineField({name: 'twitterCard', title: 'X / Twitter card', type: 'string', fieldset: 'social', options: {list: [{title: 'Large image', value: 'summary_large_image'}, {title: 'Summary', value: 'summary'}], layout: 'radio'}, initialValue: 'summary_large_image'}),
+
+    // Indexing
+    defineField({name: 'noIndex', title: 'Hide from search engines', type: 'boolean', fieldset: 'indexing', initialValue: false, description: 'Use for thank-you pages, drafts or duplicate pages.'}),
+    defineField({name: 'noFollow', title: 'Do not follow links on this page', type: 'boolean', fieldset: 'indexing', initialValue: false}),
+    defineField({name: 'canonicalUrl', title: 'Canonical URL', type: 'url', fieldset: 'indexing', description: 'Only if this page copies another page. Points Google to the original.', validation: (r) => r.uri({scheme: ['http', 'https']})}),
+    defineField({name: 'sitemapPriority', title: 'Sitemap priority', type: 'number', fieldset: 'indexing', description: '0.1 (low) to 1.0 (high). Leave empty for automatic.', validation: (r) => r.min(0.1).max(1)}),
   ],
 })
 
@@ -417,6 +459,153 @@ const page = defineType({
   ],
 })
 
+
+/* ── Landing page builder ─────────────────────────────────────────────────
+   A landing page is a list of sections. Add, remove and reorder them freely. */
+
+const RESERVED_SLUGS = ['listings', 'sold', 'rent', 'about', 'contact', 'journal', 'suburbs', 'studio', 'api', 'home']
+
+const cta = (name: string, title: string) => defineField({
+  name, title, type: 'object', options: {columns: 2},
+  fields: [defineField({name: 'label', type: 'string'}), defineField({name: 'href', title: 'Link', type: 'string', description: 'e.g. /contact, /listings, #form or a full URL'})],
+})
+
+const sectionHeading = [
+  defineField({name: 'eyebrow', title: 'Small label above heading', type: 'string'}),
+  defineField({name: 'heading', type: 'string'}),
+]
+
+const lpHero = defineType({
+  name: 'lpHero', title: 'Hero (top banner)', type: 'object',
+  fields: [
+    ...sectionHeading,
+    defineField({name: 'subheading', type: 'text', rows: 3}),
+    defineField({name: 'image', title: 'Background image', type: 'image', options: {hotspot: true}}),
+    defineField({name: 'imageAlt', title: 'Image description', type: 'string'}),
+    cta('primaryCta', 'Main button'),
+    cta('secondaryCta', 'Second button'),
+  ],
+  preview: {select: {title: 'heading', media: 'image'}, prepare: ({title, media}) => ({title: title || 'Hero', subtitle: 'Hero', media})},
+})
+
+const lpText = defineType({
+  name: 'lpText', title: 'Text', type: 'object',
+  fields: [...sectionHeading, defineField({name: 'body', type: 'array', of: [defineArrayMember({type: 'articleSection'})]})],
+  preview: {select: {title: 'heading'}, prepare: ({title}) => ({title: title || 'Text', subtitle: 'Text'})},
+})
+
+const lpImageText = defineType({
+  name: 'lpImageText', title: 'Image + text', type: 'object',
+  fields: [
+    ...sectionHeading,
+    defineField({name: 'body', type: 'text', rows: 6}),
+    defineField({name: 'image', type: 'image', options: {hotspot: true}}),
+    defineField({name: 'imageAlt', title: 'Image description', type: 'string'}),
+    defineField({name: 'imageOnRight', title: 'Image on the right', type: 'boolean', initialValue: false}),
+    cta('cta', 'Button'),
+  ],
+  preview: {select: {title: 'heading', media: 'image'}, prepare: ({title, media}) => ({title: title || 'Image + text', subtitle: 'Image + text', media})},
+})
+
+const lpCards = defineType({
+  name: 'lpCards', title: 'Cards (benefits / services)', type: 'object',
+  fields: [
+    ...sectionHeading,
+    defineField({name: 'intro', type: 'text', rows: 2}),
+    defineField({name: 'items', type: 'array', validation: (r) => r.max(8), of: [defineArrayMember({type: 'object', fields: [
+      defineField({name: 'title', type: 'string'}), defineField({name: 'description', type: 'text', rows: 3}), defineField({name: 'href', title: 'Link (optional)', type: 'string'}),
+    ], preview: {select: {title: 'title', subtitle: 'description'}}})]}),
+  ],
+  preview: {select: {title: 'heading'}, prepare: ({title}) => ({title: title || 'Cards', subtitle: 'Cards'})},
+})
+
+const lpSteps = defineType({
+  name: 'lpSteps', title: 'Steps (how it works)', type: 'object',
+  fields: [
+    ...sectionHeading,
+    defineField({name: 'items', title: 'Steps', type: 'array', validation: (r) => r.max(8), of: [defineArrayMember({type: 'object', fields: [
+      defineField({name: 'title', type: 'string'}), defineField({name: 'description', type: 'text', rows: 3}),
+    ], preview: {select: {title: 'title', subtitle: 'description'}}})]}),
+    defineField({name: 'markAsHowTo', title: 'Mark as a how-to guide for search engines', type: 'boolean', initialValue: false}),
+  ],
+  preview: {select: {title: 'heading'}, prepare: ({title}) => ({title: title || 'Steps', subtitle: 'Steps'})},
+})
+
+const lpStats = defineType({
+  name: 'lpStats', title: 'Numbers / stats', type: 'object',
+  fields: [
+    ...sectionHeading,
+    defineField({name: 'items', type: 'array', validation: (r) => r.max(6), of: [defineArrayMember({type: 'object', fields: [
+      defineField({name: 'value', type: 'string', description: 'e.g. "28 days" or "$745k"'}), defineField({name: 'label', type: 'string'}),
+      defineField({name: 'source', title: 'Source (shown small)', type: 'string', description: 'Where the number comes from. Required for market figures.'}),
+    ], preview: {select: {title: 'value', subtitle: 'label'}}})]}),
+  ],
+  preview: {select: {title: 'heading'}, prepare: ({title}) => ({title: title || 'Numbers', subtitle: 'Numbers'})},
+})
+
+const lpListings = defineType({
+  name: 'lpListings', title: 'Listings from Agentbox', type: 'object',
+  fields: [
+    ...sectionHeading,
+    defineField({name: 'show', type: 'string', options: {list: [{title: 'For sale', value: 'current'}, {title: 'Sold', value: 'sold'}, {title: 'Both', value: 'all'}], layout: 'radio'}, initialValue: 'current'}),
+    defineField({name: 'suburbs', title: 'Only these suburbs (optional)', type: 'array', of: [defineArrayMember({type: 'string'})], options: {layout: 'tags'}}),
+    defineField({name: 'limit', title: 'How many', type: 'number', initialValue: 6, validation: (r) => r.min(1).max(24).integer()}),
+  ],
+  preview: {select: {title: 'heading', show: 'show'}, prepare: ({title, show}) => ({title: title || 'Listings', subtitle: `Listings (${show || 'current'})`})},
+})
+
+const lpReviews = defineType({
+  name: 'lpReviews', title: 'Reviews', type: 'object',
+  fields: [...sectionHeading, defineField({name: 'limit', title: 'How many', type: 'number', initialValue: 3, validation: (r) => r.min(1).max(12).integer()})],
+  preview: {select: {title: 'heading'}, prepare: ({title}) => ({title: title || 'Reviews', subtitle: 'Reviews'})},
+})
+
+const lpFaq = defineType({
+  name: 'lpFaq', title: 'FAQs', type: 'object',
+  fields: [...sectionHeading, defineField({name: 'items', title: 'Questions', type: 'array', of: [defineArrayMember({type: 'faqItem'})], validation: (r) => r.max(15)})],
+  preview: {select: {title: 'heading'}, prepare: ({title}) => ({title: title || 'FAQs', subtitle: 'FAQs'})},
+})
+
+const lpCta = defineType({
+  name: 'lpCta', title: 'Call to action band', type: 'object',
+  fields: [...sectionHeading, defineField({name: 'body', type: 'text', rows: 3}), cta('cta', 'Button')],
+  preview: {select: {title: 'heading'}, prepare: ({title}) => ({title: title || 'Call to action', subtitle: 'Call to action'})},
+})
+
+const lpForm = defineType({
+  name: 'lpForm', title: 'Enquiry form', type: 'object',
+  fields: [...sectionHeading, defineField({name: 'body', type: 'text', rows: 3})],
+  preview: {select: {title: 'heading'}, prepare: ({title}) => ({title: title || 'Enquiry form', subtitle: 'Enquiry form'})},
+})
+
+const landingPage = defineType({
+  name: 'landingPage', title: 'Landing page', type: 'document', icon: DocumentIcon,
+  groups: [{name: 'content', title: 'Content', default: true}, {name: 'seo', title: 'SEO, AEO & GEO'}],
+  fields: [
+    defineField({name: 'title', title: 'Internal title', type: 'string', group: 'content', validation: (r) => r.required()}),
+    defineField({
+      name: 'slug', title: 'Web address', type: 'slug', group: 'content',
+      description: 'The page will live at canvasrealestate.com.au/<this>. Use the search phrase, e.g. "sell-my-house-geelong".',
+      options: {source: 'title', maxLength: 80},
+      validation: (r) => r.required().custom((slug: {current?: string} | undefined) => {
+        const v = slug?.current || ''
+        if (!/^[a-z0-9-]+$/.test(v)) return 'Use lowercase letters, numbers and hyphens only'
+        if (RESERVED_SLUGS.includes(v)) return `"${v}" is already used by the website`
+        return true
+      }),
+    }),
+    defineField({
+      name: 'sections', title: 'Sections', type: 'array', group: 'content',
+      description: 'Build the page from sections. Drag to reorder. Start with a Hero.',
+      of: [lpHero, lpText, lpImageText, lpCards, lpSteps, lpStats, lpListings, lpReviews, lpFaq, lpCta, lpForm].map((t) => defineArrayMember({type: t.name})),
+      validation: (r) => r.required().min(1),
+    }),
+    defineField({name: 'showInFooter', title: 'Link in footer', type: 'boolean', group: 'content', initialValue: false}),
+    defineField({name: 'seo', type: 'seo', group: 'seo'}),
+  ],
+  preview: {select: {title: 'title', slug: 'slug.current'}, prepare: ({title, slug}) => ({title, subtitle: slug ? `/${slug}` : 'No address yet'})},
+})
+
 /** Local area page, e.g. /suburbs/armstrong-creek. Listings in the suburb are added automatically. */
 const suburb = defineType({
   name: 'suburb', title: 'Suburb page', type: 'document', icon: DocumentIcon,
@@ -495,4 +684,4 @@ const siteSettings = defineType({
   preview: {prepare: () => ({title: 'Canvas Real Estate settings'})},
 })
 
-export const schemaTypes = [seo, faqItem, comparableSale, statementOfInformation, articleSection, agent, listing, rental, journalArticle, page, suburb, review, siteSettings]
+export const schemaTypes = [seo, faqItem, comparableSale, statementOfInformation, articleSection, agent, listing, rental, journalArticle, page, suburb, review, lpHero, lpText, lpImageText, lpCards, lpSteps, lpStats, lpListings, lpReviews, lpFaq, lpCta, lpForm, landingPage, siteSettings]
