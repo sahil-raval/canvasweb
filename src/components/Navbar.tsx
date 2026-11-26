@@ -5,12 +5,15 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, X, Phone } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useCms } from "@/lib/cms/context";
 const logoPng = "/images/logo-dark.png";
 
 export function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const location = usePathname();
+  const phone = useCms().siteSettings.phone || "0469 131 347";
+  const phoneHref = `tel:${phone.replace(/[^\d+]/g, "")}`;
 
   const isHome = location === "/" || location === "/";
 
@@ -76,9 +79,9 @@ export function Navbar() {
 
             {/* CTA */}
             <div className="hidden md:flex items-center gap-3">
-              <a href="tel:0469131347" className="flex items-center gap-2 text-[#371628] text-sm font-medium hover:opacity-70 transition-opacity">
+              <a href={phoneHref} className="flex items-center gap-2 text-[#371628] text-sm font-medium hover:opacity-70 transition-opacity">
                 <Phone className="w-4 h-4" />
-                0469 131 347
+                {phone}
               </a>
               <Link href="/contact">
                 <button className="bg-[#371628] text-white text-sm font-semibold px-6 py-2.5 rounded-xl hover:bg-[#2d1020] active:scale-95 transition-all duration-200 shadow-md shadow-[#371628]/20">
@@ -129,11 +132,11 @@ export function Navbar() {
                 </Link>
               ))}
               <div className="pt-8 space-y-4">
-                <a href="tel:0469131347" className="flex items-center gap-3 text-[#371628] font-medium text-lg">
+                <a href={phoneHref} className="flex items-center gap-3 text-[#371628] font-medium text-lg">
                   <div className="w-10 h-10 rounded-full bg-[#371628]/10 flex items-center justify-center">
                     <Phone className="w-5 h-5 text-[#371628]" />
                   </div>
-                  0469 131 347
+                  {phone}
                 </a>
                 <Link href="/contact" onClick={() => setMobileMenuOpen(false)}>
                   <button className="w-full bg-[#371628] text-white font-semibold py-4 rounded-2xl text-lg mt-2 hover:bg-[#2d1020] transition-colors">

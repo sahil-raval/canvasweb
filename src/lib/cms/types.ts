@@ -101,6 +101,20 @@ export interface SeoFields {
   focusKeyword?: string;
 }
 
+export interface BusinessAddress {
+  street?: string;
+  suburb?: string;
+  state?: string;
+  postcode?: string;
+  latitude?: number;
+  longitude?: number;
+}
+
+export interface Faq {
+  question: string;
+  answer: string;
+}
+
 export interface SiteSettings {
   businessName: string;
   siteUrl: string;
@@ -111,6 +125,10 @@ export interface SiteSettings {
   serviceArea?: string;
   weekdayHours?: string;
   weekendHours?: string;
+  address?: BusinessAddress | null;
+  googleBusinessProfileUrl?: string;
+  licenceNumber?: string;
+  abn?: string;
   socialLinks?: Array<{ platform: string; url: string }>;
   defaultSeo?: SeoFields;
 }
@@ -138,6 +156,8 @@ export interface CmsPage {
   ctaLabel?: string;
   ctaHref?: string;
   _updatedAt?: string;
+  faqs?: Faq[] | null;
+  body?: CmsSuburb["body"];
   seo?: SeoFields;
   aboutContent?: {
     manifestoEyebrow?: string; manifesto?: string; manifestoCaption?: string; manifestoHint?: string;
@@ -156,6 +176,19 @@ export interface CmsPage {
 export interface PageTextItem { number?: string; label?: string; title?: string; description?: string; href?: string }
 export interface PageCta { eyebrow?: string; heading?: string; body?: string; label?: string; href?: string; perks?: string[] }
 
+export interface CmsSuburb {
+  name: string;
+  slug: string;
+  postcode?: string;
+  heading?: string;
+  intro?: string;
+  heroImage?: string;
+  body?: Array<{ _key?: string; type: "paragraph" | "heading" | "pullquote" | "divider"; text?: string }> | null;
+  faqs?: Faq[] | null;
+  seo?: SeoFields;
+  _updatedAt?: string;
+}
+
 export interface CmsContent {
   siteSettings: SiteSettings;
   listings: CmsListing[];
@@ -163,4 +196,5 @@ export interface CmsContent {
   articles: CmsArticle[];
   pages: CmsPage[];
   agents: CmsAgent[];
+  suburbs: CmsSuburb[];
 }

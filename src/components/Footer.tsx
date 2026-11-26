@@ -2,9 +2,22 @@
 
 import Link from "next/link";
 import { Facebook, Instagram, Linkedin, Youtube, Mail, Phone, MapPin, ArrowRight } from "lucide-react";
+import { useCms } from "@/lib/cms/context";
+import { LEGAL_PAGES } from "@/lib/cms/routes";
 const logoPng = "/images/logo-white.png";
 
+const SOCIAL_ICONS = { facebook: Facebook, instagram: Instagram, linkedin: Linkedin, youtube: Youtube } as const;
+const telHref = (phone: string) => `tel:${phone.replace(/[^\d+]/g, "")}`;
+
 export function Footer() {
+  const { siteSettings: s, suburbs, pages } = useCms();
+  const legal = LEGAL_PAGES.filter((l) => pages.some((p) => p.slug === l.slug));
+  const phone = s.phone || "0469 131 347";
+  const email = s.email || "enquiry@canvasrealestate.com.au";
+  const a = s.address;
+  const socials = (s.socialLinks ?? [])
+    .map((l) => ({ ...l, Icon: SOCIAL_ICONS[l.platform?.toLowerCase().trim() as keyof typeof SOCIAL_ICONS] }))
+    .filter((l) => l.url && l.Icon);
   return (
     <div className="px-4 md:px-8 pb-6 pt-2">
       <footer
@@ -24,18 +37,16 @@ export function Footer() {
                 <img src={logoPng} alt="Canvas Real Estate" className="h-14 w-auto object-contain" style={{ mixBlendMode: "screen" }} />
               </div>
               <p className="text-white/60 text-sm leading-relaxed mb-6 max-w-xs">
-                Geelong's trusted independent real estate agency, blending local knowledge with modern precision to deliver exceptional results.
+                {s.tagline || "Geelong's trusted independent real estate agency, blending local knowledge with modern precision to deliver exceptional results."}
               </p>
               <div className="flex gap-3">
-                {[
-                  { icon: Facebook, href: "#" },
-                  { icon: Instagram, href: "#" },
-                  { icon: Linkedin, href: "#" },
-                  { icon: Youtube, href: "#" },
-                ].map(({ icon: Icon, href }, i) => (
+                {socials.map(({ Icon, url, platform }) => (
                   <a
-                    key={i}
-                    href={href}
+                    key={url}
+                    href={url}
+                    target="_blank"
+                    rel="noopener noreferrer me"
+                    aria-label={`${s.businessName} on ${platform}`}
                     className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-all duration-200 group"
                   >
                     <Icon className="w-4 h-4 text-white/70 group-hover:text-white transition-colors" />
@@ -52,6 +63,7 @@ export function Footer() {
                   { label: "Home", href: "/" },
                   { label: "Current Listings", href: "/listings" },
                   { label: "Sold Properties", href: "/sold" },
+                  ...(suburbs.length ? [{ label: "Suburb Guides", href: "/suburbs" }] : []),
                   { label: "About Us", href: "/about" },
                   { label: "Contact Us", href: "/contact" },
                   { label: "Appraisal", href: "/contact" },
@@ -74,24 +86,24 @@ export function Footer() {
               <h4 className="text-[10px] font-semibold font-sans uppercase tracking-[0.3em] text-white/40 mb-6">Contact</h4>
               <ul className="space-y-5">
                 <li>
-                  <a href="tel:0469131347" className="flex items-start gap-3 group">
+                  <a href={telHref(phone)} className="flex items-start gap-3 group">
                     <div className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center shrink-0 group-hover:bg-white/20 transition-colors">
                       <Phone className="w-4 h-4 text-white/70 group-hover:text-white transition-colors" />
                     </div>
                     <div>
                       <p className="text-[10px] uppercase tracking-[0.3em] font-sans text-white/40 mb-0.5">Phone</p>
-                      <p className="text-sm text-white/80 group-hover:text-white transition-colors font-medium">0469 131 347</p>
+                      <p className="text-sm text-white/80 group-hover:text-white transition-colors font-medium">{phone}</p>
                     </div>
                   </a>
                 </li>
                 <li>
-                  <a href="mailto:enquiry@canvasrealestate.com.au" className="flex items-start gap-3 group">
+                  <a href={`mailto:${email}`} className="flex items-start gap-3 group">
                     <div className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center shrink-0 group-hover:bg-white/20 transition-colors">
                       <Mail className="w-4 h-4 text-white/70 group-hover:text-white transition-colors" />
                     </div>
                     <div>
                       <p className="text-[10px] uppercase tracking-[0.3em] font-sans text-white/40 mb-0.5">Email</p>
-                      <p className="text-sm text-white/80 group-hover:text-white transition-colors font-medium break-all">enquiry@canvasrealestate.com.au</p>
+                      <p className="text-sm text-white/80 group-hover:text-white transition-colors font-medium break-all">{email}</p>
                     </div>
                   </a>
                 </li>
@@ -101,7 +113,11 @@ export function Footer() {
                   </div>
                   <div>
                     <p className="text-[10px] uppercase tracking-[0.3em] font-sans text-white/40 mb-0.5">Location</p>
-                    <p className="text-sm text-white/80 font-medium">Geelong, Victoria<br />Australia</p>
+                    <address className="text-sm text-white/80 font-medium not-italic">
+                      {a?.street && <>{a.street}<br /></>}
+                      {a?.suburb ? `${a.suburb} ${a.state || "VIC"} ${a.postcode || ""}`.trim() : s.location || "Geelong, Victoria"}
+                      <br />Australia
+                    </address>
                   </div>
                 </li>
               </ul>
@@ -131,11 +147,13 @@ export function Footer() {
 
           {/* Bottom bar */}
           <div className="border-t border-white/10 pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-white/30">
-            <p>© {new Date().getFullYear()} Canvas Real Estate Geelong. All rights reserved.</p>
+            <p>© {new Date().getFullYear()} {s.businessName}.{s.abn ? ` ABN ${s.abn}.` : ""}{s.licenceNumber ? ` Licence ${s.licenceNumber}.` : ""} All rights reserved.</p>
             <div className="flex gap-6">
-              <a href="#" className="hover:text-white/60 transition-colors">Privacy Policy</a>
-              <a href="#" className="hover:text-white/60 transition-colors">Terms of Service</a>
-              <a href="#" className="hover:text-white/60 transition-colors">Disclaimer</a>
+              {legal.map((l) => (
+                <Link key={l.slug} href={`/${l.slug}`} className="hover:text-white/60 transition-colors">
+                  {l.label}
+                </Link>
+              ))}
             </div>
           </div>
         </div>

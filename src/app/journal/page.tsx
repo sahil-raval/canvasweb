@@ -1,5 +1,6 @@
 import Journal from '@/views/Journal'
 import {JsonLd} from '@/components/JsonLd'
+import {PageFaqs} from '@/components/PageFaqs'
 import {getContent} from '@/lib/cms/fetch'
 import {breadcrumbSchema, staticPageMetadata, STATIC_SEO} from '@/lib/seo'
 
@@ -13,6 +14,7 @@ export default async function Page() {
   return (
     <>
       <Journal />
+      <PageFaqs content={content} path="/journal" />
       <JsonLd data={breadcrumbSchema(content, [[name, '/journal']])} />
     </>
   )

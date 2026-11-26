@@ -52,6 +52,8 @@ export async function GET() {
     `- [About us](${base}/about)`,
     `- [Contact and appraisals](${base}/contact)`,
     `- [Journal: Geelong property insights](${base}/journal)`,
+    ...(c.suburbs.length ? [`- [Suburb guides](${base}/suburbs)`] : []),
+    ...c.suburbs.map((x) => `  - [${x.name}](${base}/suburbs/${x.slug})${x.intro ? `: ${x.intro}` : ''}`),
     ...c.articles.slice(0, 20).map((a) => `  - [${a.title}](${base}/journal/${a.slug}): ${a.excerpt}`),
     '',
   ]

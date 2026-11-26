@@ -5,14 +5,14 @@
  */
 import {revalidateTag} from 'next/cache'
 import {CMS_TAG} from '@/lib/cms/config'
+import {secretFrom, secretMatches} from '@/lib/security'
 
 export const dynamic = 'force-dynamic'
 
 export async function POST(req: Request) {
-  const secret = process.env.SANITY_REVALIDATE_SECRET
-  const given =
-    new URL(req.url).searchParams.get('secret') || (req.headers.get('authorization') || '').replace(/^Bearer\s+/i, '')
-  if (!secret || given !== secret) return new Response('Unauthorised', {status: 401})
+  if (!secretMatches(secretFrom(req, 'secret'), [process.env.SANITY_REVALIDATE_SECRET])) {
+    return new Response('Unauthorised', {status: 401})
+  }
   revalidateTag(CMS_TAG, {expire: 0})
   return Response.json({revalidated: true, at: new Date().toISOString()})
 }

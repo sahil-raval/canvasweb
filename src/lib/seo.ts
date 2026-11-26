@@ -1,6 +1,6 @@
 import type {Metadata} from 'next'
 import {SITE_URL} from '@/lib/cms/config'
-import type {CmsArticle, CmsContent, CmsListing, CmsRental, SeoFields} from '@/lib/cms/types'
+import type {CmsArticle, CmsContent, CmsListing, CmsRental, CmsSuburb, Faq, SeoFields} from '@/lib/cms/types'
 
 /** Default SEO per route. Any of these can be overridden in Sanity (Page → SEO, or Site settings → Default SEO). */
 export const STATIC_SEO: Record<string, {title: string; description: string; keywords: string[]}> = {
@@ -35,6 +35,12 @@ export const STATIC_SEO: Record<string, {title: string; description: string; key
       "recent sales Geelong",
       "Geelong real estate results",
     ],
+  },
+  "/suburbs": {
+    title: "Geelong Suburbs We Cover | Canvas Real Estate",
+    description:
+      "Local real estate knowledge for Geelong suburbs: property types, lifestyle and current listings from Canvas Real Estate.",
+    keywords: ["Geelong suburbs", "real estate agents Geelong suburbs", "Geelong suburb guide"],
   },
   "/rent": {
     title: "Rental Properties Geelong | Canvas Real Estate",
@@ -132,8 +138,7 @@ export function buildMetadata(c: CmsContent, m: MetaInput): Metadata {
 /** Metadata for a fixed route like "/about", using the matching Sanity page's SEO if there is one. */
 export function staticPageMetadata(c: CmsContent, path: string): Metadata {
   const meta = STATIC_SEO[path]
-  const slug = path === '/' ? 'home' : path.slice(1)
-  const page = c.pages.find((p) => p.slug === slug || (path === '/' && p.slug === '/'))
+  const page = pageFor(c, path)
   const seo = page?.seo ?? (path === '/' ? c.siteSettings.defaultSeo : undefined)
   return buildMetadata(c, {path, title: meta.title, description: meta.description, keywords: meta.keywords, image: page?.heroImage, seo})
 }
@@ -188,6 +193,7 @@ type Json = Record<string, unknown>
 export function businessSchema(c: CmsContent): Json {
   const base = siteUrlOf(c)
   const s = c.siteSettings
+  const a = s.address ?? {}
   return {
     '@context': 'https://schema.org',
     '@type': ['RealEstateAgent', 'LocalBusiness'],
@@ -200,14 +206,25 @@ export function businessSchema(c: CmsContent): Json {
     telephone: s.phone,
     email: s.email,
     priceRange: '$$',
-    address: {'@type': 'PostalAddress', addressLocality: 'East Geelong', addressRegion: 'VIC', postalCode: '3219', addressCountry: 'AU'},
-    // Greater Geelong plus every suburb the agency has listed or sold in (from Agentbox).
-    areaServed: ['Greater Geelong', ...new Set(c.listings.map((l) => l.suburb).filter(Boolean))].map((name) => ({
-      '@type': 'Place',
-      name,
-    })),
+    address: {
+      '@type': 'PostalAddress',
+      ...(a.street ? {streetAddress: a.street} : {}),
+      addressLocality: a.suburb || 'East Geelong',
+      addressRegion: a.state || 'VIC',
+      postalCode: a.postcode || '3219',
+      addressCountry: 'AU',
+    },
+    ...(a.latitude && a.longitude ? {geo: {'@type': 'GeoCoordinates', latitude: a.latitude, longitude: a.longitude}} : {}),
+    ...(s.googleBusinessProfileUrl ? {hasMap: s.googleBusinessProfileUrl} : {}),
+    ...(s.abn ? {taxID: s.abn} : {}),
+    ...(s.licenceNumber ? {identifier: {'@type': 'PropertyValue', name: 'Estate agent licence', value: s.licenceNumber}} : {}),
+    // Greater Geelong, every suburb page, and every suburb the agency has listed or sold in (from Agentbox).
+    areaServed: [
+      'Greater Geelong',
+      ...new Set([...c.suburbs.map((x) => x.name), ...c.listings.map((l) => l.suburb)].filter(Boolean)),
+    ].map((name) => ({'@type': 'Place', name})),
     employee: c.agents.map((a) => ({'@type': 'Person', name: a.name, jobTitle: a.role, telephone: a.phone, email: a.email})),
-    sameAs: s.socialLinks?.map((l) => l.url).filter(Boolean),
+    sameAs: [...(s.socialLinks?.map((l) => l.url) ?? []), s.googleBusinessProfileUrl].filter(Boolean),
   }
 }
 
@@ -328,3 +345,50 @@ export function itemListSchema(c: CmsContent, name: string, items: CmsListing[])
     itemListElement: items.map((l, i) => ({'@type': 'ListItem', position: i + 1, url: `${base}/listings/${l.slug}`, name: `${l.address}, ${l.suburb}`})),
   }
 }
+
+/** FAQPage data. Only used when the questions are also visible on the page. */
+export function faqSchema(faqs?: Faq[] | null): Json | null {
+  const items = (faqs ?? []).filter((f) => f?.question && f?.answer)
+  if (!items.length) return null
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: items.map((f) => ({'@type': 'Question', name: f.question, acceptedAnswer: {'@type': 'Answer', text: f.answer}})),
+  }
+}
+
+export function suburbMetadata(c: CmsContent, sub: CmsSuburb): Metadata {
+  return buildMetadata(c, {
+    path: `/suburbs/${sub.slug}`,
+    title: `Real Estate Agents ${sub.name}${sub.postcode ? ` ${sub.postcode}` : ''} | Canvas Real Estate`,
+    description:
+      sub.intro ||
+      `Buying, selling or renting in ${sub.name}? Local market knowledge, current listings and recent sales from Canvas Real Estate Geelong.`,
+    keywords: [`real estate agents ${sub.name}`, `${sub.name} property for sale`, `sell my house ${sub.name}`, `${sub.name} real estate`],
+    image: sub.heroImage,
+    modifiedTime: sub._updatedAt,
+    seo: sub.seo,
+  })
+}
+
+export function suburbSchema(c: CmsContent, sub: CmsSuburb): Json {
+  const base = siteUrlOf(c)
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'WebPage',
+    name: sub.heading || `Real estate in ${sub.name}`,
+    url: `${base}/suburbs/${sub.slug}`,
+    description: sub.intro,
+    about: {
+      '@type': 'Place',
+      name: `${sub.name}, VIC${sub.postcode ? ` ${sub.postcode}` : ''}`,
+      address: {'@type': 'PostalAddress', addressLocality: sub.name, addressRegion: 'VIC', postalCode: sub.postcode, addressCountry: 'AU'},
+    },
+    publisher: {'@id': `${base}/#business`},
+    inLanguage: 'en-AU',
+  }
+}
+
+/** Find the Sanity page document for a fixed route ("/" is the "home" page). */
+export const pageFor = (c: CmsContent, path: string) =>
+  c.pages.find((p) => p.slug === (path === '/' ? 'home' : path.slice(1)) || (path === '/' && p.slug === '/'))

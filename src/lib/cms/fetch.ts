@@ -56,5 +56,6 @@ export const getContent = cache(async (): Promise<CmsContent> => {
     articles: asArray(data.articles),
     pages: asArray(data.pages),
     agents: asArray(data.agents),
+    suburbs: asArray(data.suburbs),
   }
 })

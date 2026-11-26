@@ -24,5 +24,6 @@ export const structure: StructureResolver = (S) =>
         ),
       S.documentTypeListItem('journalArticle').title('Journal').icon(DocumentTextIcon),
       S.documentTypeListItem('page').title('Pages').icon(DocumentIcon),
+      S.documentTypeListItem('suburb').title('Suburb pages').icon(DocumentIcon),
       S.documentTypeListItem('agent').title('Agents').icon(UserIcon),
     ])

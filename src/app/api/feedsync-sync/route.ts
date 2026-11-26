@@ -9,16 +9,13 @@
 import {revalidateTag} from 'next/cache'
 import {runSync, type SyncReport} from '@/lib/agentbox/sync'
 import {CMS_TAG} from '@/lib/cms/config'
+import {secretFrom, secretMatches} from '@/lib/security'
 
 export const dynamic = 'force-dynamic'
 export const maxDuration = 300
 
 function authorised(req: Request) {
-  const url = new URL(req.url)
-  const secrets = [process.env.SYNC_SECRET, process.env.CRON_SECRET].filter(Boolean) as string[]
-  if (!secrets.length) return false
-  const given = url.searchParams.get('key') || (req.headers.get('authorization') || '').replace(/^Bearer\s+/i, '')
-  return secrets.includes(given)
+  return secretMatches(secretFrom(req, 'key'), [process.env.SYNC_SECRET, process.env.CRON_SECRET])
 }
 
 const esc = (s: string) => s.replace(/[&<>"]/g, (c) => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'})[c]!)

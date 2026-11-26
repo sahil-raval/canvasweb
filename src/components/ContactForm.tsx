@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "./ui/input";
 import { Textarea } from "./ui/textarea";
+import { Honeypot, honeypotValue } from "@/components/Honeypot";
 
 const formSchema = z.object({
   name: z.string().min(2, "Please enter your full name"),
@@ -52,13 +53,13 @@ export function ContactForm({ dark = false }: { dark?: boolean }) {
     }
   }, [form]);
 
-  async function onSubmit(data: FormValues) {
+  async function onSubmit(data: FormValues, event?: React.BaseSyntheticEvent) {
     setLoading(true);
     try {
       const res = await fetch("/api/enquiry", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
+        body: JSON.stringify({ ...data, website: honeypotValue(event?.target) }),
       });
 
       if (!res.ok) {
@@ -97,7 +98,8 @@ export function ContactForm({ dark = false }: { dark?: boolean }) {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="relative space-y-5">
+        <Honeypot />
         {/* Name + Phone */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <FormField control={form.control} name="name" render={({ field }) => (

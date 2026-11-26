@@ -10,6 +10,7 @@ import {
   Calendar, Shield, PawPrint, Sofa,
 } from "lucide-react";
 import { useCms } from "@/lib/cms/context";
+import { Honeypot, honeypotValue } from "@/components/Honeypot";
 const poojaImg = "/images/agent-pooja-new.jpg";
 const chandraImg = "/images/agent-chandra-new.jpg";
 
@@ -94,7 +95,7 @@ function EnquiryForm({ address, agentName }: { address: string; agentName: strin
       const res = await fetch("/api/enquiry", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...form, property: address, enquiryType: "Rent a Property" }),
+        body: JSON.stringify({ ...form, property: address, enquiryType: "Rent a Property", website: honeypotValue(e.currentTarget) }),
       });
       if (!res.ok) {
         const body = await res.json().catch(() => ({}));
@@ -125,7 +126,8 @@ function EnquiryForm({ address, agentName }: { address: string; agentName: strin
   const inputCls = "w-full border border-[#371628]/12 px-4 py-3 text-sm font-sans text-[#2a1f25]/80 placeholder:text-[#371628]/20 focus:outline-none focus:border-[#371628]/40 transition-colors bg-transparent";
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form onSubmit={handleSubmit} className="relative space-y-4">
+      <Honeypot />
       {[
         { field: "name",  label: "Full Name",      type: "text",  required: true },
         { field: "email", label: "Email Address",  type: "email", required: true },

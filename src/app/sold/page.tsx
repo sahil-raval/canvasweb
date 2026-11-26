@@ -1,6 +1,7 @@
 import {SoldListings} from '@/views/Listings'
 import {isSold} from '@/lib/cms/listing'
 import {JsonLd} from '@/components/JsonLd'
+import {PageFaqs} from '@/components/PageFaqs'
 import {getContent} from '@/lib/cms/fetch'
 import {breadcrumbSchema, itemListSchema, staticPageMetadata} from '@/lib/seo'
 
@@ -14,6 +15,7 @@ export default async function Page() {
   return (
     <>
       <SoldListings />
+      <PageFaqs content={content} path="/sold" />
       <JsonLd data={[breadcrumbSchema(content, [['Sold', '/sold']]), itemListSchema(content, 'Properties sold by Canvas Real Estate', sold)]} />
     </>
   )

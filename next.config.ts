@@ -1,5 +1,31 @@
 import type {NextConfig} from 'next'
 
+const securityHeaders = [
+  {key: 'Strict-Transport-Security', value: 'max-age=63072000; includeSubDomains; preload'},
+  {key: 'X-Content-Type-Options', value: 'nosniff'},
+  {key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin'},
+  {key: 'X-Frame-Options', value: 'SAMEORIGIN'},
+  {key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=(), payment=(), usb=(), interest-cohort=()'},
+  {key: 'Cross-Origin-Opener-Policy', value: 'same-origin'},
+]
+
+const contentSecurityPolicy = [
+  "default-src 'self'",
+  // Next.js needs inline scripts for page data; no external scripts are allowed.
+  "script-src 'self' 'unsafe-inline'" + (process.env.NODE_ENV === 'development' ? " 'unsafe-eval'" : ''),
+  "style-src 'self' 'unsafe-inline'",
+  "img-src 'self' data: blob: https://cdn.sanity.io",
+  "font-src 'self' data:",
+  "connect-src 'self'",
+  "media-src 'self' https://cdn.sanity.io",
+  "frame-src 'self'",
+  "object-src 'none'",
+  "base-uri 'self'",
+  "form-action 'self'",
+  "frame-ancestors 'self'",
+  'upgrade-insecure-requests',
+].join('; ')
+
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
@@ -10,14 +36,15 @@ const nextConfig: NextConfig = {
     remotePatterns: [{protocol: 'https', hostname: 'cdn.sanity.io'}],
   },
   async rewrites() {
+    // Sanity Studio is a single-page app built into public/studio. Its files are served first;
+    // every other /studio URL loads the Studio app (before the /[slug] page route can match).
     return {
       beforeFiles: [],
-      afterFiles: [],
-      // Sanity Studio is a single-page app built into public/studio.
-      fallback: [
+      afterFiles: [
         {source: '/studio', destination: '/studio/index.html'},
         {source: '/studio/:path*', destination: '/studio/index.html'},
       ],
+      fallback: [],
     }
   },
   async headers() {
@@ -26,14 +53,9 @@ const nextConfig: NextConfig = {
         source: '/images/:path*',
         headers: [{key: 'Cache-Control', value: 'public, max-age=31536000, immutable'}],
       },
-      {
-        source: '/:path*',
-        headers: [
-          {key: 'X-Content-Type-Options', value: 'nosniff'},
-          {key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin'},
-          {key: 'X-Frame-Options', value: 'SAMEORIGIN'},
-        ],
-      },
+      {source: '/:path*', headers: securityHeaders},
+      // The website only loads its own code and Sanity images. Studio is excluded: it talks to the Sanity API.
+      {source: '/((?!studio).*)', headers: [{key: 'Content-Security-Policy', value: contentSecurityPolicy}]},
     ]
   },
 }

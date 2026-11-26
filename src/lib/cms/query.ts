@@ -10,6 +10,10 @@ export const CONTENT_QUERY = `{
     serviceArea,
     weekdayHours,
     weekendHours,
+    address{street, suburb, state, postcode, latitude, longitude},
+    googleBusinessProfileUrl,
+    licenceNumber,
+    abn,
     socialLinks[]{platform, url},
     "defaultSeo": defaultSeo{
       title, description, keywords, canonicalUrl, noIndex,
@@ -27,6 +31,8 @@ export const CONTENT_QUERY = `{
     ctaLabel,
     ctaHref,
     _updatedAt,
+    "faqs": faqs[]{question, answer},
+    body[]{_key, type, text},
     "seo": seo{
       title, description, keywords, canonicalUrl, noIndex,
       ogTitle, ogDescription, "ogImage": ogImage.asset->url,
@@ -96,6 +102,17 @@ export const CONTENT_QUERY = `{
   "agents": *[_type == "agent"] | order(name asc){
     "key": coalesce(key.current, key), name, role, bio, phone, email,
     "photo": photo.asset->url,
+    "seo": seo{
+      title, description, keywords, canonicalUrl, noIndex,
+      ogTitle, ogDescription, "ogImage": ogImage.asset->url,
+      twitterCard, focusKeyword
+    }
+  },
+  "suburbs": *[_type == "suburb" && defined(slug.current)] | order(name asc){
+    name, "slug": slug.current, postcode, heading, intro, _updatedAt,
+    "heroImage": heroImage.asset->url,
+    body[]{_key, type, text},
+    "faqs": faqs[]{question, answer},
     "seo": seo{
       title, description, keywords, canonicalUrl, noIndex,
       ogTitle, ogDescription, "ogImage": ogImage.asset->url,

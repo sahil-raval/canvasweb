@@ -16,6 +16,8 @@ src/
     api/feedsync-sync   Agentbox → Sanity listing sync
     api/revalidate      Sanity webhook → refresh website cache
     api/enquiry         enquiry forms → email (Resend)
+    suburbs/            suburb guide pages
+    [slug]/             any other Sanity page (privacy policy, terms …)
   views/                page UI (client components)
   components/           shared UI (Navbar, Footer, ListingCard, forms)
   lib/cms/              content types, GROQ query, server fetch (cached), React context
@@ -36,6 +38,29 @@ public/images/          static images
   - otherwise every 10 minutes as a safety net.
 - Listings: see [FEEDSYNC_SYNC.md](FEEDSYNC_SYNC.md). Agentbox is the source of truth for
   listing details; SEO fields on listings stay editable in Sanity.
+
+## Editing content in Sanity
+
+| What | Where in Studio | Shows on |
+|---|---|---|
+| Business name, phone, email, office address, map location, Google Business Profile link, ABN, licence, social links | Site settings | Header, footer, contact page, search engine data |
+| Page headings, text, images, FAQs, SEO | Pages | Matching page (`home`, `listings`, `sold`, `rent`, `about`, `contact`, `journal`) |
+| Any other page (e.g. `privacy-policy`, `terms`, `disclaimer`) | Pages → new page with that slug | `/<slug>`; legal pages are linked in the footer automatically |
+| Suburb guides | Suburb pages | `/suburbs/<slug>`, with that suburb's Agentbox listings added automatically |
+| Journal articles, agents | Journal, Agents | `/journal`, agent cards |
+| Listing details | Agentbox (not Sanity) | Listing pages. Only the SEO tab of a listing is edited in Sanity |
+
+**For search and AI answers:** fill in the office address exactly as on Google Business Profile,
+add 4-8 real FAQs to the main pages and each suburb page, and write suburb pages with genuine
+local knowledge. Thin or copied text does not rank.
+
+## Security
+
+- Secrets are server-only environment variables (never `NEXT_PUBLIC_`). Use 12+ random characters.
+- Sync and webhook secrets are compared in constant time; send them as `Authorization: Bearer …` where possible.
+- Enquiry API: same-site only, size limit, spam trap, basic rate limit, input validation and escaped emails.
+- Headers: HSTS, Content-Security-Policy (no third-party scripts), frame, referrer and permissions policies.
+- `npm audit` still lists issues inside Sanity's build tools (CLI). They run only at build time, not on the website.
 
 ## Local development
 

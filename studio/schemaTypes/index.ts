@@ -31,6 +31,23 @@ const seo = defineType({
   ],
 })
 
+/** Question + answer. Shown on the page and marked up as FAQPage data for Google and AI answers. */
+const faqItem = defineType({
+  name: 'faqItem', title: 'FAQ', type: 'object',
+  fields: [
+    defineField({name: 'question', type: 'string', validation: (r) => r.required().max(160)}),
+    defineField({name: 'answer', type: 'text', rows: 4, description: 'Answer in 2-4 plain sentences. Start with the direct answer.', validation: (r) => r.required().max(1200)}),
+  ],
+  preview: {select: {title: 'question', subtitle: 'answer'}},
+})
+
+const faqs = (group?: string) => defineField({
+  name: 'faqs', title: 'FAQs', type: 'array', ...(group ? {group} : {}),
+  description: 'Common questions people ask about this topic. Helps Google and AI assistants answer with your content.',
+  of: [defineArrayMember({type: 'faqItem'})],
+  validation: (r) => r.max(12),
+})
+
 const comparableSale = defineType({
   name: 'comparableSale', title: 'Comparable sale', type: 'object',
   fields: [
@@ -349,10 +366,30 @@ const page = defineType({
     defineField({name: 'heroImage', title: 'Hero image', type: 'image', group: 'content', options: {hotspot: true}}),
     defineField({name: 'ctaLabel', title: 'Primary action label', type: 'string', group: 'content'}),
     defineField({name: 'ctaHref', title: 'Primary action path', type: 'string', group: 'content'}),
+    defineField({name: 'body', title: 'Page text', type: 'array', group: 'content', of: [defineArrayMember({type: 'articleSection'})], description: 'Main text for general pages such as Privacy Policy, Terms or Disclaimer (slug e.g. "privacy-policy").'}),
     aboutContent, aboutValuesEyebrow, aboutValuesHeading, aboutValues,
     listingsContent, rentContent, contactContent, journalContent,
+    faqs('content'),
     defineField({name: 'seo', type: 'seo', group: 'seo'}),
   ],
+})
+
+/** Local area page, e.g. /suburbs/armstrong-creek. Listings in the suburb are added automatically. */
+const suburb = defineType({
+  name: 'suburb', title: 'Suburb page', type: 'document', icon: DocumentIcon,
+  groups: [{name: 'content', title: 'Content', default: true}, {name: 'seo', title: 'SEO'}],
+  fields: [
+    defineField({name: 'name', title: 'Suburb name', type: 'string', group: 'content', description: 'Exactly as in Agentbox, e.g. "Armstrong Creek". Listings with this suburb appear on the page.', validation: (r) => r.required()}),
+    defineField({name: 'slug', title: 'URL slug', type: 'slug', group: 'content', options: {source: 'name'}, validation: slugValidation}),
+    defineField({name: 'postcode', type: 'string', group: 'content'}),
+    defineField({name: 'heading', type: 'string', group: 'content', description: 'e.g. "Real estate agents in Armstrong Creek"'}),
+    defineField({name: 'intro', type: 'text', rows: 3, group: 'content', description: 'One or two sentences that directly describe the suburb and how you help there.'}),
+    defineField({name: 'heroImage', title: 'Hero image', type: 'image', group: 'content', options: {hotspot: true}}),
+    defineField({name: 'body', title: 'About the suburb', type: 'array', group: 'content', of: [defineArrayMember({type: 'articleSection'})], description: 'Local knowledge: lifestyle, schools, transport, property types, market notes.'}),
+    faqs('content'),
+    defineField({name: 'seo', type: 'seo', group: 'seo'}),
+  ],
+  preview: {select: {title: 'name', subtitle: 'postcode', media: 'heroImage'}},
 })
 
 const siteSettings = defineType({
@@ -365,6 +402,21 @@ const siteSettings = defineType({
     defineField({name: 'phone', title: 'Main phone', type: 'string', group: 'business'}),
     defineField({name: 'email', title: 'Main email', type: 'string', group: 'business', validation: (r) => r.email()}),
     defineField({name: 'location', type: 'string', group: 'business', initialValue: 'East Geelong, Victoria'}),
+    defineField({
+      name: 'address', title: 'Office address', type: 'object', group: 'business',
+      description: 'Must match your Google Business Profile exactly (name, address, phone). Used in search engine data.',
+      fields: [
+        defineField({name: 'street', title: 'Street address', type: 'string'}),
+        defineField({name: 'suburb', type: 'string', initialValue: 'East Geelong'}),
+        defineField({name: 'state', type: 'string', initialValue: 'VIC'}),
+        defineField({name: 'postcode', type: 'string', initialValue: '3219', validation: (r) => r.regex(/^\d{4}$/)}),
+        defineField({name: 'latitude', type: 'number', validation: (r) => r.min(-90).max(90)}),
+        defineField({name: 'longitude', type: 'number', validation: (r) => r.min(-180).max(180)}),
+      ],
+    }),
+    defineField({name: 'googleBusinessProfileUrl', title: 'Google Business Profile link', type: 'url', group: 'business', description: 'The share link of your Google Business Profile (Google Maps listing).'}),
+    defineField({name: 'licenceNumber', title: 'Estate agent licence number', type: 'string', group: 'business'}),
+    defineField({name: 'abn', title: 'ABN', type: 'string', group: 'business'}),
     defineField({name: 'serviceArea', title: 'Service area', type: 'string', group: 'business', initialValue: 'Serving all Geelong suburbs'}),
     defineField({name: 'weekdayHours', title: 'Weekday hours', type: 'string', group: 'business', initialValue: 'Mon–Fri: 9am – 6pm'}),
     defineField({name: 'weekendHours', title: 'Weekend hours', type: 'string', group: 'business', initialValue: 'Sat: 10am – 3pm · Sun: By appt.'}),
@@ -374,4 +426,4 @@ const siteSettings = defineType({
   preview: {prepare: () => ({title: 'Canvas Real Estate settings'})},
 })
 
-export const schemaTypes = [seo, comparableSale, statementOfInformation, articleSection, agent, listing, rental, journalArticle, page, siteSettings]
+export const schemaTypes = [seo, faqItem, comparableSale, statementOfInformation, articleSection, agent, listing, rental, journalArticle, page, suburb, siteSettings]
