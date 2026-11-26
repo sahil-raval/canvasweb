@@ -48,7 +48,15 @@ public/images/          static images
 | Any other page (e.g. `privacy-policy`, `terms`, `disclaimer`) | Pages → new page with that slug | `/<slug>`; legal pages are linked in the footer automatically |
 | Suburb guides | Suburb pages | `/suburbs/<slug>`, with that suburb's Agentbox listings added automatically |
 | Journal articles, agents | Journal, Agents | `/journal`, agent cards |
+| Client reviews | Reviews (one per review, copied exactly) | Home page review slider, `llms.txt` |
+| Google rating, review count, "read" and "leave a review" links | Site settings → Reviews | Rating badges (hidden until filled in), review buttons |
 | Listing details | Agentbox (not Sanity) | Listing pages. Only the SEO tab of a listing is edited in Sanity |
+
+**Reviews:** the site shows only the Google rating you type in Site settings, so it never shows an
+unchecked number. Update it when it changes. What actually helps local ranking is the number and
+freshness of reviews on your Google Business Profile, so use the "Leave a review" link after every sale
+or lease. Reviews are not added as schema.org markup, because Google ignores (and may penalise)
+review markup a business adds about itself.
 
 **For search and AI answers:** fill in the office address exactly as on Google Business Profile,
 add 4-8 real FAQs to the main pages and each suburb page, and write suburb pages with genuine

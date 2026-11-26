@@ -4,6 +4,8 @@ import Link from "next/link";
 import { Facebook, Instagram, Linkedin, Youtube, Mail, Phone, MapPin, ArrowRight } from "lucide-react";
 import { useCms } from "@/lib/cms/context";
 import { LEGAL_PAGES } from "@/lib/cms/routes";
+import { googleRating } from "@/lib/cms/reviews";
+import { Stars } from "@/components/Reviews";
 const logoPng = "/images/logo-white.png";
 
 const SOCIAL_ICONS = { facebook: Facebook, instagram: Instagram, linkedin: Linkedin, youtube: Youtube } as const;
@@ -11,6 +13,7 @@ const telHref = (phone: string) => `tel:${phone.replace(/[^\d+]/g, "")}`;
 
 export function Footer() {
   const { siteSettings: s, suburbs, pages } = useCms();
+  const rating = googleRating(s);
   const legal = LEGAL_PAGES.filter((l) => pages.some((p) => p.slug === l.slug));
   const phone = s.phone || "0469 131 347";
   const email = s.email || "enquiry@canvasrealestate.com.au";
@@ -34,7 +37,7 @@ export function Footer() {
             {/* Brand */}
             <div className="lg:col-span-1">
               <div className="mb-7">
-                <img src={logoPng} alt="Canvas Real Estate" className="h-14 w-auto object-contain" style={{ mixBlendMode: "screen" }} />
+                <img loading="lazy" decoding="async" src={logoPng} alt="Canvas Real Estate" className="h-14 w-auto object-contain" style={{ mixBlendMode: "screen" }} />
               </div>
               <p className="text-white/60 text-sm leading-relaxed mb-6 max-w-xs">
                 {s.tagline || "Geelong's trusted independent real estate agency, blending local knowledge with modern precision to deliver exceptional results."}
@@ -134,14 +137,19 @@ export function Footer() {
                   Book Appraisal
                 </button>
               </Link>
-              <div className="mt-5 flex items-center gap-2">
-                {[1,2,3,4,5].map(i => (
-                  <svg key={i} className="w-4 h-4 text-white fill-current" viewBox="0 0 20 20">
-                    <path d="M10 1l2.39 4.84 5.34.78-3.86 3.76.91 5.32L10 13.27l-4.78 2.51.91-5.32L2.27 6.62l5.34-.78z"/>
-                  </svg>
-                ))}
-                <span className="text-white/60 text-xs ml-1">5.0 Google Rating</span>
-              </div>
+              {rating && (
+                <a
+                  href={rating.readUrl || undefined}
+                  target={rating.readUrl ? "_blank" : undefined}
+                  rel={rating.readUrl ? "noopener noreferrer" : undefined}
+                  className="mt-5 flex items-center gap-2"
+                >
+                  <Stars value={rating.rating} className="w-4 h-4 text-white fill-white" />
+                  <span className="text-white/60 text-xs ml-1">
+                    {rating.rating.toFixed(1)} Google Rating{rating.count ? ` · ${rating.count} reviews` : ""}
+                  </span>
+                </a>
+              )}
             </div>
           </div>
 

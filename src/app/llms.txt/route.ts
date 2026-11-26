@@ -5,6 +5,7 @@
 import {isSold} from '@/lib/cms/listing'
 import {SITE_URL} from '@/lib/cms/config'
 import {getContent} from '@/lib/cms/fetch'
+import {googleRating} from '@/lib/cms/reviews'
 
 export const revalidate = 600
 
@@ -36,6 +37,17 @@ export async function GET() {
     s.weekdayHours ? `- Hours: ${s.weekdayHours}${s.weekendHours ? `; ${s.weekendHours}` : ''}` : '',
     `- Website: ${base}`,
     '',
+    ...(() => {
+      const r = googleRating(s)
+      const quotes = c.reviews.slice(0, 5)
+      if (!r && !quotes.length) return []
+      return [
+        '## Client reviews',
+        ...(r ? [`- Google rating: ${r.rating.toFixed(1)}/5${r.count ? ` from ${r.count} reviews` : ''}${r.readUrl ? ` (${r.readUrl})` : ''}`] : []),
+        ...quotes.map((q) => `- "${q.text.replace(/\s+/g, ' ').slice(0, 280)}" - ${q.authorName}${q.suburb ? `, ${q.suburb}` : ''}${q.source ? ` (${q.source})` : ''}`),
+        '',
+      ]
+    })(),
     '## Agents',
     ...c.agents.map((a) => `- ${a.name}${a.role ? `, ${a.role}` : ''}${a.phone ? ` (${a.phone})` : ''}`),
     '',

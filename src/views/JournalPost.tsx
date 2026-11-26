@@ -149,7 +149,7 @@ function Hero({ image, category, title, date, readTime, index }: {
     <div ref={ref} className="relative overflow-hidden" style={{ height: "100svh", minHeight: "640px", maxHeight: "960px" }}>
       {/* Parallax image */}
       <motion.div className="absolute inset-0" style={{ y, scale: 1.14 }}>
-        <img src={image} alt={title} className="w-full h-full object-cover" />
+        <img fetchPriority="high" src={image} alt={title} className="w-full h-full object-cover" />
       </motion.div>
 
       {/* Overlays — layered for depth */}
@@ -212,7 +212,7 @@ function Hero({ image, category, title, date, readTime, index }: {
           <motion.h1
             className="font-serif font-normal text-[#FAF8F5] leading-[1.03]"
             style={{ fontSize: "clamp(2.4rem, 5.8vw, 4.8rem)", letterSpacing: "-0.01em" }}
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1.2, delay: 0.36, ease: [0.22, 1, 0.36, 1] }}
           >

@@ -127,6 +127,10 @@ export interface SiteSettings {
   weekendHours?: string;
   address?: BusinessAddress | null;
   googleBusinessProfileUrl?: string;
+  googleRating?: number;
+  googleReviewCount?: number;
+  googleReviewsUrl?: string;
+  googleWriteReviewUrl?: string;
   licenceNumber?: string;
   abn?: string;
   socialLinks?: Array<{ platform: string; url: string }>;
@@ -189,6 +193,20 @@ export interface CmsSuburb {
   _updatedAt?: string;
 }
 
+export interface CmsReview {
+  _id: string;
+  authorName: string;
+  rating: number;
+  text: string;
+  suburb?: string;
+  service?: string;
+  source?: string;
+  link?: string;
+  date?: string;
+  featured?: boolean;
+  agent?: string;
+}
+
 export interface CmsContent {
   siteSettings: SiteSettings;
   listings: CmsListing[];
@@ -197,4 +215,5 @@ export interface CmsContent {
   pages: CmsPage[];
   agents: CmsAgent[];
   suburbs: CmsSuburb[];
+  reviews: CmsReview[];
 }

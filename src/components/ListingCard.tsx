@@ -25,7 +25,7 @@ export function ListingCard({ listing, index = 0 }: { listing: Listing; index?: 
       <Link href={`/listings/${listing.slug}`} className="block">
         <div className="relative overflow-hidden cursor-pointer" style={{ height: "260px" }}>
           {/* Static base image */}
-          <img
+          <img loading="lazy" decoding="async"
             src={listing.heroImage}
             alt={listing.address}
             className="absolute inset-0 w-full h-full object-cover"
@@ -37,7 +37,7 @@ export function ListingCard({ listing, index = 0 }: { listing: Listing; index?: 
             whileHover={{ scale: 1.05 }}
             transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
           >
-            <img
+            <img loading="lazy" decoding="async"
               src={listing.heroImage}
               alt=""
               aria-hidden

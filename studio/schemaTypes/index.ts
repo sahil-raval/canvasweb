@@ -392,9 +392,31 @@ const suburb = defineType({
   preview: {select: {title: 'name', subtitle: 'postcode', media: 'heroImage'}},
 })
 
+/** Client review. Copy real reviews (e.g. from Google) with the reviewer's first name and initial. */
+const review = defineType({
+  name: 'review', title: 'Review', type: 'document', icon: UserIcon,
+  fields: [
+    defineField({name: 'authorName', title: 'Reviewer name', type: 'string', description: 'First name and last initial, e.g. "Monson C."', validation: (r) => r.required().max(60)}),
+    defineField({name: 'rating', type: 'number', options: {list: [5, 4, 3, 2, 1]}, initialValue: 5, validation: (r) => r.required().integer().min(1).max(5)}),
+    defineField({name: 'text', title: 'Review text', type: 'text', rows: 5, description: 'Exactly as written by the reviewer.', validation: (r) => r.required().max(1500)}),
+    defineField({name: 'suburb', type: 'string'}),
+    defineField({name: 'service', type: 'string', options: {list: ['Selling', 'Buying', 'Renting', 'Property management', 'Appraisal']}}),
+    defineField({name: 'agent', type: 'reference', to: [{type: 'agent'}]}),
+    defineField({name: 'source', type: 'string', options: {list: ['Google', 'RateMyAgent', 'realestate.com.au', 'Domain', 'Direct']}, initialValue: 'Google', validation: (r) => r.required()}),
+    defineField({name: 'link', title: 'Link to the original review', type: 'url'}),
+    defineField({name: 'date', title: 'Review date', type: 'date'}),
+    defineField({name: 'featured', title: 'Show on home page', type: 'boolean', initialValue: true}),
+  ],
+  orderings: [{title: 'Newest first', name: 'dateDesc', by: [{field: 'date', direction: 'desc'}]}],
+  preview: {
+    select: {title: 'authorName', rating: 'rating', source: 'source', subtitle: 'text'},
+    prepare: ({title, rating, source, subtitle}) => ({title: `${'★'.repeat(rating || 0)} ${title || ''}`, subtitle: `${source || ''} · ${subtitle || ''}`}),
+  },
+})
+
 const siteSettings = defineType({
   name: 'siteSettings', title: 'Site settings', type: 'document', icon: CogIcon,
-  groups: [{name: 'business', title: 'Business', default: true}, {name: 'social', title: 'Social'}, {name: 'seo', title: 'SEO'}],
+  groups: [{name: 'business', title: 'Business', default: true}, {name: 'reviews', title: 'Reviews'}, {name: 'social', title: 'Social'}, {name: 'seo', title: 'SEO'}],
   fields: [
     defineField({name: 'businessName', type: 'string', group: 'business', initialValue: 'Canvas Real Estate', validation: (r) => r.required()}),
     defineField({name: 'siteUrl', title: 'Website URL', type: 'url', group: 'business', initialValue: 'https://canvasrealestate.com.au', validation: (r) => r.required().uri({scheme: ['https']})}),
@@ -416,6 +438,10 @@ const siteSettings = defineType({
     }),
     defineField({name: 'googleBusinessProfileUrl', title: 'Google Business Profile link', type: 'url', group: 'business', description: 'The share link of your Google Business Profile (Google Maps listing).'}),
     defineField({name: 'licenceNumber', title: 'Estate agent licence number', type: 'string', group: 'business'}),
+    defineField({name: 'googleRating', title: 'Google rating', type: 'number', group: 'reviews', description: 'Copy from your Google Business Profile, e.g. 4.9. Leave empty to hide the rating badge.', validation: (r) => r.min(1).max(5).precision(1)}),
+    defineField({name: 'googleReviewCount', title: 'Number of Google reviews', type: 'number', group: 'reviews', validation: (r) => r.integer().min(0)}),
+    defineField({name: 'googleReviewsUrl', title: 'Link to read your Google reviews', type: 'url', group: 'reviews'}),
+    defineField({name: 'googleWriteReviewUrl', title: 'Link to leave a Google review', type: 'url', group: 'reviews', description: 'Google Business Profile → "Ask for reviews" → copy link (g.page/r/…/review).'}),
     defineField({name: 'abn', title: 'ABN', type: 'string', group: 'business'}),
     defineField({name: 'serviceArea', title: 'Service area', type: 'string', group: 'business', initialValue: 'Serving all Geelong suburbs'}),
     defineField({name: 'weekdayHours', title: 'Weekday hours', type: 'string', group: 'business', initialValue: 'Mon–Fri: 9am – 6pm'}),
@@ -426,4 +452,4 @@ const siteSettings = defineType({
   preview: {prepare: () => ({title: 'Canvas Real Estate settings'})},
 })
 
-export const schemaTypes = [seo, faqItem, comparableSale, statementOfInformation, articleSection, agent, listing, rental, journalArticle, page, suburb, siteSettings]
+export const schemaTypes = [seo, faqItem, comparableSale, statementOfInformation, articleSection, agent, listing, rental, journalArticle, page, suburb, review, siteSettings]

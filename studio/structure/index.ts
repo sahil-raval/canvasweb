@@ -26,4 +26,5 @@ export const structure: StructureResolver = (S) =>
       S.documentTypeListItem('page').title('Pages').icon(DocumentIcon),
       S.documentTypeListItem('suburb').title('Suburb pages').icon(DocumentIcon),
       S.documentTypeListItem('agent').title('Agents').icon(UserIcon),
+      S.documentTypeListItem('review').title('Reviews').icon(UserIcon),
     ])

@@ -14,6 +14,9 @@ import { ListingCard } from "@/components/ListingCard";
 import { ContactForm } from "@/components/ContactForm";
 import { useCms } from "@/lib/cms/context";
 import { isSold } from "@/lib/cms/listing";
+import { googleRating, homeReviews } from "@/lib/cms/reviews";
+import type { CmsReview } from "@/lib/cms/types";
+import { GoogleRatingLine, ReviewActions, Stars } from "@/components/Reviews";
 
 
 const pillars = [
@@ -21,13 +24,6 @@ const pillars = [
   { icon: Users,     title: "Genuinely Personal",     desc: "We take the time to understand your unique goals, not just your property. Every client receives our full attention." },
   { icon: TrendingUp,title: "Results-Driven",         desc: "Our track record speaks for itself. We work tirelessly to maximise your outcome and exceed your expectations." },
   { icon: Award,     title: "Local Expertise",        desc: "Born and raised in Geelong. We know every street, suburb, and market nuance that gives you the competitive edge." },
-];
-
-const testimonials = [
-  { name: "Monson C.",  suburb: "Charlemont", rating: 5, text: "We really appreciate all the support and help from Pooja and the team at Canvas Real Estate throughout our rental process. The communication was always friendly, professional, and very quick, which made everything smooth and stress-free for our family. Pooja was very helpful, approachable, and supportive at every step, and the whole process was handled efficiently and fast. Thank you again for making our move much easier" },
-  { name: "Verified Seller",  suburb: "Leopold",            rating: 5, text: "Pooja was amazing to deal with whilst selling our home. Communication was fantastic and we were kept up to date every step of the way. Very flexible with her time and always willing to help however she could." },
-  { name: "Verified Buyer",  suburb: "Leopold",         rating: 5, text: "Easy and Stress free, Pooja was easy to work with and patient. She made everything easy and seamless. Really enjoyed working with her." },
-  { name: "Shishtika K.", suburb: "Lara",        rating: 5, text: "i had the privilege to work with canvas reality. they had put up my rental property up very quickly in Geelong. Pooja was a very great help." },
 ];
 
 const processSteps = [
@@ -42,7 +38,7 @@ const SLIDE_DIR = { enter: (d: number) => ({ x: d > 0 ? 60 : -60, opacity: 0 }),
                     center: { x: 0, opacity: 1 },
                     exit:  (d: number) => ({ x: d > 0 ? -60 : 60, opacity: 0 }) };
 
-function TestimonialSlider() {
+function TestimonialSlider({ testimonials }: { testimonials: CmsReview[] }) {
   const [idx, setIdx]         = useState(0);
   const [dir, setDir]         = useState(1);
   const [paused, setPaused]   = useState(false);
@@ -85,7 +81,7 @@ function TestimonialSlider() {
           >
             {/* Stars */}
             <div className="flex gap-1 mb-6">
-              {Array.from({ length: t.rating }).map((_, i) => (
+              {Array.from({ length: Math.round(t.rating) }).map((_, i) => (
                 <Star key={i} className="w-4 h-4 text-[#371628] fill-[#371628]" />
               ))}
             </div>
@@ -96,11 +92,11 @@ function TestimonialSlider() {
             {/* Attribution */}
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-full bg-[#371628] flex items-center justify-center text-white text-sm font-bold font-sans shrink-0">
-                {t.name[0]}
+                {t.authorName[0]}
               </div>
               <div>
-                <p className="text-sm font-semibold text-gray-900 font-sans">{t.name}</p>
-                <p className="text-xs text-gray-400 font-sans">{t.suburb}</p>
+                <p className="text-sm font-semibold text-gray-900 font-sans">{t.authorName}</p>
+                <p className="text-xs text-gray-400 font-sans">{[t.suburb, t.source && `via ${t.source}`].filter(Boolean).join(" · ")}</p>
               </div>
             </div>
           </motion.div>
@@ -144,7 +140,10 @@ function TestimonialSlider() {
    PAGE
 ═══════════════════════════════════════════════════════ */
 export default function Home() {
-  const { listings: allListings, pages, siteSettings } = useCms();
+  const cms = useCms();
+  const { listings: allListings, pages, siteSettings } = cms;
+  const reviews = homeReviews(cms);
+  const rating = googleRating(siteSettings);
   // Only current (not sold) listings are featured and counted.
   const listings = allListings.filter((l) => !isSold(l.status));
   const featuredListings = listings.slice(0, 3);
@@ -157,23 +156,25 @@ export default function Home() {
   const heroY = useTransform(scrollYProgress, [0, 1], ["0%", "30%"]);
 
   return (
-    <main className="min-h-screen bg-[#FAF8F5] overflow-x-hidden">
+    <div className="min-h-screen bg-[#FAF8F5] overflow-x-hidden">
 
       {/* ── HERO ──────────────────────────────────────────────────── */}
       <section ref={heroRef} className="relative h-[100dvh] min-h-[640px] flex items-center justify-center overflow-hidden">
         <motion.div className="absolute inset-0 z-0" style={{ y: heroY }}>
-          <img src={page?.heroImage || heroImg} alt="Geelong luxury home" className="w-full h-full object-cover scale-110" />
+          <img fetchPriority="high" src={page?.heroImage || heroImg} alt="Geelong luxury home" className="w-full h-full object-cover scale-110" />
           <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/70" />
         </motion.div>
 
-        {/* Floating trust badge */}
+        {/* Floating trust badge (only when a Google rating is set in Sanity) */}
+        {rating && (
         <motion.div
           initial={{ opacity: 0, x: -30 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 1.2, duration: 0.6 }}
           className="absolute top-32 left-6 md:left-12 hidden md:flex items-center gap-3 bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl px-4 py-3"
         >
-          <div className="flex">{[1,2,3,4,5].map(i => <Star key={i} className="w-3.5 h-3.5 text-white fill-white" />)}</div>
-          <span className="text-white text-xs font-semibold font-sans">5.0 Google Rating</span>
+          <Stars value={rating.rating} className="w-3.5 h-3.5 text-white fill-white" />
+          <span className="text-white text-xs font-semibold font-sans">{rating.rating.toFixed(1)} Google Rating</span>
         </motion.div>
+        )}
 
         {/* Floating active listing badge */}
         <motion.div
@@ -192,7 +193,7 @@ export default function Home() {
             {page?.eyebrow || "Geelong's Trusted Independent Agency"}
           </motion.p>
           <motion.h1
-            initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: [0.25, 0.46, 0.45, 0.94] }}
+            initial={{ y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: [0.25, 0.46, 0.45, 0.94] }}
             className="text-5xl md:text-7xl lg:text-8xl font-serif font-normal leading-[1.05] max-w-5xl mx-auto mb-8"
           >
             {page?.heading || "Your Story Starts Here in Geelong."}
@@ -360,7 +361,7 @@ export default function Home() {
             key={person.name}
             className="flex-1 rounded-2xl sm:rounded-3xl overflow-hidden relative h-[280px] sm:h-[360px] lg:h-[420px]"
           >
-            <img
+            <img loading="lazy" decoding="async"
               src={person.img}
               alt={person.name}
               className="absolute inset-0 w-full h-full object-cover object-center"
@@ -384,12 +385,10 @@ export default function Home() {
           <div className="text-center mb-16">
             <p className="text-xs uppercase tracking-[0.3em] text-[#371628]/50 font-semibold font-sans mb-4">Client Stories</p>
             <h2 className="text-4xl md:text-5xl font-serif text-gray-900 font-normal">What Our Clients Say</h2>
-            <div className="flex justify-center items-center gap-1.5 mt-5">
-              {[1,2,3,4,5].map(i => <Star key={i} className="w-4 h-4 text-[#371628] fill-[#371628]" />)}
-              <span className="ml-2 text-sm font-semibold font-sans text-gray-500">5.0 average · Google Reviews</span>
-            </div>
+            <GoogleRatingLine summary={rating} />
           </div>
-          <TestimonialSlider />
+          <TestimonialSlider testimonials={reviews} />
+          <ReviewActions summary={rating} />
         </div>
       </section>
 
@@ -446,6 +445,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-    </main>
+    </div>
   );
 }

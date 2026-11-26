@@ -67,7 +67,7 @@ function ListingsView({ mode }: { mode: "current" | "sold" }) {
           <div className="absolute top-0 right-0 w-[500px] h-[500px] rounded-full bg-white translate-x-1/3 -translate-y-1/3" />
         </div>
         <div className="container mx-auto px-6 md:px-12 relative z-10">
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
+          <motion.div initial={{ y: 20 }} animate={{ opacity: 1, y: 0 }}>
             <p className="text-[10px] uppercase tracking-[0.3em] text-white/50 font-semibold font-sans mb-4">{page?.eyebrow || (sold ? "Recent Results" : "Geelong Properties")}</p>
             <h1 className="text-5xl md:text-6xl font-serif font-normal text-white mb-4">{page?.heading || (sold ? "Sold Properties" : "Current Listings")}</h1>
             <p className="text-white/65 text-lg font-sans max-w-xl mb-10">

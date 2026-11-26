@@ -516,7 +516,7 @@ export default function About() {
           <motion.h1
             className="font-serif font-normal text-[#FAF8F5] leading-[1.04] mb-6"
             style={{ fontSize: "clamp(2.8rem, 7vw, 5.5rem)", letterSpacing: "-0.015em" }}
-            initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }}
+            initial={{ y: 24 }} animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
           >
             {page?.heading || "About Us"}
@@ -577,7 +577,7 @@ export default function About() {
         >
           {[0, 1].map(k => (
             <div key={k} className="flex items-center shrink-0">
-              {(content?.marqueeItems?.length ? content.marqueeItems : ["CANVAS REAL ESTATE", "GEELONG VICTORIA", "INDEPENDENT AGENCY", "5.0 GOOGLE RATING", "LOCALLY TRUSTED", "BOUTIQUE SERVICE", "HONEST ADVICE", "GENUINE CARE"]).map((item, i) => (
+              {(content?.marqueeItems?.length ? content.marqueeItems : ["CANVAS REAL ESTATE", "GEELONG VICTORIA", "INDEPENDENT AGENCY", "LOCALLY TRUSTED", "BOUTIQUE SERVICE", "HONEST ADVICE", "GENUINE CARE"]).map((item, i) => (
                 <span key={i} className="flex items-center shrink-0">
                   <span className="text-white/55 text-[10px] font-semibold tracking-[0.4em] uppercase font-sans px-8 whitespace-nowrap">
                     {item}
@@ -644,7 +644,7 @@ export default function About() {
                       transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
                       className="absolute inset-0 overflow-hidden rounded-xl shadow-2xl shadow-[#371628]/20"
                     >
-                      <img
+                      <img loading="lazy" decoding="async"
                         src={values[hoveredValue].img}
                         alt={values[hoveredValue].title}
                         className="w-full h-full object-cover"
@@ -735,17 +735,17 @@ export default function About() {
           {/* Asymmetric grid — stacked on mobile, editorial on md+ */}
           <div className="flex flex-col gap-3 md:grid md:grid-cols-12 md:grid-rows-[320px_320px]">
             <FadeUp className="w-full h-[260px] md:h-auto md:col-span-7 md:row-span-2 overflow-hidden rounded-sm group" delay={0}>
-              <img src={galleryImages[0]?.image} alt={galleryImages[0]?.alt || "Canvas office"} className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-700" />
+              <img loading="lazy" decoding="async" src={galleryImages[0]?.image} alt={galleryImages[0]?.alt || "Canvas office"} className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-700" />
             </FadeUp>
             <FadeUp className="w-full h-[220px] md:h-auto md:col-span-5 md:row-span-1 overflow-hidden rounded-sm group" delay={0.08}>
-              <img src={galleryImages[1]?.image || galleryImages[0]?.image} alt={galleryImages[1]?.alt || "Canvas team"} className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-700" />
+              <img loading="lazy" decoding="async" src={galleryImages[1]?.image || galleryImages[0]?.image} alt={galleryImages[1]?.alt || "Canvas team"} className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-700" />
             </FadeUp>
             <div className="col-span-12 md:col-span-5 md:row-span-1 grid grid-cols-2 gap-3 h-[220px] md:h-auto">
               <FadeUp className="col-span-1 overflow-hidden rounded-sm group h-full" delay={0.14}>
-                <img src={galleryImages[2]?.image || galleryImages[0]?.image} alt={galleryImages[2]?.alt || "Canvas workspace"} className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-700" />
+                <img loading="lazy" decoding="async" src={galleryImages[2]?.image || galleryImages[0]?.image} alt={galleryImages[2]?.alt || "Canvas workspace"} className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-700" />
               </FadeUp>
               <FadeUp className="col-span-1 overflow-hidden rounded-sm group h-full" delay={0.2}>
-                <img src={galleryImages[3]?.image || galleryImages[0]?.image} alt={galleryImages[3]?.alt || "Canvas detail"} className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-700" />
+                <img loading="lazy" decoding="async" src={galleryImages[3]?.image || galleryImages[0]?.image} alt={galleryImages[3]?.alt || "Canvas detail"} className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-700" />
               </FadeUp>
             </div>
           </div>
@@ -826,7 +826,7 @@ export default function About() {
                   key={a.name}
                   className="flex items-center gap-3 bg-white/8 backdrop-blur-sm border border-white/10 rounded-2xl px-5 py-3"
                 >
-                  <img
+                  <img loading="lazy" decoding="async"
                     src={a.img}
                     alt={a.name}
                     className="w-10 h-10 rounded-full object-cover object-top shrink-0"

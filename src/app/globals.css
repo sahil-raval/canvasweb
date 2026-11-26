@@ -225,18 +225,3 @@ html {
     pointer-events: none;
   }
 }
-
-/* First visit: dark cover until the intro animation mounts (see SiteShell). */
-html.intro body::after {
-  content: '';
-  position: fixed;
-  inset: 0;
-  z-index: 199;
-  background: #0d0408;
-  pointer-events: none;
-  /* Safety net: never leave the cover up if scripts fail to load. */
-  animation: intro-cover-off 0.3s ease 6s forwards;
-}
-@keyframes intro-cover-off {
-  to { opacity: 0; visibility: hidden; }
-}

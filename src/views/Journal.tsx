@@ -427,7 +427,7 @@ function Hero({
         <motion.h1
           className="font-serif font-normal text-[#FAF8F5] leading-[1.04] mb-6"
           style={{ fontSize: "clamp(2.8rem, 7vw, 5.5rem)", letterSpacing: "-0.015em" }}
-          initial={{ opacity: 0, y: 24 }}
+          initial={{ y: 24 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
         >

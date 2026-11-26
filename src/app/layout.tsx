@@ -23,18 +23,17 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export const viewport: Viewport = {themeColor: '#371628', width: 'device-width', initialScale: 1}
 
-// Runs before first paint: mark the first page of a visit so the intro shows without a flash.
-const introScript = `try{if(!sessionStorage.getItem('cre-loaded'))document.documentElement.classList.add('intro')}catch(e){}`
-
 export default async function RootLayout({children}: {children: React.ReactNode}) {
   const content = await getContent()
   return (
-    <html lang="en-AU" suppressHydrationWarning>
+    <html lang="en-AU">
       <head>
-        <script dangerouslySetInnerHTML={{__html: introScript}} />
         <link rel="preconnect" href="https://cdn.sanity.io" />
       </head>
       <body>
+        <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[300] focus:rounded focus:bg-white focus:px-4 focus:py-2 focus:text-[#371628]">
+          Skip to content
+        </a>
         <CmsProvider content={content}>
           <SiteShell>{children}</SiteShell>
         </CmsProvider>

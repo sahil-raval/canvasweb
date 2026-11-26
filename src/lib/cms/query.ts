@@ -12,6 +12,10 @@ export const CONTENT_QUERY = `{
     weekendHours,
     address{street, suburb, state, postcode, latitude, longitude},
     googleBusinessProfileUrl,
+    googleRating,
+    googleReviewCount,
+    googleReviewsUrl,
+    googleWriteReviewUrl,
     licenceNumber,
     abn,
     socialLinks[]{platform, url},
@@ -107,6 +111,10 @@ export const CONTENT_QUERY = `{
       ogTitle, ogDescription, "ogImage": ogImage.asset->url,
       twitterCard, focusKeyword
     }
+  },
+  "reviews": *[_type == "review" && !(_id in path("drafts.**"))] | order(coalesce(date, _createdAt) desc)[0...40]{
+    _id, authorName, rating, text, suburb, service, source, link, date, featured,
+    "agent": agent->name
   },
   "suburbs": *[_type == "suburb" && defined(slug.current)] | order(name asc){
     name, "slug": slug.current, postcode, heading, intro, _updatedAt,

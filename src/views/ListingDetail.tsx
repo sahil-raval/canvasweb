@@ -103,7 +103,7 @@ function FloorPlanCard({
         <h3 className="font-serif text-[#2a1f25] text-2xl leading-tight mt-2 mb-5">Floor Plan</h3>
         {imageUrl && (
           <a href={imageUrl} target="_blank" rel="noopener noreferrer" className="block bg-[#FAF8F5] border border-[#371628]/8 p-3">
-            <img
+            <img loading="lazy" decoding="async"
               src={imageUrl}
               alt={`Floor plan for ${address}`}
               className="w-full h-auto max-h-[360px] object-contain"
@@ -316,7 +316,7 @@ export default function ListingDetail() {
       {/* ── HERO ── */}
       <section ref={heroRef} className="relative h-screen min-h-[600px] overflow-hidden">
         <motion.div className="absolute inset-0 z-0 scale-110" style={{ y: heroY }}>
-          <img src={listing.heroImage} alt={listing.address} className="w-full h-full object-cover" />
+          <img fetchPriority="high" src={listing.heroImage} alt={listing.address} className="w-full h-full object-cover" />
         </motion.div>
 
         <div className="absolute top-0 left-0 right-0 z-20 pt-6 px-6 md:px-10 mt-16">
@@ -334,7 +334,7 @@ export default function ListingDetail() {
           <div className="relative z-10 px-6 md:px-10 pb-10 pt-24">
             <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
               <motion.h1
-                initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }}
+                initial={{ y: 40 }} animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 1.1, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
                 className="font-serif text-white leading-none"
                 style={{ fontSize: "clamp(2.4rem, 6vw, 5rem)", fontWeight: 400, letterSpacing: "-0.01em" }}
@@ -436,7 +436,7 @@ export default function ListingDetail() {
                 <FadeUp className="col-span-12 md:col-span-8">
                   <button onClick={() => openLightbox(0)}
                     className="w-full overflow-hidden group relative block" style={{ aspectRatio: "16/10" }}>
-                    <img src={listing.heroImage} alt="Main photo"
+                    <img loading="lazy" decoding="async" src={listing.heroImage} alt="Main photo"
                       className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-700" />
                     <div className="absolute inset-0 bg-black/0 group-hover:bg-black/8 transition-colors duration-400" />
                   </button>
@@ -446,7 +446,7 @@ export default function ListingDetail() {
                     <FadeUp key={i} delay={0.06 * (i + 1)}>
                       <button onClick={() => openLightbox(i + 1)}
                         className="w-full overflow-hidden group relative block" style={{ aspectRatio: "4/3" }}>
-                        <img src={img} alt={`Photo ${i + 2}`}
+                        <img loading="lazy" decoding="async" src={img} alt={`Photo ${i + 2}`}
                           className="w-full h-full object-cover group-hover:scale-[1.04] transition-transform duration-700" />
                         <div className="absolute inset-0 bg-black/0 group-hover:bg-black/8 transition-colors duration-400" />
                       </button>
@@ -457,7 +457,7 @@ export default function ListingDetail() {
                   <FadeUp key={i} className="col-span-6" delay={0.1 + i * 0.06}>
                     <button onClick={() => openLightbox(i + 3)}
                       className="w-full overflow-hidden group relative block" style={{ aspectRatio: "16/10" }}>
-                      <img src={img} alt={`Photo ${i + 4}`}
+                      <img loading="lazy" decoding="async" src={img} alt={`Photo ${i + 4}`}
                         className="w-full h-full object-cover group-hover:scale-[1.04] transition-transform duration-700" />
                       {i === 1 && allImages.length > 5 && (
                         <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
@@ -497,7 +497,7 @@ export default function ListingDetail() {
                         <div key={agent.key} className="py-5 first:pt-0 last:pb-0">
                           <div className="flex items-center gap-4 mb-4">
                             <div className="w-14 h-14 overflow-hidden shrink-0 border border-[#371628]/10">
-                              <img src={agent.photo} alt={agent.name} className="w-full h-full object-cover object-top" />
+                              <img loading="lazy" decoding="async" src={agent.photo} alt={agent.name} className="w-full h-full object-cover object-top" />
                             </div>
                             <div>
                               <p className="font-serif text-[#2a1f25] text-lg leading-tight">{agent.name}</p>

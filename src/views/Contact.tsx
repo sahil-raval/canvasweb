@@ -4,19 +4,20 @@
 const poojaImg = "/images/agent-pooja-new.jpg";
 const chandraImg = "/images/agent-chandra-new.jpg";
 import { useCms } from "@/lib/cms/context";
+import { googleRating } from "@/lib/cms/reviews";
 import { motion } from "framer-motion";
 import RouterLink from "next/link";
 import { MapPin, Phone, Mail, Facebook, Instagram, Linkedin, Youtube, Clock, Shield, Star } from "lucide-react";
 import { ContactForm } from "@/components/ContactForm";
 
-const trustPoints = [
-  
-  { icon: Shield, text: "100% confidential & obligation-free" },
-  { icon: Star, text: "5.0 Google Rating" },
-];
 
 export default function Contact() {
   const { pages, siteSettings, agents } = useCms();
+  const rating = googleRating(siteSettings);
+  const trustPoints = [
+    { icon: Shield, text: "100% confidential & obligation-free" },
+    ...(rating ? [{ icon: Star, text: `${rating.rating.toFixed(1)} Google Rating${rating.count ? ` (${rating.count} reviews)` : ""}` }] : []),
+  ];
   const page = pages.find((item) => item.slug === "contact");
   const phone = siteSettings.phone || "0469 131 347";
   const email = siteSettings.email || "enquiry@canvasrealestate.com.au";
@@ -40,7 +41,7 @@ export default function Contact() {
           <div className="absolute top-0 right-0 w-[600px] h-[600px] rounded-full bg-white translate-x-1/3 -translate-y-1/2" />
         </div>
         <div className="container mx-auto px-6 md:px-12 relative z-10">
-          <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} className="text-center max-w-3xl mx-auto">
+          <motion.div initial={{ y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} className="text-center max-w-3xl mx-auto">
             <p className="text-[10px] uppercase tracking-[0.3em] text-white/50 font-semibold font-sans mb-5">{page?.eyebrow || "We're Here For You"}</p>
             <h1 className="text-5xl md:text-6xl font-serif font-normal text-white leading-tight mb-6">
               {page?.heading || "Let's Start the Conversation"}
@@ -140,7 +141,7 @@ export default function Contact() {
                     { key: "chandra", name: "Chandra Bhatt", role: "Director", photo: chandraImg },
                   ]).map((agent) => (
                     <div key={agent.key} className="flex-1 bg-white/8 rounded-2xl p-3 flex items-center gap-3 border border-white/10">
-                      <img src={agent.photo || (agent.key === "pooja" ? poojaImg : chandraImg)} alt={agent.name} className="w-10 h-10 rounded-full object-cover object-center" />
+                      <img loading="lazy" decoding="async" src={agent.photo || (agent.key === "pooja" ? poojaImg : chandraImg)} alt={agent.name} className="w-10 h-10 rounded-full object-cover object-center" />
                       <div>
                         <p className="text-white text-xs font-semibold">{agent.name}</p>
                         <p className="text-white/50 text-[10px]">{agent.role || "Agent"}</p>
