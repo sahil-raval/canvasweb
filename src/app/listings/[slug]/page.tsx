@@ -2,6 +2,9 @@ import {notFound} from 'next/navigation'
 import ListingDetail from '@/views/ListingDetail'
 import {JsonLd} from '@/components/JsonLd'
 import {getContent} from '@/lib/cms/fetch'
+import {CmsProvider} from '@/lib/cms/context'
+import {pagesFor, scope} from '@/lib/cms/scope'
+
 import {breadcrumbSchema, listingMetadata, listingSchema} from '@/lib/seo'
 
 type Props = {params: Promise<{slug: string}>}
@@ -25,7 +28,9 @@ export default async function Page({params}: Props) {
   const sold = listing.status === 'Sold'
   return (
     <>
-      <ListingDetail />
+      <CmsProvider content={scope(content, {listings: [listing], agents: content.agents})}>
+        <ListingDetail />
+      </CmsProvider>
       <JsonLd
         data={[
           listingSchema(content, listing),

@@ -7,6 +7,7 @@ import {SiteShell} from '@/components/SiteShell'
 import {SITE_URL} from '@/lib/cms/config'
 import {CmsProvider} from '@/lib/cms/context'
 import {getContent} from '@/lib/cms/fetch'
+import {shellContent} from '@/lib/cms/scope'
 import {businessSchema, websiteSchema} from '@/lib/seo'
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -34,7 +35,7 @@ export default async function RootLayout({children}: {children: React.ReactNode}
         <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[300] focus:rounded focus:bg-white focus:px-4 focus:py-2 focus:text-[#371628]">
           Skip to content
         </a>
-        <CmsProvider content={content}>
+        <CmsProvider content={shellContent(content)}>
           <SiteShell>{children}</SiteShell>
         </CmsProvider>
         <JsonLd data={[businessSchema(content), websiteSchema(content)]} />

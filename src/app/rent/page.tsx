@@ -2,6 +2,9 @@ import Rent from '@/views/Rent'
 import {JsonLd} from '@/components/JsonLd'
 import {PageFaqs} from '@/components/PageFaqs'
 import {getContent} from '@/lib/cms/fetch'
+import {CmsProvider} from '@/lib/cms/context'
+import {pagesFor, scope} from '@/lib/cms/scope'
+
 import {breadcrumbSchema, staticPageMetadata, STATIC_SEO} from '@/lib/seo'
 
 export async function generateMetadata() {
@@ -13,7 +16,9 @@ export default async function Page() {
   const name = STATIC_SEO['/rent'].title.split(' | ')[0]
   return (
     <>
-      <Rent />
+      <CmsProvider content={scope(content, {rentals: content.rentals, pages: pagesFor(content, 'rent')})}>
+        <Rent />
+      </CmsProvider>
       <PageFaqs content={content} path="/rent" />
       <JsonLd data={breadcrumbSchema(content, [[name, '/rent']])} />
     </>

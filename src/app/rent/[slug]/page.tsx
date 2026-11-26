@@ -2,6 +2,9 @@ import {notFound} from 'next/navigation'
 import RentalDetail from '@/views/RentalDetail'
 import {JsonLd} from '@/components/JsonLd'
 import {getContent} from '@/lib/cms/fetch'
+import {CmsProvider} from '@/lib/cms/context'
+import {pagesFor, scope} from '@/lib/cms/scope'
+
 import {breadcrumbSchema, rentalMetadata, rentalSchema} from '@/lib/seo'
 
 type Props = {params: Promise<{slug: string}>}
@@ -24,7 +27,9 @@ export default async function Page({params}: Props) {
   if (!rental) notFound()
   return (
     <>
-      <RentalDetail />
+      <CmsProvider content={scope(content, {rentals: [rental], agents: content.agents})}>
+        <RentalDetail />
+      </CmsProvider>
       <JsonLd data={[rentalSchema(content, rental), breadcrumbSchema(content, [['Rent', '/rent'], [`${rental.address}, ${rental.suburb}`, `/rent/${rental.slug}`]])]} />
     </>
   )
