@@ -141,13 +141,28 @@ function TestimonialSlider({ testimonials }: { testimonials: CmsReview[] }) {
 ═══════════════════════════════════════════════════════ */
 export default function Home() {
   const cms = useCms();
-  const { listings: allListings, pages, siteSettings } = cms;
+  const { listings: allListings, pages, siteSettings, agents } = cms;
   const reviews = homeReviews(cms);
   const rating = googleRating(siteSettings);
+  const page = pages.find((item) => item.slug === "home");
+  const hc = page?.homeContent ?? {};
+  // Sanity text if entered, otherwise the default copy.
+  const steps = hc.processSteps?.length
+    ? hc.processSteps.map((x, i) => ({ num: x.number || String(i + 1).padStart(2, "0"), title: x.title || "", desc: x.description || "" }))
+    : processSteps;
+  const cards = hc.pillars?.length
+    ? hc.pillars.map((x, i) => ({ icon: pillars[i % pillars.length].icon, title: x.title || "", desc: x.description || "" }))
+    : pillars;
+  const teamPoints = hc.teamPoints?.length
+    ? hc.teamPoints
+    : ["Independent & locally owned", "Combined 15+ years of industry expertise", "Deeply embedded in the Geelong community", "Available when you need us, not just 9 to 5"];
+  const team = agents.length
+    ? agents.slice(0, 2).map((a) => ({ img: a.photo || (a.key === "chandra" ? chandraImg : poojaImg), name: a.name, role: a.role || "" }))
+    : [{ img: poojaImg, name: "Pooja Patel", role: "Director / Licensed Estate Agent" }, { img: chandraImg, name: "Chandra Bhatt", role: "Director" }];
+  const quote = reviews[0];
   // Only current (not sold) listings are featured and counted.
   const listings = allListings.filter((l) => !isSold(l.status));
   const featuredListings = listings.slice(0, 3);
-  const page = pages.find((item) => item.slug === "home");
   const phone = siteSettings.phone || "0469 131 347";
   const email = siteSettings.email || "enquiry@canvasrealestate.com.au";
   const phoneHref = `tel:${phone.replace(/[^\d+]/g, "")}`;
@@ -208,14 +223,14 @@ export default function Home() {
             initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.45 }}
             className="flex flex-col sm:flex-row gap-4 justify-center"
           >
-            <Link href="/listings">
+            <Link href={hc.heroPrimaryHref || "/listings"}>
               <button className="h-14 px-10 text-sm font-bold font-sans bg-[#371628] text-white rounded-2xl hover:bg-[#2d1020] active:scale-95 transition-all duration-200 shadow-xl shadow-[#371628]/40">
-                Explore Listings
+                {hc.heroPrimaryLabel || "Explore Listings"}
               </button>
             </Link>
-            <Link href="/contact">
+            <Link href={hc.heroSecondaryHref || "/contact"}>
               <button className="h-14 px-10 text-sm font-semibold font-sans bg-white/10 text-white border border-white/30 rounded-2xl hover:bg-white/20 backdrop-blur-sm active:scale-95 transition-all duration-200">
-                Property Appraisal →
+                {hc.heroSecondaryLabel || "Property Appraisal →"}
               </button>
             </Link>
           </motion.div>
@@ -237,18 +252,18 @@ export default function Home() {
         <div className="container mx-auto px-6 md:px-12">
           <div className="flex flex-col md:flex-row justify-between items-end mb-14 gap-6">
             <div>
-              <p className="text-xs uppercase tracking-[0.3em] text-[#371628]/50 font-semibold font-sans mb-3">Curated For You</p>
-              <h2 className="text-4xl md:text-5xl font-serif text-gray-900 font-normal leading-tight">Featured Properties</h2>
-              <p className="text-gray-500 font-sans mt-3 max-w-md text-sm leading-relaxed">Each listing is hand-selected and expertly presented. Properties at this level move quickly.</p>
+              <p className="text-xs uppercase tracking-[0.3em] text-[#371628]/50 font-semibold font-sans mb-3">{hc.featuredEyebrow || "Curated For You"}</p>
+              <h2 className="text-4xl md:text-5xl font-serif text-gray-900 font-normal leading-tight">{hc.featuredHeading || "Featured Properties"}</h2>
+              <p className="text-gray-500 font-sans mt-3 max-w-md text-sm leading-relaxed">{hc.featuredBody || "Each listing is hand-selected and expertly presented. Properties at this level move quickly."}</p>
             </div>
             <Link href="/listings" className="group flex items-center gap-2 text-[#371628] font-semibold font-sans text-sm hover:gap-4 transition-all duration-300 shrink-0">
-              View All Properties <ArrowRight className="w-4 h-4" />
+              {hc.featuredLinkLabel || "View All Properties"} <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
 
           <div className="flex items-center gap-3 bg-[#371628]/5 border border-[#371628]/10 rounded-2xl px-5 py-3 mb-10 w-fit">
             <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-            <p className="text-xs text-[#371628]/70 font-semibold font-sans">These properties are actively attracting buyer enquiries</p>
+            <p className="text-xs text-[#371628]/70 font-semibold font-sans">{hc.featuredUrgency || "These properties are actively attracting buyer enquiries"}</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -261,13 +276,13 @@ export default function Home() {
       <section className="py-28 bg-white">
         <div className="container mx-auto px-6 md:px-12">
           <div className="text-center max-w-2xl mx-auto mb-20">
-            <p className="text-xs uppercase tracking-[0.3em] text-[#371628]/50 font-semibold font-sans mb-4">How It Works</p>
-            <h2 className="text-4xl md:text-5xl font-serif text-gray-900 font-normal leading-tight">Your Journey, Simplified</h2>
-            <p className="text-gray-500 font-sans mt-4 text-sm leading-relaxed">We've refined every step of the process so you feel informed, confident, and in control from day one.</p>
+            <p className="text-xs uppercase tracking-[0.3em] text-[#371628]/50 font-semibold font-sans mb-4">{hc.processEyebrow || "How It Works"}</p>
+            <h2 className="text-4xl md:text-5xl font-serif text-gray-900 font-normal leading-tight">{hc.processHeading || "Your Journey, Simplified"}</h2>
+            <p className="text-gray-500 font-sans mt-4 text-sm leading-relaxed">{hc.processBody || "We've refined every step of the process so you feel informed, confident, and in control from day one."}</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8 relative">
             <div className="absolute top-10 left-[12.5%] right-[12.5%] h-px bg-gradient-to-r from-transparent via-[#371628]/20 to-transparent hidden lg:block" />
-            {processSteps.map((step, i) => (
+            {steps.map((step, i) => (
               <motion.div
                 key={i}
                 initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }}
@@ -283,9 +298,9 @@ export default function Home() {
             ))}
           </div>
           <div className="text-center mt-14">
-            <Link href="/contact">
+            <Link href={hc.processCtaHref || "/contact"}>
               <button className="h-14 px-12 text-sm font-bold font-sans bg-[#371628] text-white rounded-2xl hover:bg-[#2d1020] active:scale-95 transition-all duration-200 shadow-lg shadow-[#371628]/20">
-                Start Your Journey Today
+                {hc.processCtaLabel || "Start Your Journey Today"}
               </button>
             </Link>
           </div>
@@ -296,11 +311,11 @@ export default function Home() {
       <section className="py-28 bg-[#FAF8F5]">
         <div className="container mx-auto px-6 md:px-12">
           <div className="text-center max-w-2xl mx-auto mb-20">
-            <p className="text-xs uppercase tracking-[0.3em] text-[#371628]/50 font-semibold font-sans mb-4">The Canvas Difference</p>
-            <h2 className="text-4xl md:text-5xl font-serif text-gray-900 font-normal">Why Choose Canvas?</h2>
+            <p className="text-xs uppercase tracking-[0.3em] text-[#371628]/50 font-semibold font-sans mb-4">{hc.pillarsEyebrow || "The Canvas Difference"}</p>
+            <h2 className="text-4xl md:text-5xl font-serif text-gray-900 font-normal">{hc.pillarsHeading || "Why Choose Canvas?"}</h2>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {pillars.map((p, i) => (
+            {cards.map((p, i) => (
               <motion.div
                 key={i}
                 initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }}
@@ -327,24 +342,24 @@ export default function Home() {
   <div className="container mx-auto px-6 md:px-12 relative z-10">
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
       <motion.div initial={{ opacity: 0, x: -30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}>
-        <p className="text-xs uppercase tracking-[0.3em] text-white/50 font-semibold font-sans mb-4">Meet the Team</p>
+        <p className="text-xs uppercase tracking-[0.3em] text-white/50 font-semibold font-sans mb-4">{hc.teamEyebrow || "Meet the Team"}</p>
         <h2 className="text-3xl sm:text-4xl md:text-5xl font-serif font-normal leading-tight mb-6">
-          Real People.<br />Real Results.
+          {hc.teamHeading || <>Real People.<br />Real Results.</>}
         </h2>
         <p className="text-white/70 text-base md:text-lg font-sans font-light leading-relaxed mb-8 max-w-lg">
-          Pooja Patel and Chandra Bhatt founded Canvas Real Estate on a simple belief: that every client deserves honest advice, genuine care, and a result they're proud of.
+          {hc.teamBody || "Pooja Patel and Chandra Bhatt founded Canvas Real Estate on a simple belief: that every client deserves honest advice, genuine care, and a result they're proud of."}
         </p>
         <div className="space-y-3 mb-10">
-          {["Independent & locally owned", "Combined 15+ years of industry expertise", "Deeply embedded in the Geelong community", "Available when you need us, not just 9 to 5"].map((point, i) => (
+          {teamPoints.map((point, i) => (
             <div key={i} className="flex items-center gap-3">
               <CheckCircle2 className="w-5 h-5 text-white/60 shrink-0" />
               <span className="text-white/80 font-sans text-sm">{point}</span>
             </div>
           ))}
         </div>
-        <Link href="/about">
+        <Link href={hc.teamCtaHref || "/about"}>
           <button className="h-12 px-8 text-sm font-bold font-sans bg-white text-[#371628] rounded-xl hover:bg-white/90 active:scale-95 transition-all duration-200 shadow-lg">
-            Our Full Story →
+            {hc.teamCtaLabel || "Our Full Story →"}
           </button>
         </Link>
       </motion.div>
@@ -353,10 +368,7 @@ export default function Home() {
         initial={{ opacity: 0, x: 30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}
         className="flex flex-row gap-3 sm:gap-4"
       >
-        {[
-          { img: poojaImg, name: "Pooja Patel", role: "Director / Licensed Estate Agent" },
-          { img: chandraImg, name: "Chandra Bhatt", role: "Director" },
-        ].map((person) => (
+        {team.map((person) => (
           <div
             key={person.name}
             className="flex-1 rounded-2xl sm:rounded-3xl overflow-hidden relative h-[280px] sm:h-[360px] lg:h-[420px]"
@@ -383,8 +395,8 @@ export default function Home() {
       <section className="py-28 bg-white">
         <div className="container mx-auto px-6 md:px-12">
           <div className="text-center mb-16">
-            <p className="text-xs uppercase tracking-[0.3em] text-[#371628]/50 font-semibold font-sans mb-4">Client Stories</p>
-            <h2 className="text-4xl md:text-5xl font-serif text-gray-900 font-normal">What Our Clients Say</h2>
+            <p className="text-xs uppercase tracking-[0.3em] text-[#371628]/50 font-semibold font-sans mb-4">{hc.reviewsEyebrow || "Client Stories"}</p>
+            <h2 className="text-4xl md:text-5xl font-serif text-gray-900 font-normal">{hc.reviewsHeading || "What Our Clients Say"}</h2>
             <GoogleRatingLine summary={rating} />
           </div>
           <TestimonialSlider testimonials={reviews} />
@@ -401,12 +413,12 @@ export default function Home() {
               style={{ background: "linear-gradient(145deg, #371628 0%, #1a0d14 100%)" }}
             >
               <div>
-                <p className="text-xs uppercase tracking-[0.3em] text-white/50 font-semibold font-sans mb-4">Let's Talk</p>
+                <p className="text-xs uppercase tracking-[0.3em] text-white/50 font-semibold font-sans mb-4">{hc.contactEyebrow || "Let's Talk"}</p>
                 <h2 className="text-3xl md:text-4xl font-serif font-normal text-white leading-tight mb-6">
-                  Ready to make your move?
+                  {hc.contactHeading || "Ready to make your move?"}
                 </h2>
                 <p className="text-white/60 font-sans text-sm leading-relaxed mb-10">
-                  Whether you're selling, buying, or simply curious about your property's value, we're here to give you the honest guidance you need.
+                  {hc.contactBody || "Whether you're selling, buying, or simply curious about your property's value, we're here to give you the honest guidance you need."}
                 </p>
                 <div className="space-y-5">
                   <a href={phoneHref} className="flex items-center gap-4 group">
@@ -429,17 +441,18 @@ export default function Home() {
                   </a>
                 </div>
               </div>
-              <div className="mt-12">
-                <div className="flex items-center gap-2 mb-2">
-                  {[1,2,3,4,5].map(i => <Star key={i} className="w-4 h-4 text-white fill-white" />)}
-                </div>
-                <p className="text-white/50 font-sans text-xs leading-relaxed">
-                  "The most professional and caring real estate experience we've ever had."
-                </p>
-              </div>
+              {quote && (
+                <figure className="mt-12">
+                  <Stars value={quote.rating} className="w-4 h-4 text-white fill-white" />
+                  <blockquote className="mt-2 text-white/50 font-sans text-xs leading-relaxed line-clamp-3">
+                    &ldquo;{quote.text}&rdquo;
+                  </blockquote>
+                  <figcaption className="mt-1 text-white/40 font-sans text-[11px]">{quote.authorName}{quote.suburb ? `, ${quote.suburb}` : ""}</figcaption>
+                </figure>
+              )}
             </div>
             <div className="lg:col-span-3 bg-white p-10 md:p-14">
-              <h3 className="text-2xl font-serif font-normal text-gray-900 mb-8">Send Your Enquiry</h3>
+              <h3 className="text-2xl font-serif font-normal text-gray-900 mb-8">{hc.formHeading || "Send Your Enquiry"}</h3>
               <ContactForm />
             </div>
           </div>

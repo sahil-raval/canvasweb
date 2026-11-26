@@ -61,10 +61,11 @@ export const CONTENT_QUERY = `{
       "cta": aboutContent.cta{eyebrow, heading, body, label, href, perks},
       "agentPanels": aboutContent.agentPanels[]{number, flip, "image": image.asset->url, bio, "agent": agent->{ "key": coalesce(key.current, key), name, role, bio, phone, email, "photo": photo.asset->url }}
     },
+    homeContent,
     listingsContent,
     "rentContent": rentContent{processEyebrow, processHeading, processSteps[]{number, label, title, description, href}, availableEyebrow, availableHeading, upcomingEyebrow, upcomingHeading, cardCtaLabel, "cta": cta{eyebrow, heading, body, label, href, perks}},
     "contactContent": contactContent{trustPoints[]{icon, text}, infoHeading, formEyebrow, formHeading, reachOutEyebrow, reachOutHeading, reachOutCards[]{label, title, description, href}},
-    "journalContent": journalContent{categories, tickerItems, featuredLabel, emptyTitle, emptyBody, filteredEmptyText, exploreEyebrow, exploreHeading, exploreBody, exploreCtaLabel, exploreCtaHref, footerText, footerCtaLabel, footerCtaHref}
+    "journalContent": journalContent{categories, tickerItems, featuredLabel, emptyTitle, emptyBody, filteredEmptyText, exploreEyebrow, exploreHeading, exploreBody, exploreCtaLabel, exploreCtaHref, footerText, footerCtaLabel, footerCtaHref, articleCtaHeading, articleCtaBody, articleCtaLabel}
   },
   "listings": *[_type == "listing" && defined(slug.current)] | order(_createdAt desc){
     "slug": slug.current, _updatedAt, address, suburb, state, price, beds, baths, cars,

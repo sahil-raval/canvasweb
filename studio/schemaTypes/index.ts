@@ -308,6 +308,48 @@ const aboutValues = defineField({
   })],
 })
 
+const homeContent = defineField({
+  name: 'homeContent', title: 'Home page sections', type: 'object', group: 'home',
+  hidden: pageSlugIs('home'),
+  description: 'Every field is optional. Empty fields show the default text.',
+  fields: [
+    defineField({name: 'heroPrimaryLabel', title: 'Hero button 1 label', type: 'string'}),
+    defineField({name: 'heroPrimaryHref', title: 'Hero button 1 link', type: 'string'}),
+    defineField({name: 'heroSecondaryLabel', title: 'Hero button 2 label', type: 'string'}),
+    defineField({name: 'heroSecondaryHref', title: 'Hero button 2 link', type: 'string'}),
+    defineField({name: 'featuredEyebrow', title: 'Featured listings eyebrow', type: 'string'}),
+    defineField({name: 'featuredHeading', title: 'Featured listings heading', type: 'string'}),
+    defineField({name: 'featuredBody', title: 'Featured listings text', type: 'text', rows: 2}),
+    defineField({name: 'featuredLinkLabel', title: 'Featured listings link label', type: 'string'}),
+    defineField({name: 'featuredUrgency', title: 'Featured listings notice', type: 'string'}),
+    defineField({name: 'processEyebrow', title: 'Process eyebrow', type: 'string'}),
+    defineField({name: 'processHeading', title: 'Process heading', type: 'string'}),
+    defineField({name: 'processBody', title: 'Process text', type: 'text', rows: 2}),
+    defineField({name: 'processSteps', title: 'Process steps', type: 'array', validation: (r) => r.max(6), of: [defineArrayMember({type: 'object', fields: [
+      defineField({name: 'number', type: 'string'}), defineField({name: 'title', type: 'string'}), defineField({name: 'description', type: 'text', rows: 3}),
+    ], preview: {select: {title: 'title', subtitle: 'number'}}})]}),
+    defineField({name: 'processCtaLabel', title: 'Process button label', type: 'string'}),
+    defineField({name: 'processCtaHref', title: 'Process button link', type: 'string'}),
+    defineField({name: 'pillarsEyebrow', title: '"Why choose us" eyebrow', type: 'string'}),
+    defineField({name: 'pillarsHeading', title: '"Why choose us" heading', type: 'string'}),
+    defineField({name: 'pillars', title: '"Why choose us" cards', type: 'array', validation: (r) => r.max(4), of: [defineArrayMember({type: 'object', fields: [
+      defineField({name: 'title', type: 'string'}), defineField({name: 'description', type: 'text', rows: 3}),
+    ], preview: {select: {title: 'title'}}})]}),
+    defineField({name: 'teamEyebrow', title: 'Team eyebrow', type: 'string'}),
+    defineField({name: 'teamHeading', title: 'Team heading', type: 'string'}),
+    defineField({name: 'teamBody', title: 'Team text', type: 'text', rows: 3}),
+    defineField({name: 'teamPoints', title: 'Team bullet points', type: 'array', of: [defineArrayMember({type: 'string'})], validation: (r) => r.max(6)}),
+    defineField({name: 'teamCtaLabel', title: 'Team button label', type: 'string'}),
+    defineField({name: 'teamCtaHref', title: 'Team button link', type: 'string'}),
+    defineField({name: 'reviewsEyebrow', title: 'Reviews eyebrow', type: 'string'}),
+    defineField({name: 'reviewsHeading', title: 'Reviews heading', type: 'string'}),
+    defineField({name: 'contactEyebrow', title: 'Contact eyebrow', type: 'string'}),
+    defineField({name: 'contactHeading', title: 'Contact heading', type: 'string'}),
+    defineField({name: 'contactBody', title: 'Contact text', type: 'text', rows: 3}),
+    defineField({name: 'formHeading', title: 'Enquiry form heading', type: 'string'}),
+  ],
+})
+
 const listingsContent = defineField({
   name: 'listingsContent', title: 'Listings page sections', type: 'object', group: 'listings',
   hidden: pageSlugIs('listings'),
@@ -351,12 +393,13 @@ const journalContent = defineField({
     defineField({name: 'featuredLabel', type: 'string'}), defineField({name: 'emptyTitle', type: 'string'}), defineField({name: 'emptyBody', type: 'string'}),
     defineField({name: 'filteredEmptyText', title: 'Filtered empty message', type: 'string'}), defineField({name: 'exploreEyebrow', type: 'string'}), defineField({name: 'exploreHeading', type: 'string'}), defineField({name: 'exploreBody', type: 'text', rows: 3}), defineField({name: 'exploreCtaLabel', type: 'string'}), defineField({name: 'exploreCtaHref', type: 'string'}),
     defineField({name: 'footerText', type: 'string'}), defineField({name: 'footerCtaLabel', type: 'string'}), defineField({name: 'footerCtaHref', type: 'string'}),
+    defineField({name: 'articleCtaHeading', title: 'Article page call-to-action heading', type: 'string'}), defineField({name: 'articleCtaBody', title: 'Article page call-to-action text', type: 'string'}), defineField({name: 'articleCtaLabel', title: 'Article page call-to-action button', type: 'string'}),
   ],
 })
 
 const page = defineType({
   name: 'page', title: 'Page', type: 'document', icon: DocumentIcon,
-  groups: [{name: 'content', title: 'Content', default: true}, {name: 'about', title: 'About sections'}, {name: 'listings', title: 'Listings sections'}, {name: 'rent', title: 'Rent sections'}, {name: 'contact', title: 'Contact sections'}, {name: 'journal', title: 'Journal sections'}, {name: 'seo', title: 'SEO'}],
+  groups: [{name: 'content', title: 'Content', default: true}, {name: 'home', title: 'Home sections'}, {name: 'about', title: 'About sections'}, {name: 'listings', title: 'Listings sections'}, {name: 'rent', title: 'Rent sections'}, {name: 'contact', title: 'Contact sections'}, {name: 'journal', title: 'Journal sections'}, {name: 'seo', title: 'SEO'}],
   fields: [
     defineField({name: 'title', title: 'Page title', type: 'string', group: 'content', validation: (r) => r.required()}),
     defineField({name: 'slug', title: 'Path', type: 'slug', group: 'content', options: {source: 'title'}, validation: slugValidation}),
@@ -368,7 +411,7 @@ const page = defineType({
     defineField({name: 'ctaHref', title: 'Primary action path', type: 'string', group: 'content'}),
     defineField({name: 'body', title: 'Page text', type: 'array', group: 'content', of: [defineArrayMember({type: 'articleSection'})], description: 'Main text for general pages such as Privacy Policy, Terms or Disclaimer (slug e.g. "privacy-policy").'}),
     aboutContent, aboutValuesEyebrow, aboutValuesHeading, aboutValues,
-    listingsContent, rentContent, contactContent, journalContent,
+    homeContent, listingsContent, rentContent, contactContent, journalContent,
     faqs('content'),
     defineField({name: 'seo', type: 'seo', group: 'seo'}),
   ],

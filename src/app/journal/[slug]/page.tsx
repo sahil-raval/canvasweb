@@ -27,7 +27,7 @@ export default async function Page({params}: Props) {
   if (!article) notFound()
   return (
     <>
-      <CmsProvider content={scope(content, {articles: content.articles.map((a) => (a.slug === slug ? a : {...a, body: []})), agents: content.agents})}>
+      <CmsProvider content={scope(content, {articles: content.articles.map((a) => (a.slug === slug ? a : {...a, body: []})), agents: content.agents, pages: pagesFor(content, 'journal')})}>
         <JournalPost />
       </CmsProvider>
       <JsonLd data={[articleSchema(content, article), breadcrumbSchema(content, [['Journal', '/journal'], [article.title, `/journal/${article.slug}`]])]} />

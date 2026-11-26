@@ -14,11 +14,15 @@ import { ContactForm } from "@/components/ContactForm";
 export default function Contact() {
   const { pages, siteSettings, agents } = useCms();
   const rating = googleRating(siteSettings);
+  const page = pages.find((item) => item.slug === "contact");
+  const cc = page?.contactContent ?? {};
+  // Trust points typed in Sanity replace the default; the Google rating is added from Site settings.
   const trustPoints = [
-    { icon: Shield, text: "100% confidential & obligation-free" },
+    ...(cc.trustPoints?.filter((t) => t.text).map((t) => ({ icon: t.icon?.toLowerCase().includes("star") ? Star : Shield, text: t.text! })) ?? [
+      { icon: Shield, text: "100% confidential & obligation-free" },
+    ]),
     ...(rating ? [{ icon: Star, text: `${rating.rating.toFixed(1)} Google Rating${rating.count ? ` (${rating.count} reviews)` : ""}` }] : []),
   ];
-  const page = pages.find((item) => item.slug === "contact");
   const phone = siteSettings.phone || "0469 131 347";
   const email = siteSettings.email || "enquiry@canvasrealestate.com.au";
   const phoneHref = `tel:${phone.replace(/[^\d+]/g, "")}`;
@@ -73,7 +77,7 @@ export default function Contact() {
               style={{ background: "linear-gradient(145deg, #371628 0%, #1a0d14 100%)" }}
             >
               <div>
-                <h2 className="text-2xl font-serif text-white mb-8">Get in Touch</h2>
+                <h2 className="text-2xl font-serif text-white mb-8">{cc.infoHeading || "Get in Touch"}</h2>
 
                 {/* Contact Details */}
                 <div className="space-y-6 mb-10">
@@ -154,8 +158,8 @@ export default function Contact() {
 
             {/* Right — Form */}
             <div className="lg:col-span-3 p-10 md:p-14">
-              <p className="text-[10px] uppercase tracking-[0.3em] text-[#371628]/60 font-semibold font-sans mb-2">Enquiry Form</p>
-              <h2 className="text-2xl font-serif font-normal text-gray-900 mb-8">Tell Us What You Need</h2>
+              <p className="text-[10px] uppercase tracking-[0.3em] text-[#371628]/60 font-semibold font-sans mb-2">{cc.formEyebrow || "Enquiry Form"}</p>
+              <h2 className="text-2xl font-serif font-normal text-gray-900 mb-8">{cc.formHeading || "Tell Us What You Need"}</h2>
               <ContactForm />
             </div>
           </div>
@@ -166,11 +170,13 @@ export default function Contact() {
       <section className="pb-24 bg-[#FAF8F5]">
         <div className="container mx-auto px-6 md:px-12">
           <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6">
-            {[
+            {(cc.reachOutCards?.length
+  ? cc.reachOutCards.map((c) => ({ title: c.title || "", desc: c.description || "", cta: c.label || "Learn more", href: c.href || "/contact" }))
+  : [
   { title: "Sell For More", desc: "Our strategic marketing and negotiation expertise consistently achieves prices above comparable sales. Start with appraisal.", cta: "Get Appraisal", href: "#enquiry-form" },
   { title: "Find Your Home", desc: "Tell us exactly what you're looking for and we'll proactively source properties, including off-market opportunities.", cta: "Start Search", href: "/listings" },
   { title: "Know Your Value", desc: "Receive a comprehensive, data-backed market appraisal for your property with absolutely no obligation to sell.", cta: "Valuation", href: "#enquiry-form" },
-].map((card, i) => (
+]).map((card, i) => (
   <motion.div
     key={i}
     initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }}

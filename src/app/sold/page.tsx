@@ -17,7 +17,7 @@ export default async function Page() {
   const sold = content.listings.filter((l) => isSold(l.status))
   return (
     <>
-      <CmsProvider content={scope(content, {listings: sold, pages: pagesFor(content, 'sold')})}>
+      <CmsProvider content={scope(content, {listings: sold, pages: pagesFor(content, 'sold', 'listings')})}>
         <SoldListings />
       </CmsProvider>
       <PageFaqs content={content} path="/sold" />

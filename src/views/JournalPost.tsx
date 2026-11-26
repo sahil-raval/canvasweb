@@ -288,7 +288,8 @@ function FadeIn({ children, delay = 0 }: { children: React.ReactNode; delay?: nu
 
 /* ─── Page ───────────────────────────────────────────────── */
 export default function JournalPost() {
-  const { articles } = useCms();
+  const { articles, pages } = useCms();
+  const jc = pages.find((p) => p.slug === "journal")?.journalContent ?? {};
   const params  = useParams<{ slug: string }>();
   const article = articles.find(a => a.slug === params.slug);
   const index   = articles.findIndex(a => a.slug === params.slug);
@@ -391,16 +392,16 @@ export default function JournalPost() {
         {/* CTA */}
         <FadeIn>
           <div className="text-center py-4">
-            <Eyebrow>Thinking of buying or selling?</Eyebrow>
+            <Eyebrow>{jc.articleCtaHeading || "Thinking of buying or selling?"}</Eyebrow>
             <p
               className="font-serif font-normal text-[#371628] leading-snug mt-5 mb-9 mx-auto"
               style={{ fontSize: "clamp(1.4rem, 2.2vw, 1.75rem)", maxWidth: "380px" }}
             >
-              Let our Geelong team guide you home.
+              {jc.articleCtaBody || "Let our Geelong team guide you home."}
             </p>
             <Link href="/contact">
               <button className="inline-flex items-center gap-3.5 bg-[#371628] text-white font-sans font-semibold text-[13px] tracking-wide px-10 py-4 hover:bg-[#2d1020] transition-colors shadow-2xl shadow-[#371628]/18">
-                Speak with our team
+                {jc.articleCtaLabel || "Speak with our team"}
                 <ArrowRight className="w-4 h-4" />
               </button>
             </Link>

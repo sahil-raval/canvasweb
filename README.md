@@ -45,9 +45,15 @@ public/images/          static images
 |---|---|---|
 | Business name, phone, email, office address, map location, Google Business Profile link, ABN, licence, social links | Site settings | Header, footer, contact page, search engine data |
 | Page headings, text, images, FAQs, SEO | Pages | Matching page (`home`, `listings`, `sold`, `rent`, `about`, `contact`, `journal`) |
+| Every section of the home page (buttons, featured, process steps, "why choose us" cards, team text, reviews and contact headings) | Pages → home → Home sections | Home page. Empty fields show the default text |
+| Buy/Sold notices, empty message, off-market box | Pages → listings → Listings sections | `/listings` and `/sold` |
+| Contact trust points, headings, form heading, the 3 cards | Pages → contact → Contact sections | `/contact` |
+| "Thinking of buying or selling?" box on articles | Pages → journal → Journal sections | Every article |
 | Any other page (e.g. `privacy-policy`, `terms`, `disclaimer`) | Pages → new page with that slug | `/<slug>`; legal pages are linked in the footer automatically |
 | Suburb guides | Suburb pages | `/suburbs/<slug>`, with that suburb's Agentbox listings added automatically |
-| Journal articles, agents | Journal, Agents | `/journal`, agent cards |
+| Journal articles, agents | Journal, Agents | `/journal`, agent cards, home team section |
+
+Buttons and form labels ("View PDF", "Back to Listings", field names) stay in code on purpose: they are interface text, not content.
 | Client reviews | Reviews (one per review, copied exactly) | Home page review slider, `llms.txt` |
 | Google rating, review count, "read" and "leave a review" links | Site settings → Reviews | Rating badges (hidden until filled in), review buttons |
 | Listing details | Agentbox (not Sanity) | Listing pages. Only the SEO tab of a listing is edited in Sanity |

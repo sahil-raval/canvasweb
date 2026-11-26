@@ -31,6 +31,8 @@ function ListingsView({ mode }: { mode: "current" | "sold" }) {
   // "Buy" shows For Sale / Under Offer. Sold listings move to the Sold page.
   const listings = allListings.filter((l) => isSold(l.status) === sold);
   const page = pages.find((item) => item.slug === (sold ? "sold" : "listings"));
+  // Section text is edited on the "listings" page in Sanity (shared by Buy and Sold).
+  const lc = page?.listingsContent ?? pages.find((item) => item.slug === "listings")?.listingsContent ?? {};
   const [searchTerm,   setSearchTerm]   = useState("");
   const [bedFilter,    setBedFilter]    = useState("any");
   const [suburbFilter, setSuburbFilter] = useState("All Suburbs");
@@ -105,7 +107,7 @@ function ListingsView({ mode }: { mode: "current" | "sold" }) {
         <div className="flex items-center gap-3 mb-8 bg-white border border-[#371628]/10 rounded-2xl px-5 py-3 w-fit shadow-sm">
           <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
           <p className="text-xs text-[#371628]/70 font-semibold">
-            Properties at this level are actively receiving enquiries. Act early to avoid missing out
+            {lc.urgencyText || "Properties at this level are actively receiving enquiries. Act early to avoid missing out"}
           </p>
         </div>
         )}
@@ -121,11 +123,11 @@ function ListingsView({ mode }: { mode: "current" | "sold" }) {
             <div className="w-16 h-16 bg-[#371628]/5 rounded-full flex items-center justify-center mx-auto mb-6">
               <MapPin className="w-7 h-7 text-[#371628]/40" />
             </div>
-            <h3 className="text-2xl font-serif text-gray-900 mb-3">No Properties Found</h3>
+            <h3 className="text-2xl font-serif text-gray-900 mb-3">{lc.emptyTitle || "No Properties Found"}</h3>
             <p className="text-gray-500 max-w-sm mx-auto mb-8 text-sm leading-relaxed">
               {sold && listings.length === 0
                 ? "Our recent sales will appear here. Get in touch for a free appraisal of your property."
-                : "No properties match your current search. Try adjusting your filters, or get in touch and we'll find your perfect match, including off-market listings."}
+                : lc.emptyBody || "No properties match your current search. Try adjusting your filters, or get in touch and we'll find your perfect match, including off-market listings."}
             </p>
             <div className="flex gap-3 justify-center">
               <button
@@ -134,8 +136,8 @@ function ListingsView({ mode }: { mode: "current" | "sold" }) {
               >
                 Clear Filters
               </button>
-              <a href="/contact" className="text-sm font-semibold bg-[#371628] text-white px-6 py-2.5 rounded-xl hover:bg-[#4a1e35] transition-colors">
-                Contact Us
+              <a href={lc.emptyContactHref || "/contact"} className="text-sm font-semibold bg-[#371628] text-white px-6 py-2.5 rounded-xl hover:bg-[#4a1e35] transition-colors">
+                {lc.emptyContactLabel || "Contact Us"}
               </a>
             </div>
           </motion.div>
@@ -151,14 +153,14 @@ function ListingsView({ mode }: { mode: "current" | "sold" }) {
         >
           <div className="absolute inset-0 opacity-5" style={{ backgroundImage: "radial-gradient(circle, white 1px, transparent 1px)", backgroundSize: "40px 40px" }} />
           <div className="relative z-10">
-            <p className="text-[10px] uppercase tracking-[0.3em] text-white/50 font-semibold font-sans mb-4">Exclusive Access</p>
-            <h2 className="text-3xl md:text-4xl font-serif mb-4">Can't Find What You're Looking For?</h2>
+            <p className="text-[10px] uppercase tracking-[0.3em] text-white/50 font-semibold font-sans mb-4">{lc.offMarketEyebrow || "Exclusive Access"}</p>
+            <h2 className="text-3xl md:text-4xl font-serif mb-4">{lc.offMarketHeading || "Can't Find What You're Looking For?"}</h2>
             <p className="text-white/65 text-base font-light mb-8 max-w-xl mx-auto leading-relaxed">
-              We have access to off-market properties and upcoming listings before they hit the public market. Tell us what you need.
+              {lc.offMarketBody || "We have access to off-market properties and upcoming listings before they hit the public market. Tell us what you need."}
             </p>
-            <a href="/contact">
+            <a href={lc.offMarketHref || "/contact"}>
               <button className="h-12 px-10 text-sm font-bold bg-white text-[#371628] rounded-2xl hover:bg-white/90 active:scale-95 transition-all duration-200 shadow-lg">
-                Register Your Interest
+                {lc.offMarketLabel || "Register Your Interest"}
               </button>
             </a>
           </div>

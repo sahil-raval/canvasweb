@@ -172,10 +172,20 @@ export interface CmsPage {
     cta?: PageCta;
     agentPanels?: Array<{agent?: CmsAgent; number?: string; flip?: boolean; image?: string; bio?: string[]}>;
   };
+  homeContent?: {
+    heroPrimaryLabel?: string; heroPrimaryHref?: string; heroSecondaryLabel?: string; heroSecondaryHref?: string;
+    featuredEyebrow?: string; featuredHeading?: string; featuredBody?: string; featuredLinkLabel?: string; featuredUrgency?: string;
+    processEyebrow?: string; processHeading?: string; processBody?: string;
+    processSteps?: Array<{number?: string; title?: string; description?: string}>; processCtaLabel?: string; processCtaHref?: string;
+    pillarsEyebrow?: string; pillarsHeading?: string; pillars?: Array<{title?: string; description?: string}>;
+    teamEyebrow?: string; teamHeading?: string; teamBody?: string; teamPoints?: string[]; teamCtaLabel?: string; teamCtaHref?: string;
+    reviewsEyebrow?: string; reviewsHeading?: string;
+    contactEyebrow?: string; contactHeading?: string; contactBody?: string; formHeading?: string;
+  } | null;
   listingsContent?: {urgencyText?: string; emptyTitle?: string; emptyBody?: string; emptyContactLabel?: string; emptyContactHref?: string; offMarketEyebrow?: string; offMarketHeading?: string; offMarketBody?: string; offMarketLabel?: string; offMarketHref?: string};
   rentContent?: {processEyebrow?: string; processHeading?: string; processSteps?: PageTextItem[]; availableEyebrow?: string; availableHeading?: string; upcomingEyebrow?: string; upcomingHeading?: string; cardCtaLabel?: string; cta?: PageCta};
   contactContent?: {trustPoints?: Array<{icon?: string; text?: string}>; infoHeading?: string; formEyebrow?: string; formHeading?: string; reachOutEyebrow?: string; reachOutHeading?: string; reachOutCards?: PageTextItem[]};
-  journalContent?: {categories?: string[]; tickerItems?: string[]; featuredLabel?: string; emptyTitle?: string; emptyBody?: string; filteredEmptyText?: string; exploreEyebrow?: string; exploreHeading?: string; exploreBody?: string; exploreCtaLabel?: string; exploreCtaHref?: string; footerText?: string; footerCtaLabel?: string; footerCtaHref?: string};
+  journalContent?: {categories?: string[]; tickerItems?: string[]; featuredLabel?: string; emptyTitle?: string; emptyBody?: string; filteredEmptyText?: string; exploreEyebrow?: string; exploreHeading?: string; exploreBody?: string; exploreCtaLabel?: string; exploreCtaHref?: string; footerText?: string; footerCtaLabel?: string; footerCtaHref?: string; articleCtaHeading?: string; articleCtaBody?: string; articleCtaLabel?: string};
 }
 export interface PageTextItem { number?: string; label?: string; title?: string; description?: string; href?: string }
 export interface PageCta { eyebrow?: string; heading?: string; body?: string; label?: string; href?: string; perks?: string[] }
