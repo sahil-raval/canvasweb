@@ -65,3 +65,26 @@ export function mapCategory(names: string[]): (typeof CATEGORIES)[number] {
 }
 export const COLOURS: Record<string, string> = {'Market Insights': '#6b3a52', 'Selling Guide': '#7a4a2e', 'Buying Guide': '#2f5d50', 'Renting & Investing': '#4a5a2e', Lifestyle: '#8a5a2b', Design: '#3d4a6b'}
 
+
+/** WordPress gave some posts addresses like "blog-13". Make a readable one from the title instead. */
+export function niceSlug(slug: string, title: string) {
+  if (!/^(blog|post)-?\d*$/i.test(slug)) return slug
+  return title.toLowerCase().normalize('NFKD').replace(/[\u0300-\u036f]/g, '').replace(/&/g, ' and ')
+    .replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').split('-').slice(0, 9).join('-')
+}
+
+// Page-builder leftovers that are not part of the article.
+const JUNK = /^(share( this)?( post| article)?:?|facebook|twitter|linkedin|pinterest|email|print|read more|previous( post)?|next( post)?|tags?:.*|categor(y|ies):.*|posted (in|by|on).*|leave a (reply|comment)|related posts?)$/i
+
+/** Remove junk lines and a heading that only repeats the article title (the page already shows it). */
+export function tidySections<T extends {type: string; text?: string}>(sections: T[], title: string): T[] {
+  const norm = (s = '') => s.toLowerCase().replace(/[^a-z0-9]+/g, '')
+  return sections.filter((s, i) => {
+    if (s.text && JUNK.test(s.text.trim())) return false
+    if (i < 3 && s.type === 'heading' && norm(s.text) === norm(title)) return false
+    return true
+  })
+}
+
+/** "Post title - Canvas Real Estate" -> "Post title" (the site adds its own brand). */
+export const stripBrand = (t: string) => t.replace(/\s*[-|–—]\s*Canvas Real Estate\s*$/i, '').trim()

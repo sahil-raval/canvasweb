@@ -1,6 +1,6 @@
 import 'server-only'
 import {parse} from 'node-html-parser'
-import {COLOURS, clean, decode, htmlToSections, mapCategory} from './html'
+import {COLOURS, clean, decode, htmlToSections, mapCategory, niceSlug, stripBrand, tidySections} from './html'
 import {mutate, query, sanityConfig, uploadFromUrl} from '@/lib/agentbox/sanity-write'
 
 /**
@@ -73,9 +73,10 @@ export async function runWordpressImport({dryRun = false, force = false, show = 
     const id = `wp-post-${p.id}`
     const title = clean(p.title.rendered)
     if (have.has(id) && !force) { report.skipped.push(`${title} (already in Sanity)`); continue }
-    if (slugsInUse.has(p.slug)) { report.skipped.push(`${title} (an article with this web address already exists)`); continue }
+    if (slugsInUse.has(niceSlug(p.slug, title))) { report.skipped.push(`${title} (an article with this web address already exists)`); continue }
 
-    const body = htmlToSections(p.content.rendered)
+    const slug = niceSlug(p.slug, title)
+    const body = tidySections(htmlToSections(p.content.rendered), title)
     if (!body.length) { report.warnings.push(`${title}: no text found, skipped`); continue }
 
     const media = p._embedded?.['wp:featuredmedia']?.[0]
@@ -95,8 +96,8 @@ export async function runWordpressImport({dryRun = false, force = false, show = 
     if (excerpt.length > 240) excerpt = excerpt.slice(0, 237).replace(/\s+\S*$/, '') + '…'
     const legacyPath = new URL(p.link).pathname
 
-    if (dryRun && show === p.slug) report.warnings.push(...body.map((b) => `[${b.type}] ${b.text ?? ''}`))
-    if (dryRun) { report[have.has(id) ? 'updated' : 'created'].push(`${title} -> /journal/${p.slug} (${body.length} sections, ${category}, old URL ${legacyPath})`); continue }
+    if (dryRun && (show === p.slug || show === slug)) report.warnings.push(...body.map((b) => `[${b.type}] ${b.text ?? ''}`))
+    if (dryRun) { report[have.has(id) ? 'updated' : 'created'].push(`${title} -> /journal/${slug} (${body.length} sections, ${category}, old URL ${legacyPath})`); continue }
 
     let assetId: string
     try {
@@ -109,7 +110,7 @@ export async function runWordpressImport({dryRun = false, force = false, show = 
       _id: id,
       _type: 'journalArticle',
       title,
-      slug: {_type: 'slug', current: p.slug},
+      slug: {_type: 'slug', current: slug},
       excerpt,
       image: {_type: 'image', asset: {_type: 'reference', _ref: assetId}},
       body,
@@ -123,12 +124,12 @@ export async function runWordpressImport({dryRun = false, force = false, show = 
       wordpressId: p.id,
       seo: {
         _type: 'seo',
-        ...(p.yoast_head_json?.title ? {title: decode(p.yoast_head_json.title).slice(0, 70)} : {}),
+        ...(p.yoast_head_json?.title ? {title: stripBrand(decode(p.yoast_head_json.title)).slice(0, 70)} : {}),
         ...(p.yoast_head_json?.description ? {description: decode(p.yoast_head_json.description).slice(0, 160)} : {}),
       },
     }
     await mutate(c, [have.has(id) ? {createOrReplace: doc} : {createIfNotExists: doc}])
-    report[have.has(id) ? 'updated' : 'created'].push(`${title} -> /journal/${p.slug}`)
+    report[have.has(id) ? 'updated' : 'created'].push(`${title} -> /journal/${slug}`)
   }
   return report
 }

@@ -35,6 +35,18 @@ const nextConfig: NextConfig = {
     formats: ['image/avif', 'image/webp'],
     remotePatterns: [{protocol: 'https', hostname: 'cdn.sanity.io'}],
   },
+  async redirects() {
+    // Old WordPress addresses -> new pages, so links and Google rankings carry over.
+    // (Old blog post addresses are redirected one by one in app/[slug]/page.tsx.)
+    return [
+      {source: '/blog', destination: '/journal', permanent: true},
+      {source: '/news', destination: '/journal', permanent: true},
+      {source: '/category/:path*', destination: '/journal', permanent: true},
+      {source: '/tag/:path*', destination: '/journal', permanent: true},
+      {source: '/author/:path*', destination: '/journal', permanent: true},
+      {source: '/feed', destination: '/journal', permanent: true},
+    ]
+  },
   async rewrites() {
     // Sanity Studio is a single-page app built into public/studio. Its files are served first;
     // every other /studio URL loads the Studio app (before the /[slug] page route can match).
