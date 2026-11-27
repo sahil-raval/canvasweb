@@ -1,4 +1,4 @@
-import {notFound} from 'next/navigation'
+import {notFound, permanentRedirect} from 'next/navigation'
 import {AnswerBox} from '@/components/AnswerBox'
 import LandingPageView from '@/views/LandingPageView'
 import {FaqSection} from '@/components/FaqSection'
@@ -53,7 +53,12 @@ export default async function Page({params}: Props) {
     )
   }
   const page = findPage(c, slug)
-  if (!page) notFound()
+  if (!page) {
+    // Old WordPress blog address (e.g. /my-post/) -> new Journal article.
+    const old = c.articles.find((a) => a.legacyUrl?.replace(/^\/|\/$/g, '') === slug)
+    if (old) permanentRedirect(`/journal/${old.slug}`)
+    notFound()
+  }
   const faq = faqSchema(page.faqs)
   const webPage = webPageSchema(c, {path: `/${slug}`, name: page.title || slug, description: page.intro, seo: page.seo, dateModified: page._updatedAt})
   return (

@@ -99,7 +99,7 @@ export const CONTENT_QUERY = `{
   "articles": *[_type == "journalArticle" && defined(slug.current)] | order(publishedAt desc){
     "slug": slug.current, _updatedAt, category, categoryColor, title, subtitle, excerpt,
     body[]{_key, type, text}, "author": coalesce(author->key.current, author->key), "date": coalesce(displayDate, publishedAt),
-    readTime, "image": image.asset->url, featured,
+    readTime, "image": image.asset->url, featured, legacyUrl,
     "seo": seo${SEO}
   },
   "agents": *[_type == "agent"] | order(name asc){

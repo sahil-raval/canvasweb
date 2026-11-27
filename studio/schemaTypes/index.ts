@@ -261,6 +261,8 @@ const journalArticle = defineType({
     defineField({name: 'displayDate', title: 'Display date override', type: 'string', group: 'publishing'}),
     defineField({name: 'readTime', title: 'Read time (minutes)', type: 'number', group: 'publishing', validation: (r) => r.required().integer().positive()}),
     defineField({name: 'featured', type: 'boolean', group: 'publishing', initialValue: false}),
+    defineField({name: 'legacyUrl', title: 'Old WordPress address', description: 'Visitors to this old address are sent to this article. Filled in by the WordPress import.', type: 'string', group: 'publishing', readOnly: true, hidden: ({value}) => !value}),
+    defineField({name: 'wordpressId', title: 'WordPress post ID', type: 'number', group: 'publishing', readOnly: true, hidden: ({value}) => !value}),
     defineField({name: 'seo', type: 'seo', group: 'seo'}),
   ],
   preview: {select: {title: 'title', subtitle: 'category', media: 'image'}},

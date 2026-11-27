@@ -176,7 +176,8 @@ export function rentalMetadata(c: CmsContent, r: CmsRental): Metadata {
 export function articleMetadata(c: CmsContent, a: CmsArticle): Metadata {
   return buildMetadata(c, {
     path: `/journal/${a.slug}`,
-    title: `${a.title} | Canvas Journal`,
+    // Google shows about 60 characters, so drop the brand suffix on long titles.
+    title: a.title.length > 45 ? a.title : `${a.title} | Canvas Journal`,
     description: a.excerpt,
     keywords: [a.category, 'Geelong property', 'Geelong real estate advice'],
     image: a.image,

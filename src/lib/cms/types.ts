@@ -86,6 +86,8 @@ export interface Article {
   readTime: number;
   image: string;
   featured: boolean;
+  /** Old WordPress path, e.g. /my-post/ — redirects to /journal/<slug>. */
+  legacyUrl?: string;
 }
 
 export interface SeoFields {
