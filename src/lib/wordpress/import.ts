@@ -20,7 +20,7 @@ interface WpPost {
   title: {rendered: string}
   excerpt: {rendered: string}
   content: {rendered: string}
-  yoast_head_json?: {title?: string; description?: string}
+  yoast_head_json?: {title?: string; description?: string; og_image?: Array<{url?: string}>}
   _embedded?: {
     author?: Array<{name?: string}>
     'wp:featuredmedia'?: Array<{source_url?: string; alt_text?: string}>
@@ -52,7 +52,7 @@ async function fetchAllPosts(): Promise<WpPost[]> {
   return posts
 }
 
-export async function runWordpressImport({dryRun = false, force = false} = {}): Promise<ImportReport> {
+export async function runWordpressImport({dryRun = false, force = false, show = ''} = {}): Promise<ImportReport> {
   const c = sanityConfig()
   const report: ImportReport = {dryRun, found: 0, created: [], updated: [], skipped: [], warnings: []}
   const posts = await fetchAllPosts()
@@ -68,7 +68,6 @@ export async function runWordpressImport({dryRun = false, force = false} = {}): 
   ])
   const have = new Set(existing.map((e) => e._id.replace(/^drafts\./, '')))
   const slugsInUse = new Set(taken.map((t) => t.slug))
-  if (!agents.length) throw new Error('No agents in Sanity - an article needs an author')
 
   for (const p of posts) {
     const id = `wp-post-${p.id}`
@@ -80,14 +79,15 @@ export async function runWordpressImport({dryRun = false, force = false} = {}): 
     if (!body.length) { report.warnings.push(`${title}: no text found, skipped`); continue }
 
     const media = p._embedded?.['wp:featuredmedia']?.[0]
-    const imageUrl = media?.source_url || parse(p.content.rendered).querySelector('img')?.getAttribute('src')
-    if (!imageUrl) { report.warnings.push(`${title}: no image, skipped (add one in WordPress or Sanity)`); continue }
-
-    const authorName = (p._embedded?.author?.[0]?.name || '').toLowerCase()
-    const agent = agents.find((a) => authorName && a.name.toLowerCase().includes(authorName.split(' ')[0])) || agents[0]
-    if (!authorName || !agents.some((a) => a === agent && a.name.toLowerCase().includes(authorName.split(' ')[0]))) {
-      report.warnings.push(`${title}: author "${p._embedded?.author?.[0]?.name || 'unknown'}" set to ${agent.name} - check in Sanity`)
+    let imageUrl = media?.source_url || parse(p.content.rendered).querySelector('img')?.getAttribute('src') || p.yoast_head_json?.og_image?.[0]?.url
+    if (!imageUrl) {
+      imageUrl = `${process.env.NEXT_PUBLIC_SITE_URL || 'https://cre-web-sooty.vercel.app'}/images/office-1.jpg`
+      report.warnings.push(`${title}: had no image on WordPress - a stock office photo was used, please change it in Sanity`)
     }
+
+    // Only credit a real agent when the WordPress author matches one; otherwise it is by the agency.
+    const authorName = (p._embedded?.author?.[0]?.name || '').trim().toLowerCase()
+    const agent = authorName ? agents.find((a) => a.name.toLowerCase() === authorName) : undefined
     const terms = (p._embedded?.['wp:term'] || []).flat().filter((t) => t.taxonomy === 'category').map((t) => t.name)
     const category = mapCategory([...terms, title])
     const words = body.reduce((n, s) => n + (s.text?.split(/\s+/).length || 0), 0)
@@ -95,6 +95,7 @@ export async function runWordpressImport({dryRun = false, force = false} = {}): 
     if (excerpt.length > 240) excerpt = excerpt.slice(0, 237).replace(/\s+\S*$/, '') + '…'
     const legacyPath = new URL(p.link).pathname
 
+    if (dryRun && show === p.slug) report.warnings.push(...body.map((b) => `[${b.type}] ${b.text ?? ''}`))
     if (dryRun) { report[have.has(id) ? 'updated' : 'created'].push(`${title} -> /journal/${p.slug} (${body.length} sections, ${category}, old URL ${legacyPath})`); continue }
 
     let assetId: string
@@ -114,7 +115,7 @@ export async function runWordpressImport({dryRun = false, force = false} = {}): 
       body,
       category,
       categoryColor: COLOURS[category],
-      author: {_type: 'reference', _ref: agent._id},
+      ...(agent ? {author: {_type: 'reference', _ref: agent._id}} : {}),
       publishedAt: new Date(p.date_gmt + 'Z').toISOString(),
       readTime: Math.max(1, Math.round(words / 220)),
       featured: false,

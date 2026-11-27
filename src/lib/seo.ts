@@ -331,7 +331,8 @@ export function articleSchema(c: CmsContent, a: CmsArticle): Json {
     image: a.image,
     datePublished: a.date,
     dateModified: a._updatedAt || a.date,
-    author: {'@type': 'Person', name: author?.name ?? 'Canvas Real Estate', jobTitle: author?.role},
+    // Articles written by the agency (no agent picked) are credited to the business itself.
+    author: author ? {'@type': 'Person', name: author.name, jobTitle: author.role} : {'@id': `${base}/#business`},
     publisher: {'@id': `${base}/#business`},
     mainEntityOfPage: `${base}/journal/${a.slug}`,
     inLanguage: 'en-AU',

@@ -33,7 +33,7 @@ export async function GET(req: Request) {
   if (!secretMatches(secretFrom(req, 'key'), [process.env.SYNC_SECRET])) return new Response('Unauthorised', {status: 401})
   const url = new URL(req.url)
   try {
-    const report = await runWordpressImport({dryRun: url.searchParams.get('dry') === '1', force: url.searchParams.get('force') === '1'})
+    const report = await runWordpressImport({dryRun: url.searchParams.get('dry') === '1', force: url.searchParams.get('force') === '1', show: url.searchParams.get('show') || ''})
     if (!report.dryRun && report.created.length + report.updated.length) revalidateTag(CMS_TAG, {expire: 0})
     return (req.headers.get('accept') || '').includes('text/html')
       ? new Response(html(report), {headers: {'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store'}})

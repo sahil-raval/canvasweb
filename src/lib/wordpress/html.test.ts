@@ -15,5 +15,7 @@ assert.deepEqual(s.map((x) => [x.type, x.text]), [
 ])
 assert.ok(s.every((x) => x._key.length === 12))
 assert.equal(mapCategory(['Uncategorized', 'First home buyer tips']), 'Buying Guide')
+assert.equal(mapCategory(['Geelong Landlord’s Guide']), 'Renting & Investing')
+assert.equal(mapCategory(['How much is your Geelong home worth?']), 'Selling Guide')
 assert.equal(mapCategory(['News']), 'Market Insights')
 console.log('wordpress html: ok')

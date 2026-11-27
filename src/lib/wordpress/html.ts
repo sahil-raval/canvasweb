@@ -52,13 +52,16 @@ export function htmlToSections(html: string): Section[] {
   return sections.map((s, i) => ({_key: key(`${i}${s.type}${s.text || ''}`), ...s}))
 }
 
-export const CATEGORIES = ['Market Insights', 'Buying Guide', 'Lifestyle', 'Design'] as const
+export const CATEGORIES = ['Market Insights', 'Selling Guide', 'Buying Guide', 'Renting & Investing', 'Lifestyle', 'Design'] as const
 export function mapCategory(names: string[]): (typeof CATEGORIES)[number] {
   const all = names.join(' ').toLowerCase()
-  if (/buy|first home|loan|mortgage|invest/.test(all)) return 'Buying Guide'
+  if (/market (update|insight)|rba|interest rate|rate rise|budget|price rules|sales rules/.test(all)) return 'Market Insights'
+  if (/rent|landlord|tenant|investor|investment|property management/.test(all)) return 'Renting & Investing'
+  if (/sell|vendor|listing|campaign|worth|apprais|inspection ready|pre-listing|overpric/.test(all)) return 'Selling Guide'
+  if (/buy|first home|loan|mortgage|building/.test(all)) return 'Buying Guide'
   if (/design|interior|styl|renovat/.test(all)) return 'Design'
-  if (/lifestyle|suburb|living|community|school/.test(all)) return 'Lifestyle'
+  if (/lifestyle|suburb|street|famil|community|school|cafe|espresso|easter|moving/.test(all)) return 'Lifestyle'
   return 'Market Insights'
 }
-export const COLOURS: Record<string, string> = {'Market Insights': '#6b3a52', 'Buying Guide': '#2f5d50', Lifestyle: '#8a5a2b', Design: '#3d4a6b'}
+export const COLOURS: Record<string, string> = {'Market Insights': '#6b3a52', 'Selling Guide': '#7a4a2e', 'Buying Guide': '#2f5d50', 'Renting & Investing': '#4a5a2e', Lifestyle: '#8a5a2b', Design: '#3d4a6b'}
 

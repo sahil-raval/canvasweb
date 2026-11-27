@@ -7,7 +7,8 @@ import { ArrowRight, Clock } from "lucide-react";
 import type { Article } from "@/lib/cms/types";
 import { useCms } from "@/lib/cms/context";
 
-const CATEGORIES = ["All", "Market Insights", "Buying Guide", "Lifestyle", "Design"];
+const CATEGORIES = ["All", "Market Insights", "Selling Guide", "Buying Guide", "Renting & Investing", "Lifestyle", "Design"];
+const PAGE_SIZE = 12;
 
 const TICKER_ITEMS = [
   "Market Insights", "·", "Lifestyle", "·", "Buying Guide", "·",
@@ -460,8 +461,14 @@ export default function Journal() {
   const { articles, pages } = useCms();
   const page = pages.find((item) => item.slug === "journal");
   const content = page?.journalContent;
-  const categories = content?.categories?.length ? ["All", ...content.categories.filter((category) => category !== "All")] : CATEGORIES;
-  const [activeCategory, setActiveCategory] = useState("All");
+  // Only show category tabs that have at least one article.
+  const used = new Set(articles.map((a) => a.category));
+  const categories = content?.categories?.length
+    ? ["All", ...content.categories.filter((category) => category !== "All" && used.has(category))]
+    : CATEGORIES.filter((c) => c === "All" || used.has(c));
+  const [activeCategory, setActiveCategoryState] = useState("All");
+  const [shown, setShown] = useState(PAGE_SIZE);
+  const setActiveCategory = (c: string) => { setActiveCategoryState(c); setShown(PAGE_SIZE); };
 
   const featured = articles.find(a => a.featured) ?? articles[0];
   const secondary = articles.filter(a => a !== featured);
@@ -471,6 +478,10 @@ export default function Journal() {
 
   const isAll     = activeCategory === "All";
   const [a0, a1, a2, a3, a4] = filtered;
+  // In the editorial layout the first 5 are shown above; the rest go in the grid below.
+  const editorial = isAll && filtered.length >= 5;
+  const rest = editorial ? filtered.slice(5) : filtered;
+  const visible = rest.slice(0, shown);
 
   if (!featured) {
     return (
@@ -507,7 +518,7 @@ export default function Journal() {
         </FadeUp>
 
         {/* ── Editorial layout when "All" is selected and we have 5 articles ── */}
-        {isAll && filtered.length >= 5 ? (
+        {editorial ? (
           <div className="space-y-10">
 
             {/* BLOCK A — Asymmetric: tall portrait left + two stacked landscape right */}
@@ -561,21 +572,32 @@ export default function Journal() {
               </div>
             )}
           </div>
-        ) : (
-          /* ── Filtered / fallback: standard 3-col grid ── */
-          filtered.length === 0 ? (
-            <div className="text-center py-32">
-              <p className="font-serif text-2xl text-[#371628]/25">{content?.filteredEmptyText || "No articles in this category yet."}</p>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-10 gap-y-16">
-              {filtered.map((article, i) => (
-                <FadeUp key={article.slug} delay={i * 0.07}>
-                  <GridCard article={article} num={i + 1} />
-                </FadeUp>
-              ))}
-            </div>
-          )
+        ) : filtered.length === 0 ? (
+          <div className="text-center py-32">
+            <p className="font-serif text-2xl text-[#371628]/25">{content?.filteredEmptyText || "No articles in this category yet."}</p>
+          </div>
+        ) : null}
+
+        {/* ── Standard 3-col grid: every other article, 12 at a time ── */}
+        {visible.length > 0 && (
+          <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-10 gap-y-16 ${editorial ? "mt-20" : ""}`}>
+            {visible.map((article, i) => (
+              <FadeUp key={article.slug} delay={(i % 3) * 0.07}>
+                <GridCard article={article} num={(editorial ? 5 : 0) + i + 1} />
+              </FadeUp>
+            ))}
+          </div>
+        )}
+        {rest.length > shown && (
+          <div className="mt-16 text-center">
+            <button
+              type="button"
+              onClick={() => setShown((n) => n + PAGE_SIZE)}
+              className="inline-flex items-center gap-3 border border-[#371628]/25 text-[#371628] font-sans font-semibold text-[13px] px-8 py-3.5 hover:bg-[#371628] hover:text-white transition-colors tracking-wide"
+            >
+              Show more articles ({rest.length - shown} more)
+            </button>
+          </div>
         )}
 
         {/* ── Footer rule ── */}
